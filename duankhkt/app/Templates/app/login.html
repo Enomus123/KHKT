@@ -1,0 +1,25 @@
+{% extends "app/base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Đăng nhập</h2>
+
+  {% for message in messages %}
+  <div class="alert alert-warning">{{ message }}</div>
+  {% endfor %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Tên đăng nhập</label>
+      <input type="text" name="username" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Mật khẩu</label>
+      <input type="password" name="password" class="form-control" required>
+      </div>
+    <button type="submit" class="btn btn-primary">Đăng nhập</button>
+    </form>
+  <p class="text-center h6 fw-bold mb-5 mx-1 mx-md-4 mt-4">Chưa có tài khoản? <a href= {% url "register" %} >Đăng ký</a></p>
+</div>
+{% endblock content %}
