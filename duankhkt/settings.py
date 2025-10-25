@@ -56,7 +56,6 @@ ROOT_URLCONF = 'duankhkt.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'app' / 'templates' / 'app'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
