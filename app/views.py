@@ -18,7 +18,7 @@ def home(request):
         user_not_login = "show"
         user_login = "hidden"
     context = {'user_not_login':user_not_login,'user_login':user_login}
-    return render(request,'base.html',context)
+    return render(request,'app/base.html',context)
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('home')
