@@ -49,5 +49,3 @@ def register(request):
 def logoutPage(request):
     logout(request)
     return redirect('login')
-def game(request):
-     return render(request, 'app/game.html')
