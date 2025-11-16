@@ -39,9 +39,103 @@
       .btn-register:hover {
         background-color: #084298;
       }
+      #chatbot-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 320px;
+        font-family: Arial;
+        z-index: 9999;
+      }
+
+      #chatbot-header {
+        background: #0d6efd;
+        color: white;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        cursor: pointer;
+      }
+
+      #chatbot-box {
+        display: none;
+        background: white;
+        border: 1px solid #ddd;
+        border-top: none;
+        height: 380px;
+        border-radius: 0 0 10px 10px;
+        padding: 10px;
+      }
+
+      #chatbot-messages {
+        height: 300px;
+        overflow-y: auto;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+      }
+
+      #chatbot-input {
+        display: flex;
+      }
+
+      #chatbot-text {
+        width: 75%;
+        padding: 5px;
+        border: 1px solid #ddd;
+      }
+
+      #chatbot-send {
+        width: 25%;
+        background: #0d6efd;
+        color: white;
+        border: none;
+      }
+
     </style>
   </head>
+  <div id="chatbot-widget">
+    <div id="chatbot-header">Chat hỗ trợ KHKT</div>
 
+    <div id="chatbot-box">
+        <div id="chatbot-messages"></div>
+
+        <div id="chatbot-input">
+            <input type="text" id="chatbot-text" placeholder="Nhập tin nhắn...">
+            <button id="chatbot-send">Gửi</button>
+        </div>
+    </div>
+</div>
+<script>
+document.getElementById("chatbot-header").onclick = function() {
+    let box = document.getElementById("chatbot-box");
+    box.style.display = (box.style.display === "block") ? "none" : "block";
+};
+
+document.getElementById("chatbot-send").onclick = sendMessage;
+
+function sendMessage() {
+    let text = document.getElementById("chatbot-text").value;
+    if (text.trim() === "") return;
+
+    addMessage("Bạn", text);
+    document.getElementById("chatbot-text").value = "";
+
+    fetch("/chatbot/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({text: text})
+    })
+    .then(res => res.json())
+    .then(data => {
+        addMessage("Chatbot", data.rewritten);
+    });
+}
+
+function addMessage(sender, content) {
+    let box = document.getElementById("chatbot-messages");
+    box.innerHTML += `<p><strong>${sender}:</strong> ${content}</p>`;
+    box.scrollTop = box.scrollHeight;
+}
+</script>
   <body>
     <!-- Thanh menu -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
