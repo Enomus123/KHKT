@@ -146,3 +146,5 @@ def register(request):
 def logoutPage(request):
     logout(request)
     return redirect('login')
+def serect(request):
+    return render(request, 'app/serect.html')
