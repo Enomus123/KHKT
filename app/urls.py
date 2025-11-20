@@ -7,5 +7,4 @@ urlpatterns = [
     path('login/', views.login_view,name="login"),
     path('logout/', views.logoutPage,name="logout"),
     path('chatbot/', views.chatbot_api, name="chatbot_api"),
-    path('serect/',views.serect, name="serect"),
 ]

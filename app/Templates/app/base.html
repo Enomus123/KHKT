@@ -171,6 +171,42 @@ function addMessage(sender, content) {
 
     <!-- Vùng nội dung chính -->
     <main class="container py-4">
+    <main class="container py-4">
+
+    <!-- ===== CODE CHÚC 20/11 BẮT ĐẦU ===== -->
+    <div style="text-align:center; padding-top:40px;">
+
+        <img id="flower" 
+            src="{% static 'app/images/flower.png' %}" 
+            style="width:200px; cursor:pointer; transition:0.3s;">
+        
+        <div id="hint"
+            style="margin-top:15px; font-size:22px; color:#d26b84;">
+            Chạm vào bó hoa
+        </div>
+
+        <div id="msg"
+            style="opacity:0; transition:0.5s; margin-top:20px; 
+                    font-size:24px; color:#c45a7b; width:80%; margin-left:auto; margin-right:auto;">
+        </div>
+
+    </div>
+
+    <script>
+    document.getElementById("flower").addEventListener("click", function () {
+
+        const message =
+            "Kính gửi Cô Nhu: Hôm nay là ngày 20/11, ngày đặc biệt để em gửi lời tri ân đến cô - người đã tận tâm dịu dắt em trên con đường tri thức. Cảm ơn cô vì những bài học, những lời khuyên và cả những quan tâm giản dị mỗi ngày. Em kính chúc cô luôn vui vẻ, mạnh khỏe và thật hạnh phúc. Cô là ngọn đèn soi sáng, là người truyền cảm hứng cho chúng em cố gắng từng ngày. ❤️ Chúc mừng Ngày Nhà giáo Việt Nam 20/11 ❤️";
+
+        document.getElementById("msg").innerHTML = message;
+        document.getElementById("msg").style.opacity = 1;
+        document.getElementById("hint").style.display = "none";
+
+        this.style.transform = "scale(1.15)";
+        setTimeout(() => { this.style.transform = 'scale(1)'; }, 300);
+    });
+    </script>
+    <!-- ===== CODE CHÚC 20/11 KẾT THÚC ===== -->
       {% block content %}{% endblock content %}
     </main>
 
