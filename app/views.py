@@ -6,104 +6,75 @@ from app.models import CreateUserForm
 from django.contrib.auth import login as auth_login,authenticate,logout
 from django.contrib import messages
 from django.contrib.auth import logout
+import json
+import requests
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
-
-# Từ điển từ thô tục → thay thế
-BAD_WORDS = {
-    "dm": "trời đất ơi",
-    "đm": "trời đất ơi",
-    "dmm": "ôi trời",
-    "vãi": "thật là",
-    "vl": "rất",
-    "dit": "trêu",
-    "địt": "không hay",
-    "cc": "không hay",
-    "loz": "khó chịu",
-    "lon": "khó chịu"
-}
-
-def rewrite_sentence(text):
-    words = text.split()
-    new_words = []
-    changed = False
-
-    for w in words:
-        lw = w.lower()
-        if lw in BAD_WORDS:
-            new_words.append(BAD_WORDS[lw])
-            changed = True
-        else:
-            new_words.append(w)
-
-    rewritten = " ".join(new_words)
-    return rewritten, changed
-
-
-# -------------------------------
-#   HỆ THỐNG TRẢ LỜI THÔNG MINH
-# -------------------------------
-def smart_reply(text):
-    low = text.lower()
-
-    # 1. Hỏi về website
-    if "xem bài viết" in low or "bài viết" in low:
-        return "Bạn có thể bấm vào mục **Bài viết** trên thanh menu để xem danh sách đầy đủ nha!"
-
-    if "dự án" in low or "project" in low:
-        return "Để xem các dự án KHKT, bạn mở mục **Dự án KHKT** trên menu nhé!"
-
-    if "đăng ký" in low:
-        return "Để đăng ký tài khoản, bạn nhấn vào nút **Đăng ký** ở góc phải màn hình nha!"
-
-    if "đăng nhập" in low:
-        return "Bạn có thể đăng nhập bằng cách chọn nút **Đăng nhập** ở góc phải trên cùng."
-
-    # 2. Hỏi về chatbot
-    if "chatbot" in low:
-        return "Mình là chatbot KHKT, luôn sẵn sàng hỗ trợ bạn trong quá trình xem bài viết và dự án!"
-
-    # 3. Hỏi chung chung
-    if "hello" in low or "hi" in low or "xin chào" in low:
-        return "Xin chào! Mình có thể giúp gì cho bạn trong dự án KHKT không?"
-
-    if "cảm ơn" in low:
-        return "Không có gì, mình luôn sẵn sàng hỗ trợ bạn!"
-
-    # 4. Nếu không hiểu
-    return "Mình chưa rõ ý bạn lắm, nhưng bạn có thể hỏi về bài viết, dự án hoặc cách dùng website nhé!"
-    
+from django.conf import settings
 
 
 @csrf_exempt
 def chatbot_api(request):
     if request.method != "POST":
-        return JsonResponse({"error": "POST only"}, status=405)
+        return JsonResponse({"error": "Invalid method"}, status=405)
 
-    data = json.loads(request.body)
-    user_text = data.get("text", "")
+    data = json.loads(request.body.decode("utf-8"))
+    user_message = data.get("message", "")
 
-    # Lọc + rewrite
-    rewritten, changed = rewrite_sentence(user_text)
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {settings.OPENAI_API_KEY}",
+        "OpenAI-Project": "proj_E2wBJe2boLD1PQ0pCPchSSBJ"  # RẤT QUAN TRỌNG
+    }
 
-    # Tạo câu trả lời
-    smart = smart_reply(rewritten)
+    payload = {
+    "model": "gpt-4o-mini",
+    "messages": [
+        {
+            "role": "system",
+            "content": (
+                "Bạn là Mocha – một người bạn thân dễ thương, vui vẻ, hiểu chuyện. "
+                "Hãy trò chuyện với người dùng theo kiểu tâm sự, thấu hiểu, dùng lời nói "
+                "ấm áp, có cảm xúc, và luôn chủ động hỏi han. Không cần máy móc, "
+                "không cần quá nghiêm túc. Nếu họ buồn, hãy an ủi; nếu họ vui, hãy chia sẻ."
+                "dễ thương, đôi lúc hài hước. Xưng 'mình – bạn'. "
+                "Ưu tiên đồng cảm, hỗ trợ tinh thần, không dùng giọng AI máy móc. "
+                "Hãy hỏi lại người dùng, tương tác như một người bạn thật sự."
+                "Hãy tự phân tích tin nhắn của người dùng để chọn phong cách phù hợp:\n"
+                "- Nếu người dùng dùng các từ thân thiện như 'hello', 'hii', 'alo', 'ê', 'bạn ơi' → dùng giọng vui vẻ.\n"
+                "- Nếu người dùng nói lịch sự, có dấu đầy đủ → bạn trả lời nhẹ nhàng và tôn trọng.\n"
+                "- Nếu người dùng nhắn ngắn, kiểu chat teen → bạn trả lời năng động.\n"
+                "- Nếu người dùng đang buồn → bạn nên an ủi, nói chuyện ấm áp.\n"
+                "- Nếu người dùng hỏi nghiêm túc → giữ giọng bình thường, rõ ràng.\n\n"
+                "Về xưng hô:\n"
+                "- Nếu người dùng dùng đại từ 'tôi', 'bạn' → bạn dùng 'mình – bạn'.\n"
+                "- Nếu người dùng dùng 'tớ', 'cậu' → bạn dùng 'tớ – cậu'.\n"
+                "- Nếu người dùng dùng 'em' cho bản thân → bạn dùng 'anh/chị' tùy theo ngữ cảnh, nhưng không tự nhận giới tính.\n"
+                "- Nếu người dùng nói kiểu bạn bè 'tao – mày' → chỉ dùng nhẹ nhàng, không thô lỗ.\n"
+                "- Nếu người dùng không xưng hô → bạn chọn phong cách trung tính, thân thiện.\n\n"
+                "Hãy trả lời tự nhiên, giống người thật, không nói kiểu máy móc, không nhắc rằng bạn là AI."
+            )
+        },
+        {"role": "user", "content": user_message}
+    ]
+}
 
-    # Nếu câu ban đầu bị thô tục → trước tiên nhắc nhở
-    if changed:
-        warning = f"Tớ có chỉnh câu lại cho phù hợp nè: \"{rewritten}\"."
-    else:
-        warning = ""
 
-    final_reply = f"{warning} {smart}".strip()
+    response = requests.post(
+        "https://api.openai.com/v1/chat/completions",
+        headers=headers,
+        json=payload
+    )
 
-    return JsonResponse({
-        "original": user_text,
-        "rewritten": rewritten,
-        "changed": changed,
-        "reply": final_reply
-    })
+    if response.status_code != 200:
+        return JsonResponse({
+            "reply": "⚠️ Lỗi API: " + response.text
+        }, status=500)
+
+    reply = response.json()["choices"][0]["message"]["content"]
+    return JsonResponse({"reply": reply})
+
+
 def logout_view(request):
     logout(request)
     return redirect('login')

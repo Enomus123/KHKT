@@ -9,6 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+load_dotenv()  # Load file .env
 
 from pathlib import Path
 
@@ -20,8 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-afgy2&&02o#eq=cerjtpv91r)-wk-(b@nr$rf(0fq_)&1cmow*'
-
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+CORS_ALLOW_ALL_ORIGINS = True
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = ['khkt-s1n9.onrender.com', 'localhost', '127.0.0.1']

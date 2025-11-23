@@ -1,13 +1,14 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dự án khoa học kỹ thuật</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
       .navbar-nav .nav-link {
         font-weight: 500;
@@ -39,60 +40,111 @@
       .btn-register:hover {
         background-color: #084298;
       }
+
+      /* Chatbox Container */
       #chatbot-widget {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 320px;
-        font-family: Arial;
+        bottom: 25px;
+        right: 25px;
+        width: 420px;
+        font-family: 'Segoe UI', sans-serif;
         z-index: 9999;
-      }
+}
 
+      /* Header */
       #chatbot-header {
-        background: #0d6efd;
+        background: linear-gradient(90deg, #0d6efd, #4a9bff);
         color: white;
-        padding: 10px;
-        border-radius: 10px 10px 0 0;
+        padding: 14px 18px;
+        border-radius: 18px 18px 0 0;
         cursor: pointer;
-      }
+        font-weight: 600;
+        font-size: 18px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
 
+      /* Chat Box */
       #chatbot-box {
         display: none;
-        background: white;
-        border: 1px solid #ddd;
-        border-top: none;
-        height: 380px;
-        border-radius: 0 0 10px 10px;
-        padding: 10px;
-      }
+        background: #ffffff;
+        border-radius: 0 0 18px 18px;
+        height: 500px;
+        border: none;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        padding: 15px;
+}
 
+      /* Messages area */
       #chatbot-messages {
-        height: 300px;
+        height: 390px;
         overflow-y: auto;
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 10px;
-      }
+        padding-right: 5px;
+}
 
-      #chatbot-input {
-        display: flex;
-      }
-
-      #chatbot-text {
-        width: 75%;
-        padding: 5px;
-        border: 1px solid #ddd;
-      }
-
-      #chatbot-send {
-        width: 25%;
+      /* User bubble */
+      .msg-user {
         background: #0d6efd;
         color: white;
+        padding: 10px 14px;
+        border-radius: 16px;
+        max-width: 75%;
+        margin-bottom: 10px;
+        margin-left: auto;
+        font-size: 15px;
+        line-height: 1.3;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+      /* Bot bubble */
+      .msg-bot {
+        background: #e9e9e9;
+        padding: 10px 14px;
+        border-radius: 16px;
+        max-width: 75%;
+        margin-bottom: 10px;
+        margin-right: auto;
+        font-size: 15px;
+        line-height: 1.3;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+      /* Input field */
+      #chatbot-input {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+}
+
+      #chatbot-text {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid #c9c9c9;
+        font-size: 15px;
+}
+
+      #chatbot-send {
+        padding: 10px 14px;
+        width: 90px;
+        background: #0d6efd;
         border: none;
-      }
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+}
+
+      #chatbot-send:hover {
+        background: #0956c4;
+}
 
     </style>
-  </head>
-  <div id="chatbot-widget">
+</head>
+<body>
+
+<!-- Chatbot widget -->
+<div id="chatbot-widget">
     <div id="chatbot-header">Chat hỗ trợ KHKT</div>
 
     <div id="chatbot-box">
@@ -104,7 +156,54 @@
         </div>
     </div>
 </div>
+
+<!-- Thanh menu -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-primary" href="#">KHKT</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center">
+
+        <!-- Khi đã đăng nhập -->
+        <li class="nav-item" style="visibility: {{user_login}}">
+          <div class="user-section">
+            <span class="fw-semibold text-success">👋 Xin chào, {{request.user}}</span>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'logout' %}">Đăng xuất</a>
+          </div>
+        </li>
+
+        <!-- Khi chưa đăng nhập -->
+        <li class="nav-item" style="visibility: {{user_not_login}}">
+          <div class="user-section">
+            <a class="btn btn-sm btn-login" href="{% url 'login' %}">Đăng nhập</a>
+            <a class="btn btn-sm btn-register" href="{% url 'register' %}">Đăng ký</a>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Vùng nội dung chính -->
+<main class="container py-4">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="text-center py-3 bg-light mt-4 border-top">
+  <small class="text-muted">© 2025 Dự án khoa học kỹ thuật</small>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chatbot script (đặt cuối body để tránh lỗi DOM) -->
 <script>
+
 document.getElementById("chatbot-header").onclick = function() {
     let box = document.getElementById("chatbot-box");
     box.style.display = (box.style.display === "block") ? "none" : "block";
@@ -121,12 +220,18 @@ function sendMessage() {
 
     fetch("/chatbot/", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({text: text})
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: text })
     })
     .then(res => res.json())
     .then(data => {
-        addMessage("Chatbot", data.rewritten);
+        addMessage("Chatbot", data.reply || "Chatbot không trả lời được.");
+    })
+    .catch(err => {
+        addMessage("Chatbot", "⚠️ Lỗi kết nối server!");
+        console.error(err);
     });
 }
 
@@ -135,85 +240,7 @@ function addMessage(sender, content) {
     box.innerHTML += `<p><strong>${sender}:</strong> ${content}</p>`;
     box.scrollTop = box.scrollHeight;
 }
+
 </script>
-  <body>
-    <!-- Thanh menu -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-      <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="#">KHKT</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <ul class="navbar-nav align-items-center">
-
-            <!-- Khi đã đăng nhập -->
-            <li class="nav-item" style="visibility: {{user_login}}">
-              <div class="user-section">
-                <span class="fw-semibold text-success">👋 Xin chào, {{request.user}}</span>
-                <a class="btn btn-sm btn-outline-danger" href="{% url 'logout' %}">Đăng xuất</a>
-              </div>
-            </li>
-
-            <!-- Khi chưa đăng nhập -->
-            <li class="nav-item" style="visibility: {{user_not_login}}">
-              <div class="user-section">
-                <a class="btn btn-sm btn-login" href="{% url 'login' %}">Đăng nhập</a>
-                <a class="btn btn-sm btn-register" href="{% url 'register' %}">Đăng ký</a>
-              </div>
-            </li>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Vùng nội dung chính -->
-    <main class="container py-4">
-
-    <!-- ===== CODE CHÚC 20/11 BẮT ĐẦU ===== -->
-    <div style="text-align:center; padding-top:40px;">
-
-        <img id="flower" 
-            src="{% static 'app/images/flower.png' %}" 
-            style="width:200px; cursor:pointer; transition:0.3s;">
-        
-        <div id="hint"
-            style="margin-top:15px; font-size:22px; color:#d26b84;">
-            Chạm vào bó hoa
-        </div>
-
-        <div id="msg"
-            style="opacity:0; transition:0.5s; margin-top:20px; 
-                    font-size:24px; color:#c45a7b; width:80%; margin-left:auto; margin-right:auto;">
-        </div>
-
-    </div>
-
-    <script>
-    document.getElementById("flower").addEventListener("click", function () {
-
-        const message =
-            "Kính gửi Cô Nhu: Hôm nay là ngày 20/11, ngày đặc biệt để em gửi lời tri ân đến cô - người đã tận tâm dịu dắt em trên con đường tri thức. Cảm ơn cô vì những bài học, những lời khuyên và cả những quan tâm giản dị mỗi ngày. Em kính chúc cô luôn vui vẻ, mạnh khỏe và thật hạnh phúc. Cô là ngọn đèn soi sáng, là người truyền cảm hứng cho chúng em cố gắng từng ngày. ❤️ Chúc mừng Ngày Nhà giáo Việt Nam 20/11 ❤️";
-
-        document.getElementById("msg").innerHTML = message;
-        document.getElementById("msg").style.opacity = 1;
-        document.getElementById("hint").style.display = "none";
-
-        this.style.transform = "scale(1.15)";
-        setTimeout(() => { this.style.transform = 'scale(1)'; }, 300);
-    });
-    </script>
-    <!-- ===== CODE CHÚC 20/11 KẾT THÚC ===== -->
-      {% block content %}{% endblock content %}
-    </main>
-
-    <footer class="text-center py-3 bg-light mt-4 border-top">
-      <small class="text-muted">© 2025 Dự án khoa học kỹ thuật</small>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+</body>
 </html>
