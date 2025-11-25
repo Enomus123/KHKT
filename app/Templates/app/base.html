@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -5,106 +6,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dự án khoa học kỹ thuật</title>
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-      .navbar-nav .nav-link { font-weight: 500; transition: 0.3s; }
-      .navbar-nav .nav-link:hover { color: #0d6efd !important; }
-      footer { background:#f8f9fa; padding:20px 0; text-align:center; }
+<style>
 
-      #chatbot-box {
-          position: fixed;
-          bottom: 20px;
-          right: 20px;
-          width: 340px;
-          max-height: 70vh;
-          background: white;
-          border-radius: 15px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-          display: none;
-          flex-direction: column;
-          overflow: hidden;
-          z-index: 9999;
-      }
+/* ========================== */
+/*     KHUNG CHAT MOCHA      */
+/* ========================== */
 
-      #chatbot-header {
-          background: #0d6efd;
-          color: white;
-          padding: 12px;
-          text-align: center;
-          font-weight: bold;
-          font-size: 17px;
-          position: relative;
-      }
+#chatbot-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 340px;
+    max-height: 75vh;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9999;
+}
 
-      #chatbot-header span {
-          position: absolute;
-          right: 12px;
-          top: 8px;
-          cursor: pointer;
-          font-size: 20px;
-      }
+#chatbot-header {
+    background: #0d6efd;
+    color: white;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 17px;
+    position: relative;
+    text-align: center;
+}
 
-      #chatbot-messages {
-          padding: 12px;
-          height: 300px;
-          overflow-y: auto;
-          font-size: 15px;
-      }
+#chat-close-btn {
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
 
-      #chatbot-input-area {
-          padding: 10px;
-          display: flex;
-          gap: 8px;
-          border-top: 1px solid #ddd;
-      }
+/* Nút mở chat */
+#chat-toggle-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background: #0d6efd;
+    color: white;
+    border-radius: 50%;
+    font-size: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    z-index: 9999;
+}
 
-      #chatbot-text {
-          flex: 1;
-          padding: 8px;
-          border-radius: 10px;
-          border: 1px solid #ccc;
-      }
+#chatbot-messages {
+    padding: 12px;
+    height: 300px;
+    overflow-y: auto;
+}
 
-      #chatbot-send {
-          width: 70px;
-          border: none;
-          background: #0d6efd;
-          color: white;
-          border-radius: 10px;
-      }
+/* Tin nhắn + avatar */
+.chat-msg {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 12px;
+}
 
-      #chat-toggle-btn {
-          position: fixed;
-          bottom: 25px;
-          right: 25px;
-          background: #0d6efd;
-          color: white;
-          width: 55px;
-          height: 55px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 50%;
-          font-size: 26px;
-          cursor: pointer;
-          box-shadow: 0 3px 10px rgba(0,0,0,0.25);
-          z-index: 9999;
-      }
+.chat-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-size: cover;
+}
 
-      #chat-toggle-btn.hide { display: none; }
+.bot .chat-avatar {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/4712/4712035.png');
+}
 
-      @media (max-width: 600px) {
-          #chatbot-box { width: 95%; right: 2.5%; bottom: 10px; max-height: 80vh; }
-          #chatbot-messages { height: 55vh; font-size: 16px; }
-      }
-    </style>
+.user .chat-avatar {
+    background-image: url('https://cdn-icons-png.flaticon.com/512/1946/1946429.png');
+}
+
+.chat-bubble {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 15px;
+}
+
+.bot .chat-bubble {
+    background: #f1f3f5;
+    margin-left: 8px;
+}
+
+.user {
+    justify-content: flex-end;
+}
+
+.user .chat-bubble {
+    background: #d0ebff;
+    margin-right: 8px;
+}
+
+/* Bot đang trả lời */
+#typing-indicator {
+    display: none;
+    font-style: italic;
+    color: #777;
+    padding-left: 10px;
+}
+
+/* ========================== */
+/*         Ô nhập            */
+/* ========================== */
+
+#chatbot-input-area {
+    padding: 10px;
+    display: flex;
+    gap: 6px;
+    border-top: 1px solid #ddd;
+}
+
+#chatbot-text {
+    flex: 1;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+#chatbot-send {
+    background: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0 12px;
+}
+
+/* Nút ghi âm */
+#voice-btn {
+    background: #dc3545;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    color: white;
+    border: none;
+    font-size: 20px;
+    transition: 0.2s;
+}
+
+/* ========================== */
+/*        MOBILE             */
+/* ========================== */
+@media (max-width: 600px) {
+    #chatbot-box {
+        width: 95%;
+        right: 2.5%;
+    }
+}
+
+</style>
+
 </head>
 <body>
 
+<!-- Nút mở chat -->
+<div id="chat-toggle-btn">💬</div>
+
+<!-- HỘP CHAT -->
+<div id="chatbot-box">
+<div id="chatbot-header">
+    <button id="mute-btn" 
+        style="
+            position:absolute;
+            left:10px;
+            top:50%;
+            transform:translateY(-50%);
+            background:none;
+            border:none;
+            color:white;
+            font-size:20px;
+            cursor:pointer;">
+        🔊
+    </button>
+
+    Toco – Người bạn ảo
+
+    <button id="chatbot-close-btn"
+        style="
+            position:absolute;
+            right:10px;
+            top:50%;
+            transform:translateY(-50%);
+            background:none;
+            border:none;
+            color:white;
+            font-size:22px;
+            cursor:pointer;">
+        ✖
+    </button>
+</div>
+
+
+    <!-- Tin nhắn -->
+    <div id="chatbot-messages"></div>
+
+    <!-- Typing indicator -->
+    <div id="typing-indicator">⏳ Toco đang trả lời...</div>
+
+    <!-- Khung nhập -->
+    <div id="chatbot-input-area">
+        <button id="voice-btn">🎤</button>
+        <input type="text" id="chatbot-text" placeholder="Nhập tin nhắn...">
+        <button id="chatbot-send">Gửi</button>
+    </div>
+</div>
+
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
   <div class="container">
     <a class="navbar-brand fw-bold text-primary" href="#">KHKT</a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -133,83 +262,306 @@
   </div>
 </nav>
 
-<div class="container mt-4">
+<!-- Nội dung trang -->
+<main class="container py-4">
     {% block content %}{% endblock %}
-</div>
+</main>
 
-<footer>
-    © 2025 KHKT - Website thử nghiệm AI Chatbot
+<footer class="text-center py-3 bg-light mt-4 border-top">
+    <small class="text-muted">© 2025 Dự án khoa học kỹ thuật</small>
 </footer>
 
-<!-- Toggle button -->
-<div id="chat-toggle-btn">💬</div>
-
-<!-- Chatbot UI -->
-<div id="chatbot-box">
-    <div id="chatbot-header">Người bạn ảo <span id="chat-close">✖</span></div>
-    <div id="chatbot-messages"></div>
-    <div id="chatbot-input-area">
-        <input type="text" id="chatbot-text" placeholder="Nhập tin nhắn...">
-        <button id="chatbot-send">Gửi</button>
-    </div>
-</div>
-
+<!-- JS Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-const toggleBtn = document.getElementById("chat-toggle-btn");
-const chatBox = document.getElementById("chatbot-box");
-const closeBtn = document.getElementById("chat-close");
+// ===========================
+//   MỞ / ĐÓNG CHATBOT
+// ===========================
+document.getElementById("chat-toggle-btn").onclick = () => {
+    const box = document.getElementById("chatbot-box");
+    box.style.display = (box.style.display === "flex") ? "none" : "flex";
+};
 
-// Mở chat
-toggleBtn.addEventListener("click", () => {
-    chatBox.style.display = "flex";
-    toggleBtn.classList.add("hide");
+document.getElementById("chatbot-close-btn").onclick = () => {
+    document.getElementById("chatbot-box").style.display = "none";
+};
 
-    // Nếu là lần đầu mở chat → bot chào trước
-    if (!window.chatStarted) {
-        window.chatStarted = true;
+// ===========================
+//  AUTO CHÀO KHI MỞ LẦN ĐẦU
+// ===========================
+let greeted = false;
+
+document.getElementById("chat-toggle-btn").addEventListener("click", () => {
+    if (!greeted) {
         setTimeout(() => {
-            addMessage("Chatbot", "Chào bạn 👋, mình là người bạn ảo luôn lắng nghe bạn. Bạn muốn trò chuyện về điều gì?");
+            addMessage("bot", "Hiii bạn dễ thương ~~ Toco đây 💖 hôm nay bạn muốn tâm sự gì nè?");
         }, 300);
+        greeted = true;
     }
 });
 
-// Đóng chat
-closeBtn.addEventListener("click", () => {
-    chatBox.style.display = "none";
-    toggleBtn.classList.remove("hide");
-});
+/* ======================
+   PHẦN 2: GỬI TEXT & VOICE
+   ====================== */
 
-// Gửi tin nhắn
-function sendMessage() {
-    let text = document.getElementById("chatbot-text").value;
-    if (text.trim() === "") return;
+/* Thêm tin nhắn vào khung chat */
+function addMessage(sender, msg) {
+    let box = document.getElementById("chatbot-messages");
+    let html = `
+        <div class="chat-msg ${sender}">
+            <div class="chat-avatar"></div>
+            <div class="chat-bubble">${msg}</div>
+        </div>
+    `;
+    box.innerHTML += html;
+    box.scrollTop = box.scrollHeight;
+}
 
-    addMessage("Bạn", text);
+/* ✉️ Gửi tin nhắn text */
+document.getElementById("chatbot-send").onclick = () => {
+    let text = document.getElementById("chatbot-text").value.trim();
+    if (text === "") return;
+
+    addMessage("user", text);
     document.getElementById("chatbot-text").value = "";
+
+    document.getElementById("typing-indicator").style.display = "block";
 
     fetch("/chatbot/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({
+            message: text,
+            audio: true
+        })
     })
     .then(res => res.json())
     .then(data => {
-        addMessage("Chatbot", data.reply || "Chatbot không trả lời được.");
+        document.getElementById("typing-indicator").style.display = "none";
+
+        addMessage("bot", data.reply || "⚠️ Lỗi không nhận được trả lời");
+
+        if (!isMuted && data.audio) {
+            new Audio("data:audio/mp3;base64," + data.audio).play();
+        }
     })
     .catch(err => {
-        addMessage("Chatbot", "⚠️ Lỗi kết nối server!");
+        console.error(err);
+        addMessage("bot", "⚠️ Lỗi kết nối server");
+    });
+};
+
+/* 🎤 Gửi voice (TỪ PHẦN 3 GỌI qua hàm này) */
+function sendVoiceBase64(base64Audio) {
+
+    addMessage("user", "🎤 (Đang xử lý giọng nói...)");
+    document.getElementById("typing-indicator").style.display = "block";
+
+    fetch("/chatbot/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            voice_input: base64Audio,
+            audio: true
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("typing-indicator").style.display = "none";
+
+        addMessage("bot", data.reply || "⚠️ Không hiểu bạn nói gì");
+
+        if (!isMuted && data.audio) {
+            new Audio("data:audio/mp3;base64," + data.audio).play();
+}
+
+    })
+    .catch(err => {
+        console.error(err);
+        addMessage("bot", "⚠️ Lỗi gửi giọng nói");
     });
 }
 
-document.getElementById("chatbot-send").onclick = sendMessage;
+/*
+  PHẦN 3: Recorder + Converter
+  - Ghi bằng MediaRecorder (webm)
+  - Convert webm -> wav bằng WebAudio
+  - Encode WAV -> base64
+  - Gọi sendVoiceBase64(base64) (hàm có trong PHẦN 2)
+*/
 
-function addMessage(sender, content) {
-    let box = document.getElementById("chatbot-messages");
-    box.innerHTML += `<p><strong>${sender}:</strong> ${content}</p>`;
-    box.scrollTop = box.scrollHeight;
+let recorder3 = null;
+let audioChunks3 = [];
+
+// gán xử lý cho nút voice (nút voice đã có trong phần 1)
+document.getElementById("voice-btn").onclick = async () => {
+    try {
+        // nếu chưa khởi tạo recorder thì khởi tạo
+        if (!recorder3) {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            recorder3 = new MediaRecorder(stream);
+
+            recorder3.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) audioChunks3.push(e.data);
+            };
+
+            recorder3.onstop = async () => {
+                // tạo blob webm từ chunks
+                const webmBlob = new Blob(audioChunks3, { type: "audio/webm" });
+                audioChunks3 = [];
+
+                // convert webm -> wav (16bit PCM)
+                try {
+                    const wavBlob = await convertWebmToWav(webmBlob);
+
+                    // đọc WAV thành base64 (không có prefix)
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const base64 = reader.result.split(",")[1] || "";
+                        // gọi hàm đã có trong PHẦN 2
+                        sendVoiceBase64(base64);
+                    };
+                    reader.readAsDataURL(wavBlob);
+
+                } catch (err) {
+                    console.error("Convert webm->wav failed:", err);
+                    addMessage("bot", "⚠️ Lỗi chuyển đổi âm thanh, thử lại nhé.");
+                }
+            };
+        }
+
+        // start / stop tùy trạng thái
+        if (recorder3.state === "inactive") {
+            audioChunks3 = [];
+            recorder3.start();
+            document.getElementById("voice-btn").style.background = "green";
+            document.getElementById("voice-btn").innerText = "⏺️";
+        } else {
+            recorder3.stop();
+            document.getElementById("voice-btn").style.background = "#dc3545";
+            document.getElementById("voice-btn").innerText = "🎤";
+        }
+    } catch (e) {
+        console.error("getUserMedia error:", e);
+        addMessage("bot", "⚠️ Không truy cập được micro. Hãy kiểm tra quyền micro của trình duyệt.");
+    }
+};
+
+
+/* ===========================
+   convertWebmToWav (WebAudio)
+   - Giải pháp tương thích: giải mã WebM, đọc buffer, ghi WAV PCM 16-bit
+   - Trả về Blob(type='audio/wav')
+   =========================== */
+async function convertWebmToWav(webmBlob) {
+    // decode webm to AudioBuffer
+    const arrayBuffer = await webmBlob.arrayBuffer();
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+    // If multiple channels, mixdown to mono (FPT prefers mono)
+    const numChannels = audioBuffer.numberOfChannels;
+    const sampleRate = audioBuffer.sampleRate; // keep original sampleRate (we'll let server accept it) 
+    // (If you must force 16000Hz, we can resample — but browser resampling is more complex.)
+    // Many STT accept 16k/48k; if FPT requires 16000, we can downsample here (optional).
+
+    // mix to mono
+    const length = audioBuffer.length;
+    const result = new Float32Array(length);
+    for (let ch = 0; ch < numChannels; ch++) {
+        const channelData = audioBuffer.getChannelData(ch);
+        for (let i = 0; i < length; i++) {
+            result[i] = (result[i] || 0) + channelData[i] / numChannels;
+        }
+    }
+
+    // encode WAV 16-bit PCM
+    const wavBuffer = encodeWAV(result, sampleRate);
+    return new Blob([wavBuffer], { type: "audio/wav" });
 }
+
+function encodeWAV(samples, sampleRate) {
+    const buffer = new ArrayBuffer(44 + samples.length * 2);
+    const view = new DataView(buffer);
+
+    /* RIFF identifier */
+    writeString(view, 0, 'RIFF');
+    /* file length */
+    view.setUint32(4, 36 + samples.length * 2, true);
+    /* RIFF type */
+    writeString(view, 8, 'WAVE');
+    /* format chunk identifier */
+    writeString(view, 12, 'fmt ');
+    /* format chunk length */
+    view.setUint32(16, 16, true);
+    /* sample format (raw) */
+    view.setUint16(20, 1, true);
+    /* channel count */
+    view.setUint16(22, 1, true); // mono
+    /* sample rate */
+    view.setUint32(24, sampleRate, true);
+    /* byte rate (sampleRate * blockAlign) */
+    view.setUint32(28, sampleRate * 2, true);
+    /* block align (channelCount * bytesPerSample) */
+    view.setUint16(32, 2, true);
+    /* bits per sample */
+    view.setUint16(34, 16, true);
+    /* data chunk identifier */
+    writeString(view, 36, 'data');
+    /* data chunk length */
+    view.setUint32(40, samples.length * 2, true);
+
+    // write the PCM samples
+    let offset = 44;
+    for (let i = 0; i < samples.length; i++, offset += 2) {
+        // clamp
+        let s = Math.max(-1, Math.min(1, samples[i]));
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+    }
+    return buffer;
+}
+
+function writeString(view, offset, string) {
+    for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+    }
+}
+
+/* helper: convert ArrayBuffer -> base64 (if needed elsewhere) */
+function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const chunkSize = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+    }
+    return btoa(binary);
+}
+
+/* ===========================
+   OPTIONAL: Stop & cleanup (call if you need to forcibly stop recording)
+   =========================== */
+function forceStopRecorder() {
+    if (recorder3 && recorder3.state !== "inactive") {
+        recorder3.stop();
+    }
+    recorder3 = null;
+    audioChunks3 = [];
+}
+
+let isMuted = false;
+const muteBtn = document.getElementById("mute-btn");
+
+muteBtn.addEventListener("click", () => {
+    isMuted = !isMuted;
+    muteBtn.innerText = isMuted ? "🔇" : "🔊";
+});
+
 </script>
+
+<!-- ===== END PART 3 ===== -->
+
+
 </body>
 </html>

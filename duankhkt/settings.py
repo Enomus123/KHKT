@@ -24,8 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+FPT_API_KEY = os.getenv("FPT_API_KEY")
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_PROJECT_ID = "proj_E2wBJe2boLD1PQ0pCPchSSBJ"
 CORS_ALLOW_ALL_ORIGINS = True
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
