@@ -126,6 +126,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 # THIẾT LẬP ĐƯỜNG DẪN CHO CÁC FILE STATIC CỦA ỨNG DỤNG
 # Vui lòng kiểm tra và thay thế 'app' bằng tên thư mục ứng dụng con của bạn
 # (nơi chứa thư mục 'static/images/crocodlie_idle.png').
