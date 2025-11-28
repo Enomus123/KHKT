@@ -33,8 +33,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 DEBUG = True
 ALLOWED_HOSTS = ['khkt-s1n9.onrender.com', 'localhost', '127.0.0.1']
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 
 # Application definition
 
@@ -45,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
+    'app',  # Đảm bảo tên ứng dụng con của bạn đã được thêm
 ]
 
 MIDDLEWARE = [
@@ -63,7 +61,7 @@ ROOT_URLCONF = 'duankhkt.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'app' / 'Templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -106,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 #       'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
 #   },
 #   {
-#       'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+#       'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',\
 #   },
 ]
 
@@ -116,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Asia/Ho_Chi_Minh"
 
 USE_I18N = True
 
@@ -127,7 +125,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# THIẾT LẬP ĐƯỜNG DẪN CHO CÁC FILE STATIC CỦA ỨNG DỤNG
+# Vui lòng kiểm tra và thay thế 'app' bằng tên thư mục ứng dụng con của bạn
+# (nơi chứa thư mục 'static/images/crocodlie_idle.png').
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'app', 'static'),
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/login'

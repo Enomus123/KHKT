@@ -1,0 +1,29 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-primary fw-bold mb-3">📜 Lịch sử trò chuyện</h2>
+
+    {% if chats %}
+        <div class="list-group shadow-sm">
+
+            {% for c in chats %}
+            <div class="list-group-item py-3">
+                <small class="text-muted">{{ c.timestamp|date:"H:i d/m/Y" }}</small><br>
+
+                {% if c.sender == "user" %}
+                    <strong class="text-success">Bạn:</strong>
+                {% else %}
+                    <strong class="text-primary">Toco:</strong>
+                {% endif %}
+
+                <span>{{ c.message }}</span>
+            </div>
+            {% endfor %}
+
+        </div>
+    {% else %}
+        <p class="text-muted">Bạn chưa có tin nhắn nào.</p>
+    {% endif %}
+</div>
+{% endblock %}
