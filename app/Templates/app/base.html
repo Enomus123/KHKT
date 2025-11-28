@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dự án khoa học kỹ thuật</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
 
 /* ========================== */
-/*     KHUNG CHAT MOCHA      */
+/* KHUNG CHAT MOCHA      */
 /* ========================== */
 
 #chatbot-box {
@@ -125,7 +124,7 @@
 }
 
 /* ========================== */
-/*         Ô nhập            */
+/* Ô nhập            */
 /* ========================== */
 
 #chatbot-input-area {
@@ -163,7 +162,7 @@
 }
 
 /* ========================== */
-/*        MOBILE             */
+/* MOBILE             */
 /* ========================== */
 @media (max-width: 600px) {
     #chatbot-box {
@@ -177,10 +176,8 @@
 </head>
 <body>
 
-<!-- Nút mở chat -->
 <div id="chat-toggle-btn">💬</div>
 
-<!-- HỘP CHAT -->
 <div id="chatbot-box">
 <div id="chatbot-header">
     <button id="mute-btn" 
@@ -215,13 +212,10 @@
 </div>
 
 
-    <!-- Tin nhắn -->
     <div id="chatbot-messages"></div>
 
-    <!-- Typing indicator -->
     <div id="typing-indicator">⏳ Toco đang trả lời...</div>
 
-    <!-- Khung nhập -->
     <div id="chatbot-input-area">
         <button id="voice-btn">🎤</button>
         <input type="text" id="chatbot-text" placeholder="Nhập tin nhắn...">
@@ -229,11 +223,9 @@
     </div>
 </div>
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
   <div class="container">
-    <a class="navbar-brand fw-bold text-primary" href="#">KHKT</a>
-
+    <a class="navbar-brand fw-bold text-primary" href="/">KHKT</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -241,28 +233,43 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center">
 
-        <!-- Khi đã đăng nhập -->
-        <li class="nav-item" style="visibility: {{user_login}}">
-          <div class="user-section">
-            <span class="fw-semibold text-success">👋 Xin chào, {{request.user}}</span>
-            <a class="btn btn-sm btn-outline-danger" href="{% url 'logout' %}">Đăng xuất</a>
-          </div>
-        </li>
+        {% if user.is_authenticated %}
+            <li class="nav-item">
+              <span class="fw-semibold text-success">👋 Xin chào, {{ user.username }}</span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/history/">Lịch sử trò chuyện</a>
+            </li>
+            <li class="nav-item ms-2">
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'logout' %}">Đăng xuất</a>
+            </li>
 
-        <!-- Khi chưa đăng nhập -->
-        <li class="nav-item" style="visibility: {{user_not_login}}">
-          <div class="user-section">
-            <a class="btn btn-sm btn-login" href="{% url 'login' %}">Đăng nhập</a>
-            <a class="btn btn-sm btn-register" href="{% url 'register' %}">Đăng ký</a>
-          </div>
-        </li>
+        {% else %}
+            <div style="
+                background: #ffe7e7;
+                color: #b70000;
+                padding: 12px 16px;
+                border-radius: 8px;
+                margin: 20px;
+                font-weight: 500;
+            ">
+                🔐 Bạn hãy đăng nhập để lưu và xem lại lịch sử trò chuyện nha
+            </div>
+            <li class="nav-item">
+              <a class="btn btn-sm btn-login" href="{% url 'login' %}">Đăng nhập</a>
+            </li>
 
+            <li class="nav-item ms-2">
+              <a class="btn btn-sm btn-register" href="{% url 'register' %}">Đăng ký</a>
+            </li>
+
+        {% endif %}
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- Nội dung trang -->
+
 <main class="container py-4">
     {% block content %}{% endblock %}
 </main>
@@ -271,46 +278,69 @@
     <small class="text-muted">© 2025 Dự án khoa học kỹ thuật</small>
 </footer>
 
-<!-- JS Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ===========================
 //   MỞ / ĐÓNG CHATBOT
 // ===========================
+let windowMochaGreeted = false;
+
 document.getElementById("chat-toggle-btn").onclick = () => {
     const box = document.getElementById("chatbot-box");
-    box.style.display = (box.style.display === "flex") ? "none" : "flex";
+    const isOpen = box.style.display === "flex";
+    box.style.display = isOpen ? "none" : "flex";
+
+    if (!isOpen) {
+
+        // B1: LOẠI BỎ greeting khỏi loadHistory → load trước
+        loadHistory().then(() => {
+
+            // B2: Sau khi load xong mới hỏi backend
+            fetch("/check-first-chat/", { credentials: "same-origin" })
+                .then(res => res.json())
+                .then(data => {
+
+                    if (data.first_time && !windowMochaGreeted) {
+                        windowMochaGreeted = true;
+
+                        addMessage(
+                            "bot",
+                            "Chào bạn ~~ Toco đây 💖 hôm nay bạn muốn tâm sự gì nè?"
+                        );
+                    }
+
+                })
+                .catch(() => {
+                    if (!windowMochaGreeted) {
+                        windowMochaGreeted = true;
+                        addMessage(
+                            "bot",
+                            "Chào bạn ~~ Toco đây 💖 hôm nay bạn muốn tâm sự gì nè?"
+                        );
+                    }
+                });
+
+        });
+
+    }
 };
 
 document.getElementById("chatbot-close-btn").onclick = () => {
     document.getElementById("chatbot-box").style.display = "none";
 };
 
-// ===========================
-//  AUTO CHÀO KHI MỞ LẦN ĐẦU
-// ===========================
-let greeted = false;
-
-document.getElementById("chat-toggle-btn").addEventListener("click", () => {
-    if (!greeted) {
-        setTimeout(() => {
-            addMessage("bot", "Hiii bạn dễ thương ~~ Toco đây 💖 hôm nay bạn muốn tâm sự gì nè?");
-        }, 300);
-        greeted = true;
-    }
-});
 
 /* ======================
    PHẦN 2: GỬI TEXT & VOICE
    ====================== */
 
 /* Thêm tin nhắn vào khung chat */
-function addMessage(sender, msg) {
+function addMessage(sender, msg, id = "") { 
     let box = document.getElementById("chatbot-messages");
     let html = `
         <div class="chat-msg ${sender}">
             <div class="chat-avatar"></div>
-            <div class="chat-bubble">${msg}</div>
+            <div class="chat-bubble" ${id ? `id="${id}"` : ''}>${msg}</div>
         </div>
     `;
     box.innerHTML += html;
@@ -332,7 +362,7 @@ document.getElementById("chatbot-send").onclick = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             message: text,
-            audio: true
+            audio: !isMuted
         })
     })
     .then(res => res.json())
@@ -351,9 +381,11 @@ document.getElementById("chatbot-send").onclick = () => {
     });
 };
 
-/* 🎤 Gửi voice (TỪ PHẦN 3 GỌI qua hàm này) */
+
+/* 🎤 Gửi tin nhắn voice (base64) */
 function sendVoiceBase64(base64Audio) {
 
+    // 1. Thêm tin nhắn tạm với placeholder
     addMessage("user", "🎤 (Đang xử lý giọng nói...)");
     document.getElementById("typing-indicator").style.display = "block";
 
@@ -362,71 +394,74 @@ function sendVoiceBase64(base64Audio) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             voice_input: base64Audio,
-            audio: true
+            audio: !isMuted
         })
     })
     .then(res => res.json())
     .then(data => {
 
         document.getElementById("typing-indicator").style.display = "none";
-
+        
+        // 2. Cập nhật tin nhắn người dùng bằng STT result (từ views.py)
+        const userMsgBubble = document.querySelector(".chat-msg.user:last-child .chat-bubble");
+        if (userMsgBubble && data.user_message) {
+            userMsgBubble.innerHTML = data.user_message; 
+        } else if (userMsgBubble) {
+            userMsgBubble.innerHTML = "🎤 (Không nhận dạng được giọng nói)";
+        }
+        
         addMessage("bot", data.reply || "⚠️ Không hiểu bạn nói gì");
 
         if (!isMuted && data.audio) {
             new Audio("data:audio/mp3;base64," + data.audio).play();
-}
+        }
 
     })
     .catch(err => {
         console.error(err);
-        addMessage("bot", "⚠️ Lỗi gửi giọng nói");
+        document.getElementById("typing-indicator").style.display = "none";
+        addMessage("bot", "⚠️ Lỗi kết nối server hoặc xử lý giọng nói.");
     });
 }
 
 /*
-  PHẦN 3: Recorder + Converter
-  - Ghi bằng MediaRecorder (webm)
-  - Convert webm -> wav bằng WebAudio
-  - Encode WAV -> base64
-  - Gọi sendVoiceBase64(base64) (hàm có trong PHẦN 2)
+  PHẦN 3: Recorder (Ghi bằng MediaRecorder - webm)
 */
 
 let recorder3 = null;
 let audioChunks3 = [];
 
-// gán xử lý cho nút voice (nút voice đã có trong phần 1)
+// gán xử lý cho nút voice
 document.getElementById("voice-btn").onclick = async () => {
     try {
         // nếu chưa khởi tạo recorder thì khởi tạo
         if (!recorder3) {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            recorder3 = new MediaRecorder(stream);
+            recorder3 = new MediaRecorder(stream, { mimeType: 'audio/webm; codecs=opus' }); // Tùy chọn codec
 
             recorder3.ondataavailable = (e) => {
                 if (e.data && e.data.size > 0) audioChunks3.push(e.data);
             };
 
+            // ĐÃ SỬA: Logic onstop TỐI ƯU cho mobile (Gửi WebM Base64 trực tiếp)
             recorder3.onstop = async () => {
                 // tạo blob webm từ chunks
                 const webmBlob = new Blob(audioChunks3, { type: "audio/webm" });
                 audioChunks3 = [];
 
-                // convert webm -> wav (16bit PCM)
                 try {
-                    const wavBlob = await convertWebmToWav(webmBlob);
-
-                    // đọc WAV thành base64 (không có prefix)
+                    // đọc WebM thành base64 (không có prefix)
                     const reader = new FileReader();
                     reader.onloadend = () => {
                         const base64 = reader.result.split(",")[1] || "";
                         // gọi hàm đã có trong PHẦN 2
                         sendVoiceBase64(base64);
                     };
-                    reader.readAsDataURL(wavBlob);
+                    reader.readAsDataURL(webmBlob); // <--- Đọc WebM Blob trực tiếp
 
                 } catch (err) {
-                    console.error("Convert webm->wav failed:", err);
-                    addMessage("bot", "⚠️ Lỗi chuyển đổi âm thanh, thử lại nhé.");
+                    console.error("Encode webm failed:", err);
+                    addMessage("bot", "⚠️ Lỗi mã hóa âm thanh, thử lại nhé.");
                 }
             };
         }
@@ -448,85 +483,8 @@ document.getElementById("voice-btn").onclick = async () => {
     }
 };
 
-
-/* ===========================
-   convertWebmToWav (WebAudio)
-   - Giải pháp tương thích: giải mã WebM, đọc buffer, ghi WAV PCM 16-bit
-   - Trả về Blob(type='audio/wav')
-   =========================== */
-async function convertWebmToWav(webmBlob) {
-    // decode webm to AudioBuffer
-    const arrayBuffer = await webmBlob.arrayBuffer();
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-    // If multiple channels, mixdown to mono (FPT prefers mono)
-    const numChannels = audioBuffer.numberOfChannels;
-    const sampleRate = audioBuffer.sampleRate; // keep original sampleRate (we'll let server accept it) 
-    // (If you must force 16000Hz, we can resample — but browser resampling is more complex.)
-    // Many STT accept 16k/48k; if FPT requires 16000, we can downsample here (optional).
-
-    // mix to mono
-    const length = audioBuffer.length;
-    const result = new Float32Array(length);
-    for (let ch = 0; ch < numChannels; ch++) {
-        const channelData = audioBuffer.getChannelData(ch);
-        for (let i = 0; i < length; i++) {
-            result[i] = (result[i] || 0) + channelData[i] / numChannels;
-        }
-    }
-
-    // encode WAV 16-bit PCM
-    const wavBuffer = encodeWAV(result, sampleRate);
-    return new Blob([wavBuffer], { type: "audio/wav" });
-}
-
-function encodeWAV(samples, sampleRate) {
-    const buffer = new ArrayBuffer(44 + samples.length * 2);
-    const view = new DataView(buffer);
-
-    /* RIFF identifier */
-    writeString(view, 0, 'RIFF');
-    /* file length */
-    view.setUint32(4, 36 + samples.length * 2, true);
-    /* RIFF type */
-    writeString(view, 8, 'WAVE');
-    /* format chunk identifier */
-    writeString(view, 12, 'fmt ');
-    /* format chunk length */
-    view.setUint32(16, 16, true);
-    /* sample format (raw) */
-    view.setUint16(20, 1, true);
-    /* channel count */
-    view.setUint16(22, 1, true); // mono
-    /* sample rate */
-    view.setUint32(24, sampleRate, true);
-    /* byte rate (sampleRate * blockAlign) */
-    view.setUint32(28, sampleRate * 2, true);
-    /* block align (channelCount * bytesPerSample) */
-    view.setUint16(32, 2, true);
-    /* bits per sample */
-    view.setUint16(34, 16, true);
-    /* data chunk identifier */
-    writeString(view, 36, 'data');
-    /* data chunk length */
-    view.setUint32(40, samples.length * 2, true);
-
-    // write the PCM samples
-    let offset = 44;
-    for (let i = 0; i < samples.length; i++, offset += 2) {
-        // clamp
-        let s = Math.max(-1, Math.min(1, samples[i]));
-        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
-    }
-    return buffer;
-}
-
-function writeString(view, offset, string) {
-    for (let i = 0; i < string.length; i++) {
-        view.setUint8(offset + i, string.charCodeAt(i));
-    }
-}
+// --- ĐÃ XÓA KHỐI CODE recorder3.onstop bị lặp lại ở đây ---
+// --- ĐÃ XÓA CÁC HÀM convertWebmToWav, encodeWAV, writeString (Không cần dùng) ---
 
 /* helper: convert ArrayBuffer -> base64 (if needed elsewhere) */
 function arrayBufferToBase64(buffer) {
@@ -557,11 +515,27 @@ muteBtn.addEventListener("click", () => {
     isMuted = !isMuted;
     muteBtn.innerText = isMuted ? "🔇" : "🔊";
 });
-
+// =============================
+//  Tải lịch sử chat từ server
+// =============================
+function loadHistory() {
+    return fetch("/chat-history/")
+        .then(res => {
+            if (res.status === 403) {
+                const box = document.getElementById("chatbot-messages");
+                box.innerHTML = "";
+                return { history: [] };
+            }
+            return res.json();
+        })
+        .then(data => {
+            const box = document.getElementById("chatbot-messages");
+            box.innerHTML = "";
+            data.history.forEach(msg => addMessage(msg.sender, msg.message));
+        })
+        .catch(() => {});
+}
 </script>
-
-<!-- ===== END PART 3 ===== -->
-
 
 </body>
 </html>
