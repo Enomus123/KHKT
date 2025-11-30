@@ -8,8 +8,15 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
 import json, requests, base64, time
-
 from .models import ChatHistory, CreateUserForm
+import subprocess
+import uuid
+import os
+
+# Tạo thư mục tmp nếu chưa tồn tại
+os.makedirs("tmp", exist_ok=True)
+
+
 LAST_REQUEST = {}
 def save_chat(user, sender, user_message):
     if user is None:
@@ -45,29 +52,81 @@ def chatbot_api(request):
 
     # 1) Nếu có voice_input -> gọi FPT STT để chuyển thành text
     # Dữ liệu voice_input giờ là WebM base64, FPT STT API có thể xử lý tốt.
-    if voice_input:
+# -----------------------
+#  NHẬN DẠNG GIỌNG NÓI (FPT STT)
+# -----------------------
+    if "voice_input" in data:
         try:
-            # THÊM Content-Type để STT API nhận dạng định dạng audio
-            fpt_stt_headers = {
-                "api-key": settings.FPT_API_KEY,
-                "Content-Type": "audio/webm" 
-            }
-            # FPT STT API yêu cầu dữ liệu nhị phân (base64.b64decode)
-            stt_response = requests.post(
+            voice_b64 = data["voice_input"]
+            audio_binary = base64.b64decode(voice_b64 + "===")
+
+
+# Tạo ID file tạm
+            file_id = uuid.uuid4().hex
+
+
+# Ghi file webm tạm
+            tmp_webm = f"tmp/{file_id}.webm"
+            with open(tmp_webm, "wb") as f:
+                f.write(audio_binary)
+
+
+# Chuyển WEBM → WAV
+            tmp_wav = f"tmp/{file_id}.wav"
+            cmd = [
+                "ffmpeg",
+                "-y",
+                "-i", tmp_webm,
+                "-ar", "16000",
+                "-ac", "1",
+                tmp_wav
+]
+            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+# Đọc WAV
+            with open(tmp_wav, "rb") as f:
+                wav_data = f.read()
+
+
+# Gửi WAV lên FPT
+            response = requests.post(
                 "https://api.fpt.ai/hmi/asr/general",
-                headers=fpt_stt_headers,
-                data=base64.b64decode(voice_input)
-            )
-            stt_json = stt_response.json()
-            # FPT STT trả về kết quả trong hypotheses/utterance
-            stt_result = stt_json.get("hypotheses", [{}])[0].get("utterance", None)
-            
-            # Cập nhật user_message nếu STT thành công
-            if stt_result:
-                 user_message = stt_result
-                 
+                headers={
+                    "api-key": settings.FPT_API_KEY,
+                    "Content-Type": "audio/wav"
+},
+                data=wav_data,
+                timeout=15
+)
+
+
+            stt_json = response.json()
+            print("FPT_STT:", stt_json)
+
+
+            if "hypotheses" not in stt_json:
+                return JsonResponse({"reply": "⚠️ Không nhận dạng được giọng nói. Bạn thử lại nha!"})
+
+
+            text_input = stt_json["hypotheses"][0].get("utterance", "")
+            if not text_input.strip():
+                return JsonResponse({"reply": "⚠️ Mình không nghe rõ, bạn nói lại nha!"})
+
+
+            user_message = text_input
+
+
         except Exception as e:
-            print("❌ Lỗi STT:", e)
+            print("FPT_STT_ERROR:", e)
+            return JsonResponse({"reply": "⚠️ Có lỗi khi nhận dạng giọng nói (FPT). Thử lại giúp mình nha!"})
+
+
+    if not user_message or user_message.strip() == "":
+        return JsonResponse({"reply": ""})
+
+
+
 
     # Nếu user đã đăng nhập -> nạp lịch sử từ DB (theo thứ tự tăng dần)
     if not user_message or user_message.strip() == "":
@@ -137,41 +196,51 @@ def chatbot_api(request):
 
     reply = json_data["choices"][0]["message"]["content"]
 
-    # =========================================
-    # TTS: dùng FPT để tạo giọng nữ miền Nam (nếu bật audio_mode)
-    # =========================================
+# =========================================
+# TTS: dùng FPT để tạo giọng nữ miền Nam (nếu bật audio_mode)
+# =========================================
     audio_base64 = None
     if audio_mode:
         try:
-            # THÊM Content-Type cho TTS
             fpt_tts_headers = {
                 "api-key": settings.FPT_API_KEY,
                 "voice": "linhsan",
                 "speed": "1.0",
-                "Content-Type": "text/plain" 
-            }
+                "Content-Type": "text/plain"
+        }
+
             tts_response = requests.post(
                 "https://api.fpt.ai/hmi/tts/v5",
                 headers=fpt_tts_headers,
-                data=reply.encode("utf-8")
-            )
-            tts_json = tts_response.json()
-            audio_url = tts_json.get("async")
-            
-            # ĐÃ SỬA: Giảm polling block từ 7s xuống 3s
-            if audio_url:
-                for _ in range(3): # <--- Tối ưu hóa
-                    audio_file = requests.get(audio_url)
-                    if audio_file.status_code == 200 and len(audio_file.content) > 4000:
-                        audio_base64 = base64.b64encode(audio_file.content).decode("utf-8")
-                        break
-                    time.sleep(1)
-            # Nếu TTS trả về base64 trực tiếp (vì câu trả lời ngắn)
-            elif 'data' in tts_json:
-                audio_base64 = tts_json.get("data")
-                
+                data=reply.encode("utf-8"),
+                timeout=20
+        )
+
+            if tts_response.status_code != 200:
+                print("FPT_TTS_ERROR:", tts_response.text)
+                audio_base64 = None
+
+            else:
+                tts_json = tts_response.json()
+                audio_url = tts_json.get("async")
+
+            # Polling audio file
+                if audio_url:
+                    for _ in range(5):
+                        audio_file = requests.get(audio_url)
+                        if audio_file.status_code == 200 and len(audio_file.content) > 4000:
+                            audio_base64 = base64.b64encode(audio_file.content).decode("utf-8")
+                            break
+                        time.sleep(1)
+
+            # Nếu FPT trả về base64 trực tiếp
+                elif "data" in tts_json:
+                    audio_base64 = tts_json["data"]
+
         except Exception as e:
             print("❌ Lỗi FPT TTS:", e)
+            audio_base64 = None
+
 
     # =========================================
     # LƯU lịch sử (nếu user logged in): lưu user -> bot

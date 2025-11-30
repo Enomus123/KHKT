@@ -164,14 +164,74 @@
 /* ========================== */
 /* MOBILE             */
 /* ========================== */
+/* ========================== */
+/*  MOBILE OPTIMIZATION      */
+/* ========================== */
 @media (max-width: 600px) {
+
+    /* Chatbot full-screen mode */
     #chatbot-box {
-        width: 95%;
-        right: 2.5%;
+        height: 90vh !important;
+        width: 100%;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        max-height: none;
+        border-radius: 0;
+    }
+
+    #chatbot-messages {
+        height: calc(85vh - 160px);
+    }
+
+    #chatbot-input-area {
+        padding: 14px;
+    }
+
+    #chatbot-text {
+        height: 48px;
+        font-size: 17px;
+    }
+
+    #voice-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+    }
+
+    #chatbot-send {
+        padding: 0 18px;
+        font-size: 17px;
+    }
+
+    /* Bubbles */
+    .chat-bubble {
+        font-size: 16px;
+        max-width: 80%;
+    }
+
+    /* Button mở chat */
+    #chat-toggle-btn {
+        width: 65px;
+        height: 65px;
+        font-size: 30px;
+        right: 15px;
+        bottom: 15px;
+    }
+
+    /* Navbar mobile */
+    nav.navbar {
+        font-size: 18px;
+    }
+
+    .navbar-toggler {
+        padding: 10px 14px;
     }
 }
 
+
 </style>
+<link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
 
 </head>
 <body>
@@ -428,60 +488,77 @@ function sendVoiceBase64(base64Audio) {
   PHẦN 3: Recorder (Ghi bằng MediaRecorder - webm)
 */
 
-let recorder3 = null;
-let audioChunks3 = [];
+/*
+   NEW RECORDER – auto-detect codec
+   - webm/opus nếu browser hỗ trợ
+   - mp4/aac fallback cho iPhone
+*/
+let recorder = null;
+let chunks = [];
 
-// gán xử lý cho nút voice
+async function getSupportedMime() {
+    if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus"))
+        return "audio/webm;codecs=opus";
+
+    if (MediaRecorder.isTypeSupported("audio/mp4;codecs=aac"))
+        return "audio/mp4;codecs=aac";
+
+    return "audio/webm"; // fallback
+}
+
 document.getElementById("voice-btn").onclick = async () => {
     try {
-        // nếu chưa khởi tạo recorder thì khởi tạo
-        if (!recorder3) {
+        if (!recorder) {
+            const mime = await getSupportedMime();
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            recorder3 = new MediaRecorder(stream, { mimeType: 'audio/webm; codecs=opus' }); // Tùy chọn codec
 
-            recorder3.ondataavailable = (e) => {
-                if (e.data && e.data.size > 0) audioChunks3.push(e.data);
+            recorder = new MediaRecorder(stream, { mimeType: mime });
+
+            recorder.ondataavailable = (e) => {
+                if (e.data.size > 0) chunks.push(e.data);
             };
 
-            // ĐÃ SỬA: Logic onstop TỐI ƯU cho mobile (Gửi WebM Base64 trực tiếp)
-            recorder3.onstop = async () => {
-                // tạo blob webm từ chunks
-                const webmBlob = new Blob(audioChunks3, { type: "audio/webm" });
-                audioChunks3 = [];
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: recorder.mimeType });
+                chunks = [];
 
-                try {
-                    // đọc WebM thành base64 (không có prefix)
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        const base64 = reader.result.split(",")[1] || "";
-                        // gọi hàm đã có trong PHẦN 2
-                        sendVoiceBase64(base64);
-                    };
-                    reader.readAsDataURL(webmBlob); // <--- Đọc WebM Blob trực tiếp
-
-                } catch (err) {
-                    console.error("Encode webm failed:", err);
-                    addMessage("bot", "⚠️ Lỗi mã hóa âm thanh, thử lại nhé.");
+                if (blob.size < 2000) {
+                    addMessage("bot", "⚠️ Không thu được âm thanh, bạn thử lại nha.");
+                    return;
                 }
+
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64 = reader.result.split(",")[1];
+                    sendVoiceBase64(base64);
+                };
+                reader.readAsDataURL(blob);
             };
         }
 
-        // start / stop tùy trạng thái
-        if (recorder3.state === "inactive") {
-            audioChunks3 = [];
-            recorder3.start();
+        if (recorder.state === "inactive") {
+            chunks = [];
+            recorder.start();
+
+            setTimeout(() => {
+                if (recorder.state === "recording") recorder.stop();
+            }, 15000);
+
             document.getElementById("voice-btn").style.background = "green";
             document.getElementById("voice-btn").innerText = "⏺️";
-        } else {
-            recorder3.stop();
+        } 
+        else {
+            recorder.stop();
             document.getElementById("voice-btn").style.background = "#dc3545";
             document.getElementById("voice-btn").innerText = "🎤";
         }
     } catch (e) {
-        console.error("getUserMedia error:", e);
-        addMessage("bot", "⚠️ Không truy cập được micro. Hãy kiểm tra quyền micro của trình duyệt.");
+        console.error(e);
+        addMessage("bot", "⚠️ Không bật được micro, kiểm tra lại quyền truy cập nhé.");
     }
 };
+
+
 
 // --- ĐÃ XÓA KHỐI CODE recorder3.onstop bị lặp lại ở đây ---
 // --- ĐÃ XÓA CÁC HÀM convertWebmToWav, encodeWAV, writeString (Không cần dùng) ---
