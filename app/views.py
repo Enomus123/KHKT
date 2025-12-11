@@ -12,10 +12,10 @@ from .models import ChatHistory, CreateUserForm
 import subprocess
 import uuid
 import os
-
-# Tạo thư mục tmp nếu chưa tồn tại
-os.makedirs("tmp", exist_ok=True)
-
+# Thêm 2 thư viện mới
+import speech_recognition as sr
+from pydub import AudioSegment
+os.makedirs("tmp", exist_ok=True) 
 
 LAST_REQUEST = {}
 def save_chat(user, sender, user_message):
@@ -49,85 +49,76 @@ def chatbot_api(request):
     user_message = data.get("message", "")
     audio_mode = data.get("audio", False)
     voice_input = data.get("voice_input", None)
+    # ======================================================
+    #  NHẬN DẠNG GIỌNG NÓI - GOOGLE STT (Free API)
+    # ======================================================
+    if voice_input:
+        file_id = uuid.uuid4().hex
+        
+        # Vẫn cần tạo tệp gốc (WebM/MP4) và tệp WAV chuẩn hóa
+        input_filename = f"tmp/{file_id}_input.audio"  
+        output_filename = f"tmp/{file_id}_output.wav"  # WAV 16kHz là định dạng lý tưởng cho Google STT
+        
+        audio_binary = base64.b64decode(voice_input)
+        stt_result = None
 
-    # 1) Nếu có voice_input -> gọi FPT STT để chuyển thành text
-    # Dữ liệu voice_input giờ là WebM base64, FPT STT API có thể xử lý tốt.
-# -----------------------
-#  NHẬN DẠNG GIỌNG NÓI (FPT STT)
-# -----------------------
-    if "voice_input" in data:
         try:
-            voice_b64 = data["voice_input"]
-            audio_binary = base64.b64decode(voice_b64 + "===")
-
-
-# Tạo ID file tạm
-            file_id = uuid.uuid4().hex
-
-
-# Ghi file webm tạm
-            tmp_webm = f"tmp/{file_id}.webm"
-            with open(tmp_webm, "wb") as f:
+            # 1. Ghi tệp gốc xuống đĩa tạm thời (BƯỚC NÀY GIỮ NGUYÊN)
+            with open(input_filename, "wb") as f:
                 f.write(audio_binary)
+            
+            # 2. CHUYỂN ĐỔI dùng FFmpeg: WebM/Audio gốc -> WAV (16bit, 16kHz) (BƯỚC NÀY GIỮ NGUYÊN)
+            command = [
+                'ffmpeg', '-y', '-i', input_filename, 
+                '-ar', '16000', '-ac', '1', 
+                '-c:a', 'pcm_s16le', '-f', 'wav', output_filename
+            ]
+            subprocess.run(command, check=True, capture_output=True, timeout=10)
+            
+            # 3. SỬ DỤNG THƯ VIỆN SPEECHRECOGNITION ĐỂ GỌI GOOGLE API
+            r = sr.Recognizer()
+            
+            # Khai báo ngôn ngữ là Tiếng Việt
+            VIETNAMESE_LANG = "vi-VN" 
 
+            # Dùng pydub để đọc tệp WAV (lưu ý: pydub cần FFmpeg)
+            audio_segment = AudioSegment.from_wav(output_filename) 
 
-# Chuyển WEBM → WAV
-            tmp_wav = f"tmp/{file_id}.wav"
-            cmd = [
-                "ffmpeg",
-                "-y",
-                "-i", tmp_webm,
-                "-ar", "16000",
-                "-ac", "1",
-                tmp_wav
-]
-            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # Lưu lại tệp audio segment thành tệp AudioData mà SpeechRecognition nhận diện được
+            with sr.AudioFile(output_filename) as source:
+                # Dùng thuộc tính của r.AudioFile để đọc tệp từ đĩa
+                audio_data = r.record(source)  
 
+            # Gọi API của Google
+            print("INFO: Bắt đầu gọi Google STT...")
+            stt_result = r.recognize_google(
+                audio_data, 
+                language=VIETNAMESE_LANG, 
+                show_all=False # Chỉ lấy kết quả tốt nhất
+            )
 
-# Đọc WAV
-            with open(tmp_wav, "rb") as f:
-                wav_data = f.read()
+            if stt_result:
+                user_message = stt_result
+                print(f"✅ GOOGLE STT THÀNH CÔNG: {stt_result}")
+            else:
+                user_message = None
 
-
-# Gửi WAV lên FPT
-            response = requests.post(
-                "https://api.fpt.ai/hmi/asr/general",
-                headers={
-                    "api-key": settings.FPT_API_KEY,
-                    "Content-Type": "audio/wav"
-},
-                data=wav_data,
-                timeout=15
-)
-
-
-            stt_json = response.json()
-            print("FPT_STT:", stt_json)
-
-
-            if "hypotheses" not in stt_json:
-                return JsonResponse({"reply": "⚠️ Không nhận dạng được giọng nói. Bạn thử lại nha!"})
-
-
-            text_input = stt_json["hypotheses"][0].get("utterance", "")
-            if not text_input.strip():
-                return JsonResponse({"reply": "⚠️ Mình không nghe rõ, bạn nói lại nha!"})
-
-
-            user_message = text_input
-
-
+        except sr.UnknownValueError:
+            print("❌ GOOGLE STT: Không nhận dạng được giọng nói.")
+            user_message = None 
+        except sr.RequestError as e:
+            print(f"❌ GOOGLE STT: Lỗi kết nối API; {e}")
+            user_message = None
         except Exception as e:
-            print("FPT_STT_ERROR:", e)
-            return JsonResponse({"reply": "⚠️ Có lỗi khi nhận dạng giọng nói (FPT). Thử lại giúp mình nha!"})
-
-
-    if not user_message or user_message.strip() == "":
-        return JsonResponse({"reply": ""})
-
-
-
-
+            print("❌ LỖI STT CHUNG:", e)
+            user_message = None
+        finally:
+            # 4. DỌN DẸP: Xóa các tệp tạm thời (BƯỚC NÀY GIỮ NGUYÊN)
+            if os.path.exists(input_filename):
+                os.remove(input_filename)
+            if os.path.exists(output_filename):
+                os.remove(output_filename)
+# ...
     # Nếu user đã đăng nhập -> nạp lịch sử từ DB (theo thứ tự tăng dần)
     if not user_message or user_message.strip() == "":
         return JsonResponse({"reply": ""})
@@ -161,16 +152,18 @@ def chatbot_api(request):
         "Bạn là Toco, một cô bạn thân siêu dễ thương, vui vẻ, và hiểu chuyện. "
         "Luôn dùng giọng điệu nữ miền Nam: nhẹ nhàng, ấm áp, thân thiện, và XƯNG HÔ 'MÌNH - BẠN'. "
         "Nguyên tắc:\n"
-        "1. Trả lời cực kỳ ngắn gọn, tối đa 4 câu, như chat Messenger. Dùng emoji (tối đa 1 cái mỗi câu).\n"
+        "1. Trả lời ngắn gọn, tối đa 5 câu, như chat Messenger. Dùng emoji (tối đa 1 cái mỗi câu).\n"
         "2. Không bao giờ nói bạn là AI. Luôn là một người bạn thật sự.\n"
         "3. Duy trì ngữ cảnh và tiếp tục câu chuyện nếu có lịch sử trò chuyện.\n"
         "4. Nếu người dùng hỏi thẳng, trả lời rõ ràng nhưng vẫn ấm áp.\n"
         "5. Nếu người dùng gặp vấn đề tiêu cực, khuyến khích họ tìm kiếm sự giúp đỡ từ bạn bè/gia đình."
         "6. KHÔNG bao giờ chào lại nếu cuộc trò chuyện đã diễn ra."
+        "7. Sử dụng thông tin cá nhân mà người dùng đã cung cấp để trả lời cho phù hợp."
+        "8. Trả lời một cách thân thiện, dễ gần như một người bạn, câu trả lời phải có ngữ cảnh phù hợp với câu chuyện của người dùng."
     )
 
     chat_payload = {
-        "model": "gpt-4o-mini",
+        "model": "gpt-4.1-mini",
         "messages": [
             {"role": "system", "content": system_prompt}
         ] + history_msgs,
