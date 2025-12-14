@@ -1,25 +1,96 @@
 {% extends "app/base.html" %}
 {% block content %}
-<div class="container mt-5">
-  <h2>Đăng nhập</h2>
+
+<style>
+  /* Căn giữa khung đăng nhập và tạo khoảng cách với các cạnh */
+  .login-container {
+    max-width: 450px;
+    margin: 40px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.95); /* Nền trắng trong suốt nhẹ */
+    border: 3px solid #d42426; /* Viền đỏ Noel */
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+
+  /* Tiêu đề Giáng sinh */
+  .login-title {
+    color: #d42426;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  }
+
+  /* Tinh chỉnh ô nhập liệu */
+  .form-control {
+    border-radius: 25px;
+    padding: 10px 20px;
+    border: 1px solid #ced4da;
+  }
+
+  .form-control:focus {
+    border-color: #1a472a;
+    box-shadow: 0 0 0 0.25rem rgba(26, 71, 42, 0.25);
+  }
+
+  /* Nút bấm Noel */
+  .btn-login {
+    background-color: #d42426;
+    border: none;
+    border-radius: 25px;
+    padding: 10px;
+    width: 100%;
+    font-weight: bold;
+    color: white;
+    transition: 0.3s;
+  }
+
+  .btn-login:hover {
+    background-color: #1a472a; /* Đổi sang xanh lá khi di chuột */
+    transform: scale(1.02);
+  }
+
+  /* Cấu hình riêng cho điện thoại */
+  @media (max-width: 576px) {
+    .login-container {
+      margin: 20px 15px; /* Giảm lề trên điện thoại */
+      padding: 25px 15px;
+    }
+    .login-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<div class="login-container">
+  <h2 class="login-title">🎄 Đăng nhập 🎅</h2>
 
   {% for message in messages %}
-  <div class="alert alert-warning">{{ message }}</div>
+  <div class="alert alert-warning shadow-sm" style="border-radius: 15px; font-size: 0.9rem;">
+    {{ message }}
+  </div>
   {% endfor %}
 
-    <form method="POST">
-      {% csrf_token %}
-      <div class="mb-3">
-        <label class="form-label">Tên đăng nhập</label>
-      <input type="text" name="username" class="form-control" required>
-      </div>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label fw-bold" style="color: #1a472a;">Tên đăng nhập</label>
+      <input type="text" name="username" class="form-control" placeholder="Tên của bạn..." required>
+    </div>
 
-      <div class="mb-3">
-        <label class="form-label">Mật khẩu</label>
-      <input type="password" name="password" class="form-control" required>
-      </div>
-    <button type="submit" class="btn btn-primary">Đăng nhập</button>
-    </form>
-  <p class="text-center h6 fw-bold mb-5 mx-1 mx-md-4 mt-4">Chưa có tài khoản? <a href= {% url "register" %} >Đăng ký</a></p>
+    <div class="mb-4">
+      <label class="form-label fw-bold" style="color: #1a472a;">Mật khẩu</label>
+      <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+    </div>
+
+    <button type="submit" class="btn-login shadow-sm">Bắt đầu trò chuyện 🎁</button>
+  </form>
+
+  <p class="text-center h6 fw-bold mt-4">
+    Chưa có tài khoản? 
+    <a href="{% url 'register' %}" style="color: #d42426; text-decoration: none;">Đăng ký ngay</a>
+  </p>
 </div>
+
 {% endblock content %}

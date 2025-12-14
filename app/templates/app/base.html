@@ -40,7 +40,7 @@
 }
 
 /* ========================== */
-/* KHUNG CHAT MOCHA (CHATBOX) */
+/* KHUNG CHAT TOCO (CHATBOX) */
 /* ========================== */
 
 #chatbot-box {
@@ -53,23 +53,32 @@
     max-width: none; 
     max-height: none;
     
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2); 
-    
+
+    background: rgba(255, 255, 255, 0.95);
+    border: 5px solid #d42426;
+    border-image: repeating-linear-gradient(45deg, #d42426, #d42426 10px, #ffffff 10px, #ffffff 20px) 5;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(248, 178, 41, 0.4); 
+    overflow: hidden;
+    background-image: url("https://www.transparenttextures.com/patterns/snow.png");
     display: flex; 
     flex-direction: column;
     overflow: hidden;
 }
 
 #chatbot-header {
-    background: #0d6efd;
+    background: linear-gradient(90deg, #d42426 0%, #a51b1d 100%); /* Màu đỏ gradient */
+    border-bottom: 3px solid #f8b229;
     color: white;
     padding: 12px;
     font-weight: bold;
     font-size: 17px;
     position: relative;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 #chatbot-messages {
@@ -106,16 +115,21 @@
     font-size: 15px;
 }
 
-.bot .chat-bubble {
-    background: #f1f3f5;
-    margin-left: 0; 
-    margin-right: auto; 
+/* Dòng 104: Tin nhắn của Người dùng (User) */
+.user .chat-bubble {
+    background: #206137ff; /* Xanh lá thông */
+    color: white;
+    border-radius: 18px 18px 2px 18px;
+    border: 2px solid #f9ff40ff; /* Viền vàng gold */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
 }
 
-.user .chat-bubble {
-    background: #d0ebff;
-    margin-right: 0; 
-    margin-left: auto; 
+/* Dòng 100: Tin nhắn của Bot (Toco) */
+.bot .chat-bubble {
+    background: white;
+    color: #d42426; /* Chữ màu đỏ Noel */
+    border: 2px solid #d42426; /* Viền đỏ */
+    border-radius: 18px 18px 18px 2px;
 }
 
 /* Bot đang trả lời */
@@ -136,15 +150,25 @@
     /* ĐIỀU CHỈNH: Tăng chiều cao của hộp chứa Toco để Toco lớn hơn */
     height: 100%; 
 }
-
 #toco-character {
     /* ĐIỀU CHỈNH: Tăng kích thước Toco lên 380px */
     width: 400px; 
     height: 100%;
     object-fit: contain; 
     transform: translateY(10px); 
+    animation: floating 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
 }
-
+@keyframes floating {
+    0%, 100% { 
+        transform: translateY(0px); 
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    }
+    50% { 
+        transform: translateY(-25px); 
+        filter: drop-shadow(0 0 25px rgba(248, 178, 41, 0.7)); 
+    }
+}
 /* ========================== */
 /* Ô nhập            */
 /* ========================== */
@@ -154,7 +178,7 @@
     display: flex;
     gap: 10px;
     border-top: 1px solid #ddd;
-    background: #f8f9fa;
+    background: #1a472a;
 }
 
 #chatbot-text {
@@ -166,13 +190,19 @@
 }
 
 #chatbot-send {
-    background: #0d6efd;
-    color: white;
-    border: none;
+    background: #f1b150ff; /* Màu vàng gold */
+    color: #ffffffff;      /* Chữ xanh lá */
+    font-weight: bold;
+    border: 2px solid #1a472a;
+    transition: 0.3s;
     border-radius: 20px;
-    padding: 0 20px;
-    font-size: 16px;
-    flex-shrink: 0;
+    padding:0 10px;
+}
+
+#chatbot-send:hover {
+    background: #d42426;
+    color: white;
+    transform: scale(1.05);
 }
 
 /* Nút ghi âm */
@@ -187,7 +217,6 @@
     transition: 0.2s;
     flex-shrink: 0;
 }
-
 /* ========================== */
 /* MOBILE / TABLET (FIX OVERFLOW NÚT GỬI) */
 /* ========================== */
@@ -202,7 +231,7 @@
         left: 50%; 
         transform: translateX(-50%); 
         width: 95%; 
-        height: 70vh; 
+        height: 77vh; 
         padding: 0;
         display: flex; 
         background-color: transparent; 
@@ -241,10 +270,9 @@
     }
     
     #chatbot-input-area {
-        display: flex; 
+        display: flex;
         align-items: center;
-        width: 100%; 
-        
+        width: 100%;
         /* Giảm padding trên/dưới để phù hợp với chiều cao input mới */
         padding: 8px 10px; 
         padding-right: 10px; 
@@ -270,34 +298,92 @@
 
     #chatbot-text {
         flex: 1; 
+        min-width: 0;
         padding: 10px 10px; 
         border-radius: 20px; 
         font-size: 15px; 
-        height: 45px; 
+        height: 45px;
+        left: auto;
+        right: auto;
     }
 
     #chatbot-send {
-        background: #0d6efd;
+        background: #f3d349ff;
         color: white;
-        border: none;
         border-radius: 20px;
-        padding: 0 10px; 
-        font-size: 15px; 
-        height: 45px; 
-        flex-shrink: 0;
+        padding: 0 10px;   
+        font-size: 14px; 
+        height: 45px;       
+        flex-shrink: 0;     
+        border: none;
+        min-width: 50px;   
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
+    .d-lg-none marquee {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+}
+/* Sửa lại Background PC */
+body { 
+    background: url("{% static 'app/images/noel-bg-pc.jpg' %}") no-repeat center center fixed; 
+    background-size: cover; 
+}
+
+@media (max-width: 992px) { 
+    body { 
+        /* center top giúp lấy trọng tâm phần trên của ảnh Noel */
+        background: url("{% static 'app/images/noel-bg-mobile.jpg' %}") no-repeat center top fixed; 
+        /* Quan trọng: cover giúp ảnh phủ kín, không tạo khoảng trắng */
+        background-size: cover; 
+        /* Đảm bảo chiều cao luôn phủ hết màn hình điện thoại */
+        min-height: 100vh;
+        width: 100%;
+    } 
+}
+/* Hiệu ứng bông tuyết */
+.snowflake {
+    color: #fff;
+    font-size: 1.2em;
+    font-family: Arial, sans-serif;
+    text-shadow: 0 0 5px rgba(255,255,255,1);
+    position: fixed;
+    top: -10%;
+    z-index: 9999;
+    user-select: none;
+    cursor: default;
+    pointer-events: none;
+    animation-name: snowflakes-fall, snowflakes-shake;
+    animation-duration: 10s, 3s;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+    animation-play-state: running, running;
+}
+
+@keyframes snowflakes-fall {
+    0% { top: -10%; }
+    100% { top: 100%; }
+}
+
+@keyframes snowflakes-shake {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(80px); }
 }
 </style>
 <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
 
 </head>
 <body>
-
+<audio id="bg-music" loop preload="auto">
+    <source src="{% static "app/music/noel.mp3" %}"  type="audio/mpeg">
+</audio>
 <div id="toco-chat-container">
     
     <div id="toco-character-box">
         <img id="toco-character" 
-             src="{% static 'app/images/toco_idle.png' %}" 
+             src="{% static 'app/images/toco_idle.png' %}   "
              alt="Toco Character">
     </div>
     
@@ -316,12 +402,10 @@
                     cursor:pointer;">
                 🔊
             </button>
-        
-            Toco – Người bạn ảo
-            
+            ✨Toco – Người bạn Giáng sinh✨
+            <div style="position: absolute; top: 40px; right: 15px; font-size: 35px; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3)); z-index: 10;">🔔</div>
+            <div style="position: absolute; bottom: 90px; left: 15px; font-size: 30px; color: white; opacity: 0.9; filter: blur(0.5px); z-index: 10;">❄️</div>
             </div>
-
-
         <div id="chatbot-messages"></div>
 
         <div id="typing-indicator">⏳ Toco đang trả lời...</div>
@@ -329,16 +413,15 @@
         <div id="chatbot-input-area">
             <button id="voice-btn">🎤</button>
             <input type="text" id="chatbot-text" placeholder="Nhập tin nhắn..." onkeypress="if(event.keyCode==13) document.getElementById('chatbot-send').click()">
-            <button id="chatbot-send">Gửi</button>
+            <button id="chatbot-send">Gửi🎁</button>
         </div>
     </div>
 </div>
-
-
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #1a472a; border-bottom: 3px solid #f8b229;">
   <div class="container">
-    <a class="navbar-brand fw-bold text-primary" href="/">KHKT</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <a class="navbar-brand fw-bold" href="/" style="color: #ffffff;">🎄 KHKT <span style="color: #f8b229;">❄️</span></a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(255,255,255,0.5);">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -347,40 +430,50 @@
 
         {% if user.is_authenticated %}
             <li class="nav-item">
-              <span class="fw-semibold text-success">👋 Xin chào, {{ user.username }}</span>
+              <span class="fw-semibold me-3" style="color: #ffffff;">👋 Chào, {{ user.username }}</span>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/history/">Lịch sử trò chuyện</a>
+              <a class="nav-link text-white" href="/history/">Lịch sử trò chuyện</a>
             </li>
-            <li class="nav-item ms-2">
-              <a class="btn btn-sm btn-outline-danger" href="{% url 'logout' %}">Đăng xuất</a>
+            <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+              <a class="btn btn-sm btn-outline-light" href="{% url 'logout' %}" style="border-radius: 20px;">Đăng xuất</a>
             </li>
 
         {% else %}
-            <div style="
-                background: #ffe7e7;
-                color: #b70000;
-                padding: 12px 16px;
-                border-radius: 8px;
-                margin: 20px;
-                font-weight: 500;
-            ">
-                🔐 Bạn hãy đăng nhập để lưu và xem lại lịch sử trò chuyện nha
+            <div class="d-none d-lg-block" style="flex: 1; margin-right: 15px;">
+                <div style="background: rgba(255, 255, 255, 0.15); color: #ffffff; padding: 8px 15px; border-radius: 20px; font-size: 1rem; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
+                    <marquee behavior="scroll" direction="left" scrollamount="5">
+                        🔐 Chào bạn! Hãy <strong>đăng nhập</strong> để lưu giữ những kỷ niệm và xem lại lịch sử trò chuyện cùng Toco nha! 🎄
+                    </marquee>
+                </div>
             </div>
-            <li class="nav-item">
-              <a class="btn btn-sm btn-login" href="{% url 'login' %}">Đăng nhập</a>
+            <li class="nav-item mt-2 mt-lg-0">
+              <a class="btn btn-sm px-3" href="{% url 'login' %}" 
+                 style="background-color: #d42426; color: white; border-radius: 20px; font-weight: bold;">
+                 Đăng nhập
+              </a>
             </li>
 
-            <li class="nav-item ms-2">
-              <a class="btn btn-sm btn-register" href="{% url 'register' %}">Đăng ký</a>
+            <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+              <a class="btn btn-sm px-3" href="{% url 'register' %}" 
+                 style="background-color: #f8b229; color: #1a472a; border-radius: 20px; font-weight: bold;">
+                 Đăng ký
+              </a>
             </li>
-
         {% endif %}
       </ul>
     </div>
   </div>
 </nav>
-
+{% if not user.is_authenticated %}
+<div class="d-block d-lg-none" style="width: 100%; background: #921c1c; padding: 10px 0; border-bottom: 2px solid #f8b229; margin-bottom: 15px;">
+    <div style="margin: 0 10px; background: rgba(255, 255, 255, 0.1); color: #ffffff; padding: 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
+        <marquee behavior="scroll" direction="left" scrollamount="6">
+            🔐 Đăng nhập ngay để lưu lịch sử trò chuyện cùng Toco nhé! 🎄✨
+        </marquee>
+    </div>
+</div>
+{% endif %}
 
 <main class="container py-4">
     {% block content %}{% endblock %}
@@ -390,20 +483,37 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 const TOCO_STATES = {
-    IDLE: "{% static 'app/images/toco_idle.png' %}", // Toco đứng yên
-    TYPING: "{% static 'app/images/toco_typing.gif' %}", // Toco suy nghĩ (GIF)
-    TALKING: "{% static 'app/images/toco_talking.gif' %}", // Toco đang nói (GIF)
+    IDLE: 'IDLE',
+    TYPING: 'TYPING',
+    TALKING: 'TALKING' // Trạng thái chung khi đang nói
 };
 
+const TOCO_IMAGES = {
+    // Sửa tên file cho đúng với thực tế bạn đã lưu trong thư mục images
+    IDLE: "{% static 'app/images/toco_idle.png' %}", 
+    TYPING: "{% static 'app/images/toco_typing.png' %}",
+    HAPPY: "{% static 'app/images/toco_happy.png' %}",
+    COMFORT: "{% static 'app/images/toco_comfort.png' %}",
+    CUTE: "{% static 'app/images/toco_cute.png' %}" // Dùng idle làm mặc định
+};
 const tocoChar = document.getElementById("toco-character");
 let currentAudio = null; 
 
-function setTocoState(state) {
-    if (tocoChar) {
-        tocoChar.src = state;
+function setTocoState(state, emotion = 'CUTE') {
+    // SỬA TẠI ĐÂY: Đổi 'toco-img' thành 'toco-character' cho khớp với HTML
+    const tocoImg = document.getElementById('toco-character'); 
+    if (!tocoImg) return;
+
+    if (state === 'TYPING' || state === TOCO_STATES.TYPING) {
+        tocoImg.src = TOCO_IMAGES.TYPING;
+    } else if (state === 'TALKING' || state === TOCO_STATES.TALKING) {
+        const emoKey = emotion.toUpperCase();
+        // Đổi ảnh theo cảm xúc
+        tocoImg.src = TOCO_IMAGES[emoKey] || TOCO_IMAGES.IDLE;
+    } else {
+        tocoImg.src = TOCO_IMAGES.IDLE;
     }
 }
-
 
 // ===========================
 //   KHỞI TẠO CHATBOX
@@ -471,6 +581,7 @@ document.getElementById("chatbot-send").onclick = () => {
     addMessage("user", text);
     document.getElementById("chatbot-text").value = "";
 
+    // Bắt đầu trạng thái SUY NGHĨ
     document.getElementById("typing-indicator").style.display = "block";
     setTocoState(TOCO_STATES.TYPING); 
 
@@ -485,20 +596,24 @@ document.getElementById("chatbot-send").onclick = () => {
     .then(res => res.json())
     .then(data => {
         document.getElementById("typing-indicator").style.display = "none";
-
         addMessage("bot", data.reply || "⚠️ Lỗi không nhận được trả lời");
 
+        const emotion = (data.emotion || "CUTE").toUpperCase();
+        setTocoState('TALKING', emotion); // Kích hoạt hình ảnh nói theo cảm xúc
+
         if (!isMuted && data.audio) {
-            setTocoState(TOCO_STATES.TALKING); 
+            if (window.currentAudio) {
+                window.currentAudio.pause(); // Dừng câu trước đó nếu đang nói
+            }
+            window.currentAudio = new Audio("data:audio/mp3;base64," + data.audio);
+            window.currentAudio.play();
 
-            const audio = new Audio("data:audio/mp3;base64," + data.audio);
-            audio.play();
-
-            audio.onended = () => {
-                setTocoState(TOCO_STATES.IDLE); 
+            window.currentAudio.onended = () => {
+                setTocoState('IDLE'); 
             };
         } else {
-             setTocoState(TOCO_STATES.IDLE); 
+            // Nếu tắt tiếng hoặc không có audio, hiện hình cảm xúc trong 3 giây rồi nghỉ
+            setTimeout(() => { setTocoState('IDLE'); }, 3000);
         }
     })
     .catch(err => {
@@ -539,22 +654,23 @@ function sendVoiceBase64(base64Audio) {
         }
         
         addMessage("bot", data.reply || "⚠️ Không hiểu bạn nói gì");
-
+        const emotion = (data.emotion || "CUTE").toUpperCase();
         if (!isMuted && data.audio) {
-            setTocoState(TOCO_STATES.TALKING); 
-            
-            const audio = new Audio("data:audio/mp3;base64," + data.audio);
-            audio.play();
+            if (window.currentAudio) {
+            window.currentAudio.pause(); // Dừng ngay câu đang nói dở
+            window.currentAudio.currentTime = 0;
+            }
+            window.currentAudio = new Audio("data:audio/mp3;base64," + data.audio);
+            window.currentAudio.play().catch(e => console.log("Trình duyệt chặn phát tự động:", e));
 
-            audio.onended = () => {
-                setTocoState(TOCO_STATES.IDLE); 
-            };
-
+            window.currentAudio.onended = () => {
+                setTocoState(TOCO_STATES.IDLE); // Trở về trạng thái nghỉ khi nói xong
+        };
         } else {
-             setTocoState(TOCO_STATES.IDLE); 
+            setTocoState(TOCO_STATES.TALKING, emotion);
+            setTimeout(() => { setTocoState(TOCO_STATES.IDLE); }, 3000);
         }
-
-    })
+    })  
     .catch(err => {
         console.error(err);
         document.getElementById("typing-indicator").style.display = "none";
@@ -659,7 +775,6 @@ function forceStopRecorder() {
 
 let isMuted = false;
 const muteBtn = document.getElementById("mute-btn");
-
 muteBtn.addEventListener("click", () => {
     isMuted = !isMuted;
     muteBtn.innerText = isMuted ? "🔇" : "🔊";
@@ -689,13 +804,61 @@ function loadHistory() {
         })
         .catch(() => {});
 }
+function createSnow() {
+    const snowflakeContainer = document.body;
+    const snowflakeSymbols = ['❄', '❅', '❆', '•'];
+    
+    // Tạo 1 bông tuyết sau mỗi 300ms
+    setInterval(() => {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.innerHTML = snowflakeSymbols[Math.floor(Math.random() * snowflakeSymbols.length)];
+        
+        // Vị trí ngang ngẫu nhiên
+        snowflake.style.left = Math.random() * 100 + 'vw';
+        
+        // Kích thước ngẫu nhiên (từ 0.5em đến 1.5em)
+        snowflake.style.fontSize = (Math.random() * 1 + 0.5) + 'em';
+        
+        // Độ mờ ngẫu nhiên để tạo cảm giác xa gần
+        snowflake.style.opacity = Math.random();
+        
+        // Tốc độ rơi ngẫu nhiên (từ 5s đến 15s)
+        const duration = Math.random() * 10 + 5;
+        snowflake.style.animationDuration = `${duration}s, ${Math.random() * 3 + 2}s`;
+        
+        snowflakeContainer.appendChild(snowflake);
 
+        // Xóa bông tuyết sau khi rơi xong để tránh nặng trình duyệt
+        setTimeout(() => {
+            snowflake.remove();
+        }, duration * 1000);
+    }, 300);
+}
 // KHỞI CHẠY CHATBOX KHI TRANG TẢI XONG
 document.addEventListener("DOMContentLoaded", () => {
+    createSnow();
     const tocoChatContainer = document.getElementById("toco-chat-container");
     const currentPath = window.location.pathname.replace(/\/$/, ""); 
+    const bgMusic = document.getElementById('bg-music');
+    if (bgMusic) {
+        bgMusic.volume = 0.15; // Chỉnh âm lượng 50%
 
-    // Kiểm tra nếu là trang chủ (path rỗng, / hoặc /index.html)
+        const startMusic = () => {
+            bgMusic.play().then(() => {
+                console.log("Nhạc đang phát!");
+            const unlockAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==");
+            unlockAudio.play().catch(() => {});
+        }).catch(error => {
+                console.log("Chờ click để phát nhạc...");
+            });
+        };
+
+    // Quan trọng: Phải có click chuột vào trang web nhạc mới bắt đầu phát
+    document.addEventListener('click', startMusic, { once: true });
+    document.addEventListener('touchstart', startMusic, { once: true });
+    document.addEventListener('keydown', startMusic, { once: true });
+    }
     if (currentPath === '' || currentPath === '/' || currentPath === '/index.html') { 
         tocoChatContainer.style.display = 'flex'; // Hiển thị khung chat (Toco + Chatbox)
         initializeChat();

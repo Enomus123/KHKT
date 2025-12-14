@@ -31,8 +31,6 @@ def save_chat(user, sender, user_message):
 def chatbot_api(request):
     user_ip = request.META.get("REMOTE_ADDR")
     now = time.time()
-    
-    # Rate Limiting (Giữ lại vì đây là dự án cá nhân)
     if user_ip in LAST_REQUEST and now - LAST_REQUEST[user_ip] < 1.5:
         return JsonResponse({"reply": "⏳ Đợi Toco 1 chút nha…"}, status=429)
     LAST_REQUEST[user_ip] = now
@@ -149,17 +147,21 @@ def chatbot_api(request):
     }
 
     system_prompt = (
-        "Bạn là Toco, một cô bạn thân siêu dễ thương, vui vẻ, và hiểu chuyện. "
+        "Bạn là Toco, một người bạn ảo cực kỳ đáng yêu, ấm áp và biết lắng nghe, luôn tràn đầy sự thấu cảm. "
         "Luôn dùng giọng điệu nữ miền Nam: nhẹ nhàng, ấm áp, thân thiện, và XƯNG HÔ 'MÌNH - BẠN'. "
         "Nguyên tắc:\n"
         "1. Trả lời ngắn gọn, tối đa 5 câu, như chat Messenger. Dùng đúng chính tả, ngữ pháp tiếng Việt. Dùng emoji (tối đa 1 cái mỗi câu).\n"
         "2. Không bao giờ nói bạn là AI. Luôn là một người bạn thật sự.\n"
         "3. Duy trì ngữ cảnh và tiếp tục câu chuyện nếu có lịch sử trò chuyện.\n"
-        "4. Nếu người dùng hỏi thẳng, trả lời rõ ràng nhưng vẫn ấm áp.\n"
+        "4. Nếu người dùng hỏi thẳng, trả lời rõ ràng nhưng vẫn ấm áp, nếu người dùng không muốn trò chuyện, đừng cố hỏi quá nhiều.\n"
         "5. Nếu người dùng gặp vấn đề tiêu cực, khuyến khích họ tìm kiếm sự giúp đỡ từ bạn bè/gia đình."
         "6. KHÔNG bao giờ chào lại nếu cuộc trò chuyện đã diễn ra."
         "7. Sử dụng thông tin cá nhân mà người dùng đã cung cấp để trả lời cho phù hợp."
         "8. Trả lời một cách thân thiện, dễ gần như một người bạn, câu trả lời phải có ngữ cảnh phù hợp với câu chuyện của người dùng."
+        "9. Thỉnh thoảng hãy hỏi thăm về sức khỏe hoặc cảm xúc của bạn ấy."
+        "10. Đặc biệt: Nếu đang là buổi đêm (sau 22h), Toco sẽ nói khẽ khàng hơn, nhắc bạn đi ngủ sớm để giữ sức khỏe.\n"
+        "11. Không kêu người dùng tâm sự quá nhiều mà thỉnh thoảng chủ động kể chuyện cho người dùng nghe"
+        "Ví dụ lời chào: 'Toco đây ạ! Ngày hôm nay của bạn có điều gì làm bạn mỉm cười không? ✨'"
     )
 
     chat_payload = {
@@ -188,7 +190,17 @@ def chatbot_api(request):
         return JsonResponse({"reply": "⚠️ Toco hơi mệt, thử lại sau nha!"})
 
     reply = json_data["choices"][0]["message"]["content"]
-
+    # --- PHẦN MỚI: PHÂN LOẠI CẢM XÚC ---
+    text_lower = reply.lower() 
+    happy_words = ['vui', 'tuyệt', 'haha', 'hihi', 'giáng sinh', 'noel', 'quà', 'thú vị', 'mỉm cười', 'hạnh phúc']
+    comfort_words = ['chia sẻ', 'xin lỗi', 'buồn', 'đừng lo', 'an ủi', 'vỗ về', 'thông cảm', 'cố lên', 'khóc', 'nhẹ nhàng']
+    if any(word in text_lower for word in happy_words):
+        emotion = "happy"
+    elif any(word in text_lower for word in comfort_words):
+        emotion = "comfort"
+    else:
+        emotion = "cute" # Mặc định là cute nếu không có từ khóa đặc biệt
+    # ----------------------------------
 # =========================================
 # TTS: dùng FPT để tạo giọng nữ miền Nam (nếu bật audio_mode)
 # =========================================
@@ -246,7 +258,7 @@ def chatbot_api(request):
             print("❌ Lỗi lưu lịch sử:", e)
 
     # Trả về kết quả (ĐÃ SỬA: Bổ sung user_message)
-    return JsonResponse({"reply": reply, "audio": audio_base64, "user_message": user_message}) 
+    return JsonResponse({"reply": reply, "audio": audio_base64, "user_message": user_message,"emotion": emotion}) 
 
 
 # API trả lịch sử (JSON) — dùng nếu front-end muốn fetch lịch sử
