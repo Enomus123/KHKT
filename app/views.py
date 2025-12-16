@@ -308,6 +308,12 @@ def login_view(request):
 
     return render(request, "app/login.html")
 
+# views.py
+
+# views.py
+
+# views.py (Hàm register - Gần dòng 225)
+
 def register(request):
     form = CreateUserForm()
 
@@ -315,8 +321,27 @@ def register(request):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Tạo tài khoản thành công!")
+            messages.success(request, "Tạo tài khoản thành công! Bây giờ bạn có thể đăng nhập.")
             return redirect('login')
+        else:
+            # ⭐️ SỬA ĐỔI: Thêm bản đồ dịch lỗi tiếng Việt cho các lỗi phổ biến
+            error_translations = {
+                "A user with that username already exists.": "Tên đăng nhập này đã tồn tại.",
+                "The two password fields didn’t match.": "Hai mật khẩu không khớp.",
+                "Enter a valid username. This value may contain only letters, numbers, and @/./+/-/_ characters.": "Tên đăng nhập không hợp lệ. Chỉ được chứa chữ cái, số và các ký tự @/,/./+/-/_ Không được có dấu cách.",
+            }
+            # -----------------------------------------------------------
+
+            for field, errors in form.errors.items():
+                for error in errors:
+                    # 1. Chuyển đối tượng lỗi thành chuỗi để tìm kiếm trong map
+                    error_string = str(error)
+                    
+                    # 2. Áp dụng bản dịch, nếu không tìm thấy bản dịch, giữ nguyên lỗi gốc
+                    translated_error = error_translations.get(error_string, error_string)
+                    
+                    # 3. Sử dụng bản dịch trong thông báo 
+                    messages.error(request,f"Lỗi: {translated_error}")
 
     return render(request, "app/register.html", {"form": form})
 

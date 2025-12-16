@@ -7,7 +7,6 @@
     <title>Dự án khoa học kỹ thuật</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-
 <style>
 
 /* ========================== */
@@ -443,7 +442,7 @@ body {
             <div class="d-none d-lg-block" style="flex: 1; margin-right: 15px;">
                 <div style="background: rgba(255, 255, 255, 0.15); color: #ffffff; padding: 8px 15px; border-radius: 20px; font-size: 1rem; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
                     <marquee behavior="scroll" direction="left" scrollamount="5">
-                        🔐 Chào bạn! Hãy <strong>đăng nhập</strong> để lưu giữ những kỷ niệm và xem lại lịch sử trò chuyện cùng Toco nha! 🎄
+                        🔐 <strong><a href="{% url 'login' %}" style="color: #f8b229; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé! 🎄✨
                     </marquee>
                 </div>
             </div>
@@ -469,7 +468,7 @@ body {
 <div class="d-block d-lg-none" style="width: 100%; background: #921c1c; padding: 10px 0; border-bottom: 2px solid #f8b229; margin-bottom: 15px;">
     <div style="margin: 0 10px; background: rgba(255, 255, 255, 0.1); color: #ffffff; padding: 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
         <marquee behavior="scroll" direction="left" scrollamount="6">
-            🔐 Đăng nhập ngay để lưu lịch sử trò chuyện cùng Toco nhé! 🎄✨
+            🔐 <strong><a href="{% url 'login' %}" style="color: #f8b229; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé! 🎄✨
         </marquee>
     </div>
 </div>
@@ -523,36 +522,36 @@ const tocoChatContainer = document.getElementById("toco-chat-container");
 
 
 function initializeChat() {
-    // B1: Tải lịch sử chat
-    loadHistory().then(() => {
+    // B1: Tải lịch sử chat (Chạy ngay, không chờ)
+    loadHistory(); // <--- GỌI HÀM loadHistory() TRỰC TIẾP Ở ĐÂY
 
-        // B2: Sau khi load xong mới hỏi backend nếu là lần đầu
-        fetch("/check-first-chat/", { credentials: "same-origin" })
-            .then(res => res.json())
-            .then(data => {
+    // B2: Hỏi backend nếu là lần đầu (Chạy song song với loadHistory)
+    fetch("/check-first-chat/", { credentials: "same-origin" })
+        .then(res => res.json())
+        .then(data => {
 
-                if (data.first_time && !windowMochaGreeted) {
-                    windowMochaGreeted = true;
+            if (data.first_time && !windowMochaGreeted) {
+                windowMochaGreeted = true;
 
-                    addMessage(
-                        "bot",
-                        "Chào bạn, mình là Toco, bạn tên gì 💖"
-                    );
-                }
+                addMessage(
+                    "bot",
+                    "Chào bạn, mình là Toco, bạn tên gì 💖"
+                );
+            }
 
-            })
-            .catch(() => {
-                // Fallback nếu fetch lỗi
-                if (!windowMochaGreeted) {
-                    windowMochaGreeted = true;
-                    addMessage(
-                        "bot",
-                        "Chào bạn, mình là Toco, bạn tên gì 💖"
-                    );
-                }
-            });
+        })
+        .catch(() => {
+            // Fallback nếu fetch lỗi
+            if (!windowMochaGreeted) {
+                windowMochaGreeted = true;
+                addMessage(
+                    "bot",
+                    "Chào bạn, mình là Toco, bạn tên gì 💖"
+                );
+            }
+        });
 
-    });
+    // }); <--- Đã xóa dấu đóng ngoặc } của loadHistory().then(() => {
 }
 
 
@@ -573,7 +572,6 @@ function addMessage(sender, msg, id = "") {
     box.scrollTop = box.scrollHeight;
 }
 
-/* ✉️ Gửi tin nhắn text */
 document.getElementById("chatbot-send").onclick = () => {
     let text = document.getElementById("chatbot-text").value.trim();
     if (text === "") return;
@@ -606,10 +604,18 @@ document.getElementById("chatbot-send").onclick = () => {
                 window.currentAudio.pause(); // Dừng câu trước đó nếu đang nói
             }
             window.currentAudio = new Audio("data:audio/mp3;base64," + data.audio);
-            window.currentAudio.play();
+            
+            // ⭐️ LOGIC THỐNG NHẤT: Bắt lỗi Autoplay và chuyển về IDLE
+            window.currentAudio.play()
+                .catch(e => {
+                    // Lỗi Autoplay bị chặn: Vẫn hiển thị Toco TALKING trong 3 giây rồi nghỉ
+                    console.error("Trình duyệt chặn phát tự động (Text):", e);
+                    // setTocoState('TALKING', emotion); // Đã set ở trên
+                    setTimeout(() => { setTocoState('IDLE'); }, 3000);
+                });
 
             window.currentAudio.onended = () => {
-                setTocoState('IDLE'); 
+                setTocoState('IDLE');
             };
         } else {
             // Nếu tắt tiếng hoặc không có audio, hiện hình cảm xúc trong 3 giây rồi nghỉ
@@ -655,22 +661,32 @@ function sendVoiceBase64(base64Audio) {
         
         addMessage("bot", data.reply || "⚠️ Không hiểu bạn nói gì");
         const emotion = (data.emotion || "CUTE").toUpperCase();
+        setTocoState(TOCO_STATES.TALKING, emotion); // Kích hoạt hình ảnh nói theo cảm xúc
+
         if (!isMuted && data.audio) {
             if (window.currentAudio) {
             window.currentAudio.pause(); // Dừng ngay câu đang nói dở
             window.currentAudio.currentTime = 0;
             }
             window.currentAudio = new Audio("data:audio/mp3;base64," + data.audio);
-            window.currentAudio.play().catch(e => console.log("Trình duyệt chặn phát tự động:", e));
+            
+            // ⭐️ LOGIC THỐNG NHẤT: Bắt lỗi Autoplay và chuyển về IDLE
+            window.currentAudio.play().catch(e => {
+                console.error("Trình duyệt chặn phát tự động (Voice):", e);
+                // Nếu bị chặn, tự động chuyển về IDLE sau 3 giây (giống gửi Text)
+                // setTocoState(TOCO_STATES.TALKING, emotion); // Đã set ở trên
+                setTimeout(() => { setTocoState(TOCO_STATES.IDLE); }, 3000);
+            });
 
             window.currentAudio.onended = () => {
                 setTocoState(TOCO_STATES.IDLE); // Trở về trạng thái nghỉ khi nói xong
-        };
+            };
         } else {
-            setTocoState(TOCO_STATES.TALKING, emotion);
+            // Nếu tắt tiếng hoặc không có audio, hiện hình cảm xúc trong 3 giây rồi nghỉ
+            // setTocoState(TOCO_STATES.TALKING, emotion); // Đã set ở trên
             setTimeout(() => { setTocoState(TOCO_STATES.IDLE); }, 3000);
         }
-    })  
+    })  
     .catch(err => {
         console.error(err);
         document.getElementById("typing-indicator").style.display = "none";
@@ -842,7 +858,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentPath = window.location.pathname.replace(/\/$/, ""); 
     const bgMusic = document.getElementById('bg-music');
     if (bgMusic) {
-        bgMusic.volume = 0.15; // Chỉnh âm lượng 50%
+        bgMusic.volume = 0.05; // Chỉnh âm lượng 50%
 
         const startMusic = () => {
             bgMusic.play().then(() => {
