@@ -29,6 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 FPT_API_KEY = os.getenv("FPT_API_KEY")
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 OPENAI_PROJECT_ID = "proj_E2wBJe2boLD1PQ0pCPchSSBJ"
 CORS_ALLOW_ALL_ORIGINS = True
 # SECURITY WARNING: don't run with debug turned on in production!
