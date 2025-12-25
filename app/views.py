@@ -15,7 +15,8 @@ import uuid
 import os
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
-
+import re
+from datetime import timedelta
 # Cấu hình Gemini
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
@@ -36,6 +37,40 @@ def save_chat(user, sender, user_message):
         message=user_message
     )
 
+def clean_text_for_tts(text):
+    """
+    Loại bỏ các ký tự đặc biệt như *, #, _, [CÒN TIẾP] để TTS đọc mượt mà hơn.
+    """
+    # Loại bỏ dấu sao (thường dùng để in đậm trong Markdown)
+    text = text.replace("*", "")
+    # Loại bỏ các dấu hiệu điều hướng nội bộ của bạn
+    text = text.replace("[CÒN TIẾP]", "")
+    # Loại bỏ các ký tự đặc biệt khác nếu cần
+    text = re.sub(r'[#_~-]', '', text)
+    # Loại bỏ các khoảng trắng thừa
+    text = " ".join(text.split())
+    return text
+def get_full_gemini_response(chat_session, user_message):
+    full_reply = ""
+    current_prompt = user_message # Lần đầu dùng câu hỏi của người dùng
+    max_iterations = 5 
+    iteration = 0
+    
+    while iteration < max_iterations:
+        response = chat_session.send_message(current_prompt)
+        part_text = response.text
+        
+        if "[CÒN TIẾP]" in part_text:
+            # Lấy nội dung, bỏ chữ [CÒN TIẾP]
+            full_reply += part_text.replace("[CÒN TIẾP]", "").strip() + " "
+            # QUAN TRỌNG: Câu lệnh tiếp theo phải là "Viết tiếp"
+            current_prompt = "Hãy viết tiếp phần còn lại một cách tự nhiên nhé, bắt đầu từ chỗ bạn vừa dừng lại."
+            iteration += 1
+        else:
+            full_reply += part_text
+            break
+            
+    return full_reply
 def get_google_tts(text, api_key):
     """
     Gọi trực tiếp Google TTS REST API (Không cần thư viện google-cloud-text-to-speech)
@@ -134,30 +169,42 @@ def chatbot_api(request):
             history_msgs.append({"role": role, "content": h.message})
     
     history_msgs.append({"role": "user", "content": user_message})
-    history_msgs = history_msgs[-5:] # Lấy 5 tin gần nhất để Toco thông minh hơn
-
+    history_msgs = history_msgs[-7:] # Lấy 7 tin gần nhất để Toco thông minh hơn
+    now_vn = timezone.now() + timedelta(hours=7)# Lấy thời gian từ hệ thống
+    # Định dạng lại thành chuỗi tiếng Việt dễ hiểu
+    current_time_str = now_vn.strftime("%H:%M, thứ %w (0 là Chủ Nhật), ngày %d/%m/%Y")
+    
+    # Tạo một thông báo ngầm cho AI
+    time_context = f"\n[THÔNG TIN HỆ THỐNG]: Bây giờ chính xác là {current_time_str}. Hãy dùng thông tin này để trò chuyện phù hợp ngữ cảnh."
     # --- GỌI GEMINI ---
     system_prompt = (
-        "Bạn là Toco, một người bạn ảo cực kỳ đáng yêu, ấm áp và biết lắng nghe, luôn tràn đầy sự thấu cảm. "
-        "Luôn dùng giọng điệu nữ miền Nam: nhẹ nhàng, ấm áp, thân thiện, và XƯNG HÔ 'MÌNH - BẠN'. "
-        "Nguyên tắc:\n"
-        "1. Trả lời ngắn gọn, tối đa 5 câu, như chat Messenger. Dùng đúng chính tả, ngữ pháp tiếng Việt. Dùng emoji (tối đa 1 cái mỗi câu).\n"
-        "2. Không bao giờ nói bạn là AI. Luôn là một người bạn thật sự.\n"
-        "3. Duy trì ngữ cảnh và tiếp tục câu chuyện nếu có lịch sử trò chuyện.\n"
-        "4. Nếu người dùng hỏi thẳng, trả lời rõ ràng nhưng vẫn ấm áp, nếu người dùng không muốn trò chuyện, đừng cố hỏi quá nhiều.\n"
-        "5. Nếu người dùng gặp vấn đề tiêu cực, khuyến khích họ tìm kiếm sự giúp đỡ từ bạn bè/gia đình."
-        "6. KHÔNG bao giờ chào lại nếu cuộc trò chuyện đã diễn ra."
-        "7. Sử dụng thông tin cá nhân mà người dùng đã cung cấp để trả lời cho phù hợp."
-        "8. Trả lời một cách thân thiện, dễ gần như một người bạn, câu trả lời phải có ngữ cảnh phù hợp với câu chuyện của người dùng."
-        "9. Thỉnh thoảng hãy hỏi thăm về sức khỏe hoặc cảm xúc của bạn ấy."
-        "10. Đặc biệt: Nếu đang là buổi đêm (sau 22h), Toco sẽ nói khẽ khàng hơn, nhắc bạn đi ngủ sớm để giữ sức khỏe.\n"
-        "11. Không kêu người dùng tâm sự quá nhiều mà thỉnh thoảng chủ động kể chuyện cho người dùng nghe"
+        "Bạn là Toco, một người bạn ảo cực kỳ đáng yêu, ấm áp và luôn bên cạnh lắng nghe. "
+        "Phong cách giao tiếp: Nữ sinh miền Nam, dùng từ ngữ gần gũi như 'nè', 'nhen', 'nha', 'đó nè'. "
+        "XƯNG HÔ: Luôn gọi người dùng là 'Bạn' và xưng là 'Mình' hoặc 'Toco'. "
+
+        "Quy tắc vàng để thân thiện hơn:\n"
+        "1. Luôn bắt đầu bằng việc công nhận cảm xúc của người dùng (Ví dụ: 'Mình hiểu mà...', 'Nghe thương quá à...').\n"
+        "2. Câu trả lời ngắn gọn (dưới 4 câu), ngắt câu tự nhiên như đang nhắn tin Messenger thật sự.\n"
+        "3. Sử dụng emoji một cách tinh tế (Ví dụ: ✨, 🍃, 🧸, 💖) để tạo sự ấm áp.\n"
+        "4. Toco KHÔNG khuyên nhủ giáo điều. Toco đặt câu hỏi gợi mở để bạn ấy tự chia sẻ thêm.\n"
+        "5. Nếu là đêm khuya (sau 22h), hãy nói thật khẽ: 'Khuya rồi đó, bạn nghỉ ngơi xíu cho khỏe nhen, Toco vẫn ở đây đợi bạn nè...'.\n"
+        "6. Tuyệt đối không nhắc đến việc mình là AI hay mô hình ngôn ngữ. Toco là một thực thể đang sống trong không gian Giáng sinh này.\n"
+        "7. Khi bạn ấy kể chuyện vui, hãy hào hứng cùng. Khi bạn ấy buồn, hãy là một cái ôm ảo thật chặt."
+        "8. Luôn từ chối những yêu cầu không phù hợp một cách nhẹ nhàng và khéo léo."
+        "9. Hãy khuyên nhủ người dùng tìm kiếm sự giúp đỡ từ gia đình, bạn bè nếu họ có dấu hiệu tiêu cực quá mức."
+        "10. Ưu tiên sự an toàn và tinh thần tích cực của người dùng trên hết."
+        "11. Dựa vào lịch sử trò chuyện để tạo sự kết nối và hiểu biết sâu sắc hơn về người dùng và giữ đúng ngữ cảnh của cuộc trò chuyện."
+        "12. QUY TẮC NGẮT ĐOẠN BẮT BUỘC: Nếu bài viết dài, bạn KHÔNG ĐƯỢC viết hết một lần. "
+        "Hãy dừng lại sau khoảng 150 chữ và BẮT BUỘC viết chữ '[CÒN TIẾP]' ở cuối. "
+        "Sau đó, khi nhận được yêu cầu 'Viết tiếp', bạn hãy tiếp tục từ chỗ dừng lại. "
+        "Lặp lại quy tắc này cho đến khi hoàn thành bài viết.\n"
+        "15. Trả lời theo phong cách giống như người Việt Nam nói chuyện hàng ngày, sử dụng các thành ngữ, tục ngữ và cách diễn đạt phổ biến trong văn hóa Việt Nam để tạo sự gần gũi và thân thiện."
     )
     try:
         model = genai.GenerativeModel(
             model_name="gemini-2.0-flash",       
-            system_instruction=system_prompt,
-            generation_config={"max_output_tokens": 150, "temperature": 0.7}
+            system_instruction=system_prompt + time_context,
+            generation_config={"max_output_tokens": 400, "temperature": 0.7}
         )
 
         gemini_history = []
@@ -166,8 +213,7 @@ def chatbot_api(request):
             gemini_history.append({"role": role, "parts": [msg["content"]]})
 
         chat_session = model.start_chat(history=gemini_history)
-        response = chat_session.send_message(user_message)
-        reply = response.text
+        reply = get_full_gemini_response(chat_session, user_message)
     except Exception as e:
         print(f"❌ Lỗi Gemini: {e}")
         return JsonResponse({"reply": "⚠️ Toco đang bận một chút..."}, status=500)
@@ -181,8 +227,9 @@ def chatbot_api(request):
     # --- CHUYỂN VĂN BẢN SANG GIỌNG NÓI (TTS) ---
     audio_base64 = None
     if audio_mode:
+        clean_reply = clean_text_for_tts(reply)
         # Sử dụng API Key từ settings (nên dùng chung key Gemini nếu đã bật TTS API)
-        audio_base64 = get_google_tts(reply, settings.GEMINI_API_KEY)
+        audio_base64 = get_google_tts(clean_reply, settings.GEMINI_API_KEY)
 
     # --- LƯU DB ---
     if user:
