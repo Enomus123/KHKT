@@ -199,6 +199,8 @@ def chatbot_api(request):
         "Sau đó, khi nhận được yêu cầu 'Viết tiếp', bạn hãy tiếp tục từ chỗ dừng lại. "
         "Lặp lại quy tắc này cho đến khi hoàn thành bài viết.\n"
         "15. Trả lời theo phong cách giống như người Việt Nam nói chuyện hàng ngày, sử dụng các thành ngữ, tục ngữ và cách diễn đạt phổ biến trong văn hóa Việt Nam để tạo sự gần gũi và thân thiện."
+        "16. Có câu trả lời phù hợp tùy vào ngữ cảnh và tính cách của người dùng."
+        "17. Dựa vào các phân tích cảm xúc trước đó để điều chỉnh cách trả lời sao cho phù hợp với tâm trạng hiện tại của người dùng."
     )
     try:
         model = genai.GenerativeModel(
@@ -296,3 +298,66 @@ def history(request):
 def check_first_chat(request):
     if not request.user.is_authenticated: return JsonResponse({"first_time": True})
     return JsonResponse({"first_time": not ChatHistory.objects.filter(user=request.user).exists()})
+@login_required
+def mood_analysis(request):
+    # Lấy 20 tin nhắn mới nhất
+    recent_history = ChatHistory.objects.filter(user=request.user, sender="user").order_by("-timestamp")[:20]
+    
+    if not recent_history:
+        return JsonResponse({
+            "mood_label": "Khởi đầu", 
+            "score": 50, 
+            "summary": "Chưa có dữ liệu hội thoại.", 
+            "advice": "Hãy trò chuyện cùng Toco nhé!",
+            "trend": "stable"
+        })
+
+    # ĐẢO NGƯỢC danh sách để AI đọc đúng từ quá khứ đến hiện tại
+    history_correct_order = reversed(recent_history)
+    user_texts = [h.message for h in history_correct_order]
+    
+    # Dùng dấu mũi tên để AI hiểu rõ chiều thời gian của cảm xúc
+    context_text = " -> ".join(user_texts)
+
+    prompt = f"""
+    Bạn là chuyên gia tâm lý AI Toco. Hãy phân tích dòng cảm xúc này (từ trái sang phải): '{context_text}'
+    
+    Nhiệm vụ:
+    1. So sánh sắc thái tin nhắn bên phải (mới nhất) với các tin nhắn trước đó (bên trái).
+    2. Xác định trend: 
+       - "up": Nếu người dùng đang vui lên hoặc bình tĩnh lại.
+       - "down": Nếu người dùng đang buồn đi, căng thẳng hơn hoặc có ý định tiêu cực.
+       - "stable": Nếu tâm trạng không thay đổi đáng kể.
+    3. Phân loại mức độ hiện tại vào 1 trong 5 nhóm: RẤT TIÊU CỰC, TIÊU CỰC, BÌNH THƯỜNG, VUI TƯƠI, RẤT TÍCH CỰC.
+
+    Yêu cầu trả về JSON duy nhất, KHÔNG DÙNG DẤU NGOẶC KÉP TRONG CÂU MÔ TẢ:
+    {{
+        "mood_label": "Tên mức độ",
+        "score": (số từ 1-100 tương ứng mức độ),
+        "summary": "Phân tích sự thay đổi tâm trạng dựa trên các từ ngữ cụ thể",
+        "advice": "Lời khuyên ấm áp (Nếu Rất tiêu cực: yêu cầu gọi 1900... ngay)",
+        "alert": (true nếu Rất tiêu cực, false nếu còn lại),
+        "trend": "up/down/stable"
+    }}
+    """
+    
+    try:
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        response = model.generate_content(prompt)
+        
+        # Trích xuất JSON an toàn bằng Regex và làm sạch ký tự xuống dòng
+        match = re.search(r'\{.*\}', response.text, re.DOTALL)
+        if match:
+            clean_json = match.group().replace('\n', ' ').replace('\r', '')
+            data = json.loads(clean_json)
+            return JsonResponse(data)
+    except Exception as e:
+        print(f"Lỗi Mood Analysis: {e}")
+        
+    return JsonResponse({
+        "mood_label": "Bình thường", 
+        "score": 50, 
+        "trend": "stable", 
+        "summary": "Toco vẫn đang cảm nhận năng lượng từ bạn.", 
+        "advice": "Mọi chuyện rồi sẽ ổn thôi!"
+    })

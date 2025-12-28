@@ -10,4 +10,5 @@ urlpatterns = [
     path("chat-history/", views.chat_history, name="chat_history"),
     path("history/", views.history, name="history"),
     path("check-first-chat/", views.check_first_chat, name="check_first_chat"),
+    path("mood-analysis/", views.mood_analysis, name="mood_analysis"),
 ]

@@ -370,6 +370,23 @@ body {
     0%, 100% { transform: translateX(0); }
     50% { transform: translateX(80px); }
 }
+.nav-link[href*="history"] {
+    color: #ffeb3b !important; /* Màu vàng rực rỡ */
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 5px 15px !important;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 235, 59, 0.3);
+}
+
+.nav-link[href*="history"]:hover {
+    background: rgba(255, 235, 59, 0.2);
+    box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+    transform: translateY(-2px);
+}
 </style>
 <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
 
@@ -432,7 +449,7 @@ body {
               <span class="fw-semibold me-3" style="color: #ffffff;">👋 Chào, {{ user.username }}</span>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="/history/">Lịch sử trò chuyện</a>
+              <a class="nav-link text-white" href="/history/">Nhật ký trò chuyện</a>
             </li>
             <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
               <a class="btn btn-sm btn-outline-light" href="{% url 'logout' %}" style="border-radius: 20px;">Đăng xuất</a>
