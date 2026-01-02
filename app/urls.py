@@ -11,5 +11,4 @@ urlpatterns = [
     path("history/", views.history, name="history"),
     path("check-first-chat/", views.check_first_chat, name="check_first_chat"),
     path("mood-analysis/", views.mood_analysis, name="mood_analysis"),
-    path('kich-hoat-admin-vip/', views.tạo_admin_nhanh),
 ]
