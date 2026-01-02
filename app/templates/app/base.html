@@ -390,6 +390,21 @@ body {
 </style>
 <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
 
+<link rel="manifest" href="{% static 'app/manifest.json' %}">
+<meta name="theme-color" content="#d42426">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<script>
+  // Đăng ký Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/static/app/serviceworker.js')
+        .then(reg => console.log('Service Worker đã sẵn sàng!', reg))
+        .catch(err => console.log('Lỗi Service Worker:', err));
+    });
+  }
+</script>
+
 </head>
 <body>
 <audio id="bg-music" loop preload="auto">

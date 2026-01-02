@@ -1,0 +1,21 @@
+{
+  "name": "Toco - Người bạn đồng hành",
+  "short_name": "Toco",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a472a",
+  "theme_color": "#d42426",
+  "description": "Chatbot AI hỗ trợ tâm lý dựa trên Gemini API",
+  "icons": [
+    {
+      "src": "/static/app/images/toco_idle.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/app/images/toco_idle.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
