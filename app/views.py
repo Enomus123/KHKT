@@ -361,3 +361,17 @@ def mood_analysis(request):
         "summary": "Toco vẫn đang cảm nhận năng lượng từ bạn.", 
         "advice": "Mọi chuyện rồi sẽ ổn thôi!"
     })
+# Thêm các import này nếu chưa có ở đầu file
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+
+def tạo_admin_nhanh(request):
+    # Bạn có thể đổi '#EnomusadminToco0913' và 'PassCuaBan123' theo ý muốn
+    tên_dang_nhap = '#EnomusadminToco0913'
+    mat_khau = 'Tocomanifestgiaitinhkhkt20252026'
+    
+    if not User.objects.filter(username=tên_dang_nhap).exists():
+        User.objects.create_superuser(tên_dang_nhap, 'admin@example.com', mat_khau)
+        return HttpResponse(f"✅ Thành công! Tài khoản '{tên_dang_nhap}' đã sẵn sàng.")
+    else:
+        return HttpResponse("⚠️ Tài khoản này đã tồn tại rồi.")
