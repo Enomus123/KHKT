@@ -163,5 +163,5 @@ EMAIL_USE_TLS = False           # Tắt TLS
 EMAIL_USE_SSL = True            # Bật SSL
 EMAIL_TIMEOUT = 10              # Giới hạn 10s để không làm sập server
 
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
