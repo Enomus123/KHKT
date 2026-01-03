@@ -3,66 +3,14 @@
 
 {% block content %}
 <style>
-  /* Container chính bo góc đồng bộ Noel */
-  .register-card {
-    border-radius: 25px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-
-  /* Ép các ô input Django về style đồng nhất */
-  .custom-input-group input {
-    border-radius: 25px !important;
-    padding: 10px 45px 10px 20px !important; /* Padding phải rộng để tránh nút mắt */
-    border: 1px solid #ced4da !important;
-    width: 100%;
-    height: 45px;
-  }
-
-  /* Khung chứa nút mắt */
-  .input-wrapper {
-    position: relative;
-    width: 100%;
-  }
-
-  /* Nút mắt nằm chuẩn bên trong ô input */
-  .toggle-password {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%); /* Căn giữa hoàn hảo theo chiều dọc */
-    cursor: pointer;
-    z-index: 10;
-    font-size: 1.1rem;
-    opacity: 0.5;
-  }
-
-  /* Nhãn nhãn label kiểu đơn giản, không bị lệch */
-  .field-label {
-    color: #1a472a;
-    font-weight: bold;
-    font-size: 0.9rem;
-    margin-bottom: 5px;
-    margin-left: 10px;
-    display: block;
-  }
-
-  /* Nút đăng ký xanh dương giống mẫu của bạn */
-  .btn-custom-blue {
-    background-color: #007bff;
-    color: white;
-    border-radius: 25px;
-    padding: 10px;
-    font-weight: bold;
-    border: none;
-    width: 100%;
-    transition: 0.3s;
-  }
-
-  .btn-custom-blue:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-  }
+  .register-card { border-radius: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; }
+  .custom-input-group input { border-radius: 25px !important; padding: 10px 45px 10px 20px !important; border: 1px solid #ced4da !important; width: 100%; height: 45px; }
+  .input-wrapper { position: relative; width: 100%; }
+  .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10; font-size: 1.1rem; opacity: 0.5; }
+  .field-label { color: #1a472a; font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; margin-left: 10px; display: block; }
+  .btn-custom-blue { background-color: #007bff; color: white; border-radius: 25px; padding: 10px; font-weight: bold; border: none; width: 100%; transition: 0.3s; }
+  /* Màu đỏ cho dấu sao bắt buộc */
+  .required-star { color: #d42426; margin-left: 3px; }
 </style>
 
 <section class="vh-100" style="background-color: #eee; padding-top: 20px;">
@@ -76,21 +24,31 @@
               <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1 custom-input-group">
                 <p class="text-center h1 fw-bold mb-4 mt-2">Tạo tài khoản</p>
 
-                <form method="POST">
+                {% if messages %}
+                  {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show text-center shadow-sm" role="alert" style="border-radius: 15px; font-size: 0.9rem;">
+                      <strong>Thông báo:</strong> {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+
+                <form method="POST" id="registerForm">
                   {% csrf_token %}
 
                   <div class="mb-3">
-                    <label class="field-label">Tên đăng nhập</label>
+                    <label class="field-label">Tên đăng nhập<span class="required-star">*</span></label>
                     {{ form.username }}
                   </div>
 
                   <div class="mb-3">
-                    <label class="field-label">Email của bạn</label>
+                    <label class="field-label">Email của bạn<span class="required-star">*</span></label>
                     {{ form.email }}
+                    <small class="text-muted ms-2" style="font-size: 0.75rem;">(Dùng để khôi phục mật khẩu khi cần)</small>
                   </div>
 
                   <div class="mb-3">
-                    <label class="field-label">Mật khẩu</label>
+                    <label class="field-label">Mật khẩu<span class="required-star">*</span></label>
                     <div class="input-wrapper">
                       {{ form.password1 }}
                       <span class="toggle-password" onclick="togglePass('input[name=\'password1\']', this)">👁️</span>
@@ -98,7 +56,7 @@
                   </div>
 
                   <div class="mb-4">
-                    <label class="field-label">Nhập lại mật khẩu</label>
+                    <label class="field-label">Nhập lại mật khẩu<span class="required-star">*</span></label>
                     <div class="input-wrapper">
                       {{ form.password2 }}
                       <span class="toggle-password" onclick="togglePass('input[name=\'password2\']', this)">👁️</span>
@@ -126,4 +84,13 @@
   </div>
 </section>
 
+<script>
+  // Ép buộc thuộc tính required cho email bằng Javascript để chắc chắn
+  document.addEventListener("DOMContentLoaded", function() {
+    const emailInput = document.querySelector('input[name="email"]');
+    if (emailInput) {
+      emailInput.setAttribute('required', 'true');
+    }
+  });
+</script>
 {% endblock content %}

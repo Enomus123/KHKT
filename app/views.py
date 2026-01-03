@@ -271,26 +271,24 @@ def login_view(request):
             return redirect('home')
         messages.error(request, "Sai tài khoản hoặc mật khẩu!")
     return render(request, "app/login.html")
-
 def register(request):
     form = CreateUserForm()
+    
     if request.method == "POST":
         form = CreateUserForm(request.POST)
+        # Lấy email và xóa khoảng trắng thừa
+        email = request.POST.get('email', '').strip()
+        if not email:
+            messages.error(request, "Vui lòng nhập Email. Đây là thông tin bắt buộc!")
+            return render(request, 'app/register.html', {'form': form})
         if form.is_valid():
             form.save()
-            messages.success(request, "Tạo tài khoản thành công!")
+            messages.success(request, "Tạo tài khoản thành công! Đăng nhập ngay nhé. 🎄")
             return redirect('login')
         else:
-            errors = {
-                "A user with that username already exists.": "Tên đăng nhập này đã tồn tại.",
-                "The two password fields didn’t match.": "Mật khẩu không khớp.",
-                "Enter a valid email address.": "Email không hợp lệ.",
-                "This field is required.": "Vui lòng điền đầy đủ thông tin.",
-                "Enter a valid username. This value may contain only letters, numbers, and @/./+/-/_ characters.": "Tên đăng nhập chỉ được chứa chữ cái, số và các ký tự @/./+/-/_ thôi nha.",
-            }
             for field, errs in form.errors.items():
                 for e in errs:
-                    messages.error(request, f"Lỗi: {errors.get(str(e), str(e))}")
+                    messages.error(request, e)
     return render(request, "app/register.html", {"form": form})
 
 @login_required
