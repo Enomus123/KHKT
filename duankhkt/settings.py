@@ -154,9 +154,18 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login'
+# settings.py
+
+# Cấu hình Email chuẩn cho Gmail
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_SSL = False  # TLS và SSL không được cùng là True
+
+# Quan trọng: Sử dụng biến môi trường để bảo mật
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+# Thiết lập thời gian chờ để tránh treo Server (Khắc phục lỗi Timeout trong Log)
+EMAIL_TIMEOUT = 10  # Nếu sau 10 giây không kết nối được thì báo lỗi luôn, không chờ đến lúc sập server
