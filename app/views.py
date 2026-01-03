@@ -283,7 +283,10 @@ def register(request):
         else:
             errors = {
                 "A user with that username already exists.": "Tên đăng nhập này đã tồn tại.",
-                "The two password fields didn’t match.": "Mật khẩu không khớp."
+                "The two password fields didn’t match.": "Mật khẩu không khớp.",
+                "Enter a valid email address.": "Email không hợp lệ.",
+                "This field is required.": "Vui lòng điền đầy đủ thông tin.",
+                "Enter a valid username. This value may contain only letters, numbers, and @/./+/-/_ characters.": "Tên đăng nhập chỉ được chứa chữ cái, số và các ký tự @/./+/-/_ thôi nha.",
             }
             for field, errs in form.errors.items():
                 for e in errs:

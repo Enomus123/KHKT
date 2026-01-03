@@ -387,6 +387,15 @@ body {
     box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
     transform: translateY(-2px);
 }
+.form-control {
+    border-radius: 25px; /* Giữ bo góc như cũ */
+    height: 45px; /* Tăng độ cao một chút để dễ chạm trên điện thoại */
+}
+
+/* Ẩn nút xem mật khẩu mặc định của trình duyệt Edge/Chrome để tránh bị chồng */
+input::-ms-reveal, input::-ms-clear {
+    display: none;
+}
 </style>
 <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
 
@@ -915,7 +924,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+function togglePass(selector, btn) {
+    const input = document.querySelector(selector);
+    if (input.type === "password") {
+        input.type = "text";
+        btn.textContent = "🙈"; // Đổi icon khi hiện mật khẩu
+    } else {
+        input.type = "password";
+        btn.textContent = "👁️"; // Đổi icon khi ẩn mật khẩu
+    }
+}
 </script>
-
 </body>
 </html>

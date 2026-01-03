@@ -1,73 +1,123 @@
 {% extends "app/base.html" %}
 {% load static %}
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        {% block content %}
-<section class="vh-100" style="background-color: #eee;">
-  <div class="container h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
+
+{% block content %}
+<style>
+  /* Container chính bo góc đồng bộ Noel */
+  .register-card {
+    border-radius: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  /* Ép các ô input Django về style đồng nhất */
+  .custom-input-group input {
+    border-radius: 25px !important;
+    padding: 10px 45px 10px 20px !important; /* Padding phải rộng để tránh nút mắt */
+    border: 1px solid #ced4da !important;
+    width: 100%;
+    height: 45px;
+  }
+
+  /* Khung chứa nút mắt */
+  .input-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  /* Nút mắt nằm chuẩn bên trong ô input */
+  .toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%); /* Căn giữa hoàn hảo theo chiều dọc */
+    cursor: pointer;
+    z-index: 10;
+    font-size: 1.1rem;
+    opacity: 0.5;
+  }
+
+  /* Nhãn nhãn label kiểu đơn giản, không bị lệch */
+  .field-label {
+    color: #1a472a;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    display: block;
+  }
+
+  /* Nút đăng ký xanh dương giống mẫu của bạn */
+  .btn-custom-blue {
+    background-color: #007bff;
+    color: white;
+    border-radius: 25px;
+    padding: 10px;
+    font-weight: bold;
+    border: none;
+    width: 100%;
+    transition: 0.3s;
+  }
+
+  .btn-custom-blue:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+</style>
+
+<section class="vh-100" style="background-color: #eee; padding-top: 20px;">
+  <div class="container">
+    <div class="row d-flex justify-content-center align-items-center">
       <div class="col-lg-12 col-xl-11">
-        <div class="card text-black" style="border-radius: 25px;">
+        <div class="card text-black register-card">
           <div class="card-body p-md-5">
             <div class="row justify-content-center">
-              <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+              
+              <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1 custom-input-group">
+                <p class="text-center h1 fw-bold mb-4 mt-2">Tạo tài khoản</p>
 
-                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Đăng ký</p>
-                {% if messages %}
-                  {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} text-center" role="alert">
-                      {{ message }}
-                    </div>
-                  {% endfor %}
-                {% endif %}
-                <form class="mx-1 mx-md-4" method='POST' action = ''>
-                    {% csrf_token %}
+                <form method="POST">
+                  {% csrf_token %}
 
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      {{form.username}}
-                      <label class="form-label" for="form3Example1c">Tên đăng nhập</label>
-                    </div>
+                  <div class="mb-3">
+                    <label class="field-label">Tên đăng nhập</label>
+                    {{ form.username }}
                   </div>
 
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      {{form.password1}}
-                      <label class="form-label" for="form3Example4c">Mật khẩu</label>
+                  <div class="mb-3">
+                    <label class="field-label">Email của bạn</label>
+                    {{ form.email }}
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="field-label">Mật khẩu</label>
+                    <div class="input-wrapper">
+                      {{ form.password1 }}
+                      <span class="toggle-password" onclick="togglePass('input[name=\'password1\']', this)">👁️</span>
                     </div>
                   </div>
 
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-key fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      {{form.password2}}
-                      <label class="form-label" for="form3Example4cd">Nhập lại mật khẩu</label>
+                  <div class="mb-4">
+                    <label class="field-label">Nhập lại mật khẩu</label>
+                    <div class="input-wrapper">
+                      {{ form.password2 }}
+                      <span class="toggle-password" onclick="togglePass('input[name=\'password2\']', this)">👁️</span>
                     </div>
                   </div>
-                  <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                    <button  type="submit" class="btn btn-primary btn-lg">Đăng ký</button>
-                  </div>
 
-                  <p class="text-center h6 fw-bold mb-5 mx-1 mx-md-4 mt-4">Đã có tài khoản? <a href= {% url "login" %} >Đăng nhập</a></p>
+                  <button type="submit" class="btn-custom-blue shadow-sm">Đăng ký ngay</button>
+                  
+                  <p class="text-center mt-3">
+                    <small class="fw-bold">Đã có tài khoản? <a href="{% url 'login' %}" style="text-decoration: none;">Đăng nhập ngay</a></small>
+                  </p>
                 </form>
-
               </div>
+
               <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-
                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
-                  class="img-fluid" alt="Sample image">
-
+                  class="img-fluid" alt="Sample image" style="max-height: 400px;">
               </div>
+
             </div>
           </div>
         </div>
@@ -75,7 +125,5 @@
     </div>
   </div>
 </section>
-        <script src="" async defer></script>
-        {% endblock content %}
-    </body>
-</html>
+
+{% endblock content %}
