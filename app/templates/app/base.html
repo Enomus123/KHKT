@@ -752,6 +752,11 @@ async function getSupportedMime() {
     return "audio/webm"; // fallback
 }
 
+/* Thêm các biến quản lý im lặng vào bộ biến toàn cục */
+let audioContext = null;
+let analyser = null;
+let silenceTimer = null;
+
 document.getElementById("voice-btn").onclick = async () => {
     try {
         if (!recorder) {
@@ -767,6 +772,13 @@ document.getElementById("voice-btn").onclick = async () => {
             recorder.onstop = () => {
                 const blob = new Blob(chunks, { type: recorder.mimeType });
                 chunks = [];
+
+                // Dọn dẹp AudioContext khi dừng
+                if (audioContext) {
+                    audioContext.close();
+                    audioContext = null;
+                }
+                clearTimeout(silenceTimer);
 
                 if (blob.size < 2000) {
                     addMessage("bot", "⚠️ Không thu được âm thanh, bạn thử lại nha.");
@@ -786,14 +798,51 @@ document.getElementById("voice-btn").onclick = async () => {
             chunks = [];
             recorder.start();
 
-        setTimeout(() => {
-            if (recorder.state === "recording") {
-                recorder.stop();
-                document.getElementById("voice-btn").style.background = "#dc3545";
-                document.getElementById("voice-btn").innerText = "🎤";
-        }
-        }, 15000);
+            // --- BẮT ĐẦU LOGIC THEO DÕI ÂM THANH ---
+            const stream = recorder.stream;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            const source = audioContext.createMediaStreamSource(stream);
+            source.connect(analyser);
+            analyser.fftSize = 256;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
 
+            const checkSilence = () => {
+                if (recorder.state !== "recording") return;
+
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Tính âm lượng trung bình
+                let sum = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    sum += dataArray[i];
+                }
+                let average = sum / bufferLength;
+
+                // Nếu âm lượng cực thấp (dưới ngưỡng im lặng)
+                if (average < 10) { // Ngưỡng 10 có thể điều chỉnh tùy môi trường
+                    if (!silenceTimer) {
+                        silenceTimer = setTimeout(() => {
+                            if (recorder.state === "recording") {
+                                console.log("Im lặng 2s, tự động dừng...");
+                                recorder.stop();
+                                document.getElementById("voice-btn").style.background = "#dc3545";
+                                document.getElementById("voice-btn").innerText = "🎤";
+                            }
+                        }, 2000); // 2 giây im lặng
+                    }
+                } else {
+                    // Nếu có tiếng động lại thì reset timer
+                    clearTimeout(silenceTimer);
+                    silenceTimer = null;
+                }
+
+                requestAnimationFrame(checkSilence);
+            };
+
+            checkSilence();
+            // --- KẾT THÚC LOGIC THEO DÕI ---
 
             document.getElementById("voice-btn").style.background = "green";
             document.getElementById("voice-btn").innerText = "⏺️";

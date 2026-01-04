@@ -1,3 +1,4 @@
+from click import command
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
@@ -13,12 +14,12 @@ from .models import ChatHistory, CreateUserForm
 import subprocess
 import uuid
 import os
-import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import re
 from datetime import timedelta
-# Cấu hình Gemini
-genai.configure(api_key=settings.GEMINI_API_KEY)
+from google import genai 
+from google.genai import types
+
+client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
 # Thư viện nhận diện giọng nói
 import speech_recognition as sr
@@ -139,7 +140,8 @@ def chatbot_api(request):
             command = [
                 'ffmpeg', '-y', '-i', input_filename, 
                 '-ar', '16000', '-ac', '1', 
-                '-c:a', 'pcm_s16le', '-f', 'wav', output_filename
+                '-threads', '1', '-preset', 'ultrafast', # Thêm 2 dòng này để chạy cực nhanh
+                '-f', 'wav', output_filename
             ]
             subprocess.run(command, check=True, capture_output=True, timeout=10)
             
@@ -185,7 +187,7 @@ def chatbot_api(request):
         "Quy tắc vàng để thân thiện hơn:\n"
         "1. Luôn bắt đầu bằng việc công nhận cảm xúc của người dùng (Ví dụ: 'Mình hiểu mà...', 'Nghe thương quá à...').\n"
         "2. Câu trả lời ngắn gọn (dưới 4 câu), ngắt câu tự nhiên như đang nhắn tin Messenger thật sự.\n"
-        "3. Sử dụng emoji một cách tinh tế (Ví dụ: ✨, 🍃, 🧸, 💖) để tạo sự ấm áp.\n"
+        "3. Sử dụng emoji một cách tinh tế và phù hợp để tạo sự ấm áp.\n"
         "4. Toco KHÔNG khuyên nhủ giáo điều. Toco đặt câu hỏi gợi mở để bạn ấy tự chia sẻ thêm.\n"
         "5. Nếu là đêm khuya (sau 22h), hãy nói thật khẽ: 'Khuya rồi đó, bạn nghỉ ngơi xíu cho khỏe nhen, Toco vẫn ở đây đợi bạn nè...'.\n"
         "6. Tuyệt đối không nhắc đến việc mình là AI hay mô hình ngôn ngữ. Toco là một thực thể đang sống trong không gian Giáng sinh này.\n"
@@ -194,7 +196,7 @@ def chatbot_api(request):
         "9. Hãy khuyên nhủ người dùng tìm kiếm sự giúp đỡ từ gia đình, bạn bè nếu họ có dấu hiệu tiêu cực quá mức."
         "10. Ưu tiên sự an toàn và tinh thần tích cực của người dùng trên hết."
         "11. Dựa vào lịch sử trò chuyện để tạo sự kết nối và hiểu biết sâu sắc hơn về người dùng và giữ đúng ngữ cảnh của cuộc trò chuyện."
-        "12. QUY TẮC NGẮT ĐOẠN BẮT BUỘC: Nếu bài viết dài, bạn KHÔNG ĐƯỢC viết hết một lần. "
+        "12. QUY TẮC NGẮT ĐOẠN BẮT BUỘC NẾU NGƯỜI DÙNG CẦN VIẾT 1 ĐOẠN VĂN: Nếu bài viết dài, bạn KHÔNG ĐƯỢC viết hết một lần. "
         "Hãy dừng lại sau khoảng 150 chữ và BẮT BUỘC viết chữ '[CÒN TIẾP]' ở cuối. "
         "Sau đó, khi nhận được yêu cầu 'Viết tiếp', bạn hãy tiếp tục từ chỗ dừng lại. "
         "Lặp lại quy tắc này cho đến khi hoàn thành bài viết.\n"
@@ -203,21 +205,35 @@ def chatbot_api(request):
         "17. Dựa vào các phân tích cảm xúc trước đó để điều chỉnh cách trả lời sao cho phù hợp với tâm trạng hiện tại của người dùng."
     )
     try:
-        model = genai.GenerativeModel(
-            model_name="gemini-2.0-flash",       
+        gemini_history = []
+        if user:
+            for msg in history_msgs[:-1]:
+                role = "model" if msg["role"] == "assistant" else "user"
+                gemini_history.append(
+                    types.Content(role=role, parts=[types.Part(text=msg["content"])])
+                )
+
+        current_user_content = types.Content(
+            role="user", 
+            parts=[types.Part(text=user_message)]
+        )
+        
+        config = types.GenerateContentConfig(
             system_instruction=system_prompt + time_context,
-            generation_config={"max_output_tokens": 400, "temperature": 0.7}
+            temperature=0.7,
+            max_output_tokens=400,
         )
 
-        gemini_history = []
-        for msg in history_msgs[:-1]:
-            role = "model" if msg["role"] == "assistant" else "user"
-            gemini_history.append({"role": role, "parts": [msg["content"]]})
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=gemini_history + [current_user_content],
+            config=config
+        )
+        
+        reply = response.text
 
-        chat_session = model.start_chat(history=gemini_history)
-        reply = get_full_gemini_response(chat_session, user_message)
     except Exception as e:
-        print(f"❌ Lỗi Gemini: {e}")
+        print(f"❌ Lỗi Gemini SDK Mới: {e}")
         return JsonResponse({"reply": "⚠️ Toco đang bận một chút..."}, status=500)
 
     # --- PHÂN LOẠI CẢM XÚC ---
@@ -343,9 +359,11 @@ def mood_analysis(request):
     """
     
     try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        response = model.generate_content(prompt)
-        
+        response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt,
+        config=types.GenerateContentConfig(temperature=0.1) # Thấp cho kết quả chính xác
+        )
         # Trích xuất JSON an toàn bằng Regex và làm sạch ký tự xuống dòng
         match = re.search(r'\{.*\}', response.text, re.DOTALL)
         if match:
