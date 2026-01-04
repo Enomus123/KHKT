@@ -152,9 +152,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login'
-# settings.py
 
-# THÊM CẤU HÌNH GMAIL API MỚI
 EMAIL_BACKEND = 'django_gmailapi.backend.GmailBackend'
 
 GMAIL_API_CLIENT_ID = os.environ.get('GMAIL_API_CLIENT_ID')
