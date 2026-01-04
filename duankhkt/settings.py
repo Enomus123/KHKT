@@ -153,7 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login'
 
-EMAIL_BACKEND = 'django_gmailapi.backend.GmailBackend'
+EMAIL_BACKEND = 'gmailapi_backend.mail.GmailBackend'
 
 GMAIL_API_CLIENT_ID = os.environ.get('GMAIL_API_CLIENT_ID')
 GMAIL_API_CLIENT_SECRET = os.environ.get('GMAIL_API_CLIENT_SECRET')

@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: khkt-chatbot
+    env: python
+    region: singapore
+    plan: free
+    # Lệnh build đảm bảo cài đặt thư viện và migrate database
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn duankhkt.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0" # Phiên bản ổn định nhất trên Render hiện tại
+      - key: DJANGO_SETTINGS_MODULE
+        value: "duankhkt.settings"
+      - key: WEB_CONCURRENCY
+        value: "1" 
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: GMAIL_API_CLIENT_ID
+        sync: false
+      - key: GMAIL_API_CLIENT_SECRET
+        sync: false
+      - key: GMAIL_API_REFRESH_TOKEN
+        sync: false
