@@ -26,9 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-FPT_API_KEY = os.getenv("FPT_API_KEY")
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 OPENAI_PROJECT_ID = "proj_E2wBJe2boLD1PQ0pCPchSSBJ"
 CORS_ALLOW_ALL_ORIGINS = True
@@ -156,12 +154,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login'
 # settings.py
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 465                # Đổi từ 587 sang 465
-EMAIL_USE_TLS = False           # Tắt TLS
-EMAIL_USE_SSL = True            # Bật SSL
-EMAIL_TIMEOUT = 10              # Giới hạn 10s để không làm sập server
+# THÊM CẤU HÌNH GMAIL API MỚI
+EMAIL_BACKEND = 'django_gmailapi.backend.GmailBackend'
 
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+GMAIL_API_CLIENT_ID = os.environ.get('GMAIL_API_CLIENT_ID')
+GMAIL_API_CLIENT_SECRET = os.environ.get('GMAIL_API_CLIENT_SECRET')
+GMAIL_API_REFRESH_TOKEN = os.environ.get('GMAIL_API_REFRESH_TOKEN')
+
+# Email này phải khớp với email ttungduong2000@gmail.com bạn đã xác thực
+DEFAULT_FROM_EMAIL = 'ttungduong2000@gmail.com'

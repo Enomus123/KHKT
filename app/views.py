@@ -362,18 +362,3 @@ def mood_analysis(request):
         "summary": "Toco vẫn đang cảm nhận năng lượng từ bạn.", 
         "advice": "Mọi chuyện rồi sẽ ổn thôi!"
     })
-from django.core.mail import send_mail
-from django.http import HttpResponse
-from django.conf import settings
-
-def test_email_view(request):
-    try:
-        subject = 'Test Render Email'
-        message = f'Kết nối thành công từ host: {settings.EMAIL_HOST} cổng {settings.EMAIL_PORT}'
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = [email_from] # Gửi cho chính mình
-        
-        send_mail(subject, message, email_from, recipient_list)
-        return HttpResponse("Gửi mail thành công! Kiểm tra hộp thư của bạn.")
-    except Exception as e:
-        return HttpResponse(f"Thất bại! Lỗi cụ thể: {str(e)}")
