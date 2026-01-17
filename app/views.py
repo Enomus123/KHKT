@@ -380,3 +380,5 @@ def mood_analysis(request):
         "summary": "Toco vẫn đang cảm nhận năng lượng từ bạn.", 
         "advice": "Mọi chuyện rồi sẽ ổn thôi!"
     })
+def game(request):
+    return render(request, "app/game.html")

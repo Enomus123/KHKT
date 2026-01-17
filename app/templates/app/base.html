@@ -12,7 +12,7 @@
 /* ========================== */
 /* KHUNG CHỨA CẢ CHAT VÀ TOCO */
 /* ========================== */
-#toco-chat-container {
+    #toco-chat-container {
     /* Định vị cố định ở giữa, phía trên footer */
     position: fixed;
     /* ĐIỀU CHỈNH: Đẩy khung chat xuống thấp hơn (từ 80px xuống 40px) */
@@ -31,59 +31,60 @@
     z-index: 9999;
     
     /* Căn chỉnh nội dung (Toco và Chatbox) */
-    display: flex; 
+            display: flex;
     gap: 20px; /* Khoảng cách giữa Toco và Chatbox */
     justify-content: center; 
     align-items: flex-end; /* Căn Toco và Chatbox xuống đáy container */
     padding: 0;
-}
+        }
 
 /* ========================== */
 /* KHUNG CHAT TOCO (CHATBOX) */
 /* ========================== */
 
-#chatbot-box {
+    #chatbot-box {
     position: relative; 
     
     /* ĐIỀU CHỈNH: Giữ nguyên tỷ lệ 450px cho chiều rộng */
     width: 1000px; 
     /* ĐIỀU CHỈNH: Chiếm 100% chiều cao của container mới (500px) */
-    height: 100%; 
+    height: 100%;
     max-width: none; 
     max-height: none;
-    
+    background: rgba(255, 255, 255, 0.96);
 
-    background: rgba(255, 255, 255, 0.95);
-    border: 5px solid #d42426;
-    border-image: repeating-linear-gradient(45deg, #d42426, #d42426 10px, #ffffff 10px, #ffffff 20px) 5;
+    border: 4px solid transparent;
+    background-image: linear-gradient(white, white), 
+                      linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+
     border-radius: 20px;
-    box-shadow: 0 0 25px rgba(248, 178, 41, 0.4); 
-    overflow: hidden;
-    background-image: url("https://www.transparenttextures.com/patterns/snow.png");
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2); 
     display: flex; 
     flex-direction: column;
     overflow: hidden;
-}
+        }
 
-#chatbot-header {
-    background: linear-gradient(90deg, #d42426 0%, #a51b1d 100%); /* Màu đỏ gradient */
+    #chatbot-header {
+    background: linear-gradient(90deg, #b31217 0%, #d42426 100%); 
     border-bottom: 3px solid #f8b229;
-    color: white;
+    color: #ffeb3b; /* Chữ vàng */
     padding: 12px;
     font-weight: bold;
     font-size: 17px;
     position: relative;
-    text-align: center;
+            text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
-}
+        }
 
-#chatbot-messages {
-    flex-grow: 1; 
-    padding: 20px;
-    overflow-y: auto;
+        #chatbot-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
 }
 
 /* Tin nhắn + avatar */
@@ -116,18 +117,18 @@
 
 /* Dòng 104: Tin nhắn của Người dùng (User) */
 .user .chat-bubble {
-    background: #206137ff; /* Xanh lá thông */
+    background: #d42426; 
     color: white;
     border-radius: 18px 18px 2px 18px;
-    border: 2px solid #f9ff40ff; /* Viền vàng gold */
+    border: 2px solid #f8b229;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Dòng 100: Tin nhắn của Bot (Toco) */
 .bot .chat-bubble {
     background: white;
-    color: #d42426; /* Chữ màu đỏ Noel */
-    border: 2px solid #d42426; /* Viền đỏ */
+    color: #333;
+    border: 2px solid #d42426;
     border-radius: 18px 18px 18px 2px;
 }
 
@@ -166,37 +167,36 @@
     50% { 
         transform: translateY(-25px); 
         filter: drop-shadow(0 0 25px rgba(248, 178, 41, 0.7)); 
-    }
+        }
 }
 /* ========================== */
 /* Ô nhập            */
 /* ========================== */
 
-#chatbot-input-area {
+        #chatbot-input-area {
     padding: 15px 20px;
-    display: flex;
-    gap: 10px;
-    border-top: 1px solid #ddd;
-    background: #1a472a;
-}
+            display: flex;
+            gap: 10px;
+    border-top: 2px solid #f8b229;
+    background: #8b1014; /* Đỏ đậm */
+        }
 
-#chatbot-text {
-    flex: 1;
+        #chatbot-text {
+            flex: 1;
     padding: 12px;
     border-radius: 20px; 
     border: 1px solid #ccc;
     font-size: 16px;
-}
+        }
 
-#chatbot-send {
-    background: #f1b150ff; /* Màu vàng gold */
-    color: #ffffffff;      /* Chữ xanh lá */
+        #chatbot-send {
+    background: #f8b229; 
+    color: #8b1014;
     font-weight: bold;
-    border: 2px solid #1a472a;
-    transition: 0.3s;
+            border: none;
     border-radius: 20px;
-    padding:0 10px;
-}
+    padding: 0 15px;
+        }
 
 #chatbot-send:hover {
     background: #d42426;
@@ -219,17 +219,17 @@
 /* ========================== */
 /* MOBILE / TABLET (FIX OVERFLOW NÚT GỬI) */
 /* ========================== */
-@media (max-width: 992px) { 
+    @media (max-width: 992px) {
 
     /* 1. KHUNG CHỨA TỔNG (toco-chat-container) */
-    #toco-chat-container {
+        #toco-chat-container {
         position: fixed; 
         top: auto; 
         right: auto;
-        bottom: 10px; 
+        bottom: 10px;
         left: 50%; 
         transform: translateX(-50%); 
-        width: 95%; 
+        width: 95%;
         height: 77vh; 
         padding: 0;
         display: flex; 
@@ -243,14 +243,24 @@
         position: relative; 
         width: 100%; 
         height: 100%; 
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        background: rgba(255, 255, 255, 0.96);
+        /* Đổi viền sang Đỏ & Vàng Tết */
+        border: 4px solid transparent;
+        background-image: linear-gradient(white, white), 
+        linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        box-shadow: 0 0 30px rgba(212, 36, 38, 0.3); 
+        overflow: hidden;
+        background-image: {% static "app/images/natural-paper.png" %};
+        display: flex; 
+        flex-direction: column;
     }
 
     /* 3. HIỂN THỊ VÀ ĐỊNH VỊ TOCO */
-    #toco-character-box {
+            #toco-character-box {
         display: block !important; 
-        position: absolute;
+                position: absolute;
         bottom: 80px; 
         right: -15px; 
         left: auto; 
@@ -260,14 +270,14 @@
         display: flex;
         align-items: flex-end; 
         justify-content: flex-end; 
-    }
+            }
     
     #toco-character {
         width: 110px; 
         height: 110px;
         transform: translateY(0); 
     }
-    
+
     #chatbot-input-area {
         display: flex;
         align-items: center;
@@ -277,7 +287,7 @@
         padding-right: 10px; 
         padding-left: 70px; 
     }
-
+    
     /* 5. ĐỊNH VỊ LẠI NÚT GHI ÂM (KÍCH THƯỚC ĐỒNG BỘ) */
     #voice-btn {
         position: absolute;
@@ -307,8 +317,8 @@
     }
 
     #chatbot-send {
-        background: #f3d349ff;
-        color: white;
+        background: #f8b229; 
+        color: #8b1014;
         border-radius: 20px;
         padding: 0 10px;   
         font-size: 14px; 
@@ -324,17 +334,17 @@
         font-weight: 600;
         letter-spacing: 0.5px;
     }
-}
+        }
 /* Sửa lại Background PC */
 body { 
-    background: url("{% static 'app/images/noel-bg-pc.jpg' %}") no-repeat center center fixed; 
+    background: url("{% static 'app/images/tam-pc.jpg' %}") no-repeat center center fixed; 
     background-size: cover; 
 }
 
 @media (max-width: 992px) { 
     body { 
         /* center top giúp lấy trọng tâm phần trên của ảnh Noel */
-        background: url("{% static 'app/images/noel-bg-mobile.jpg' %}") no-repeat center top fixed; 
+        background: url("{% static 'app/images/tam-moble.jpg' %}") no-repeat center top fixed; 
         /* Quan trọng: cover giúp ảnh phủ kín, không tạo khoảng trắng */
         background-size: cover; 
         /* Đảm bảo chiều cao luôn phủ hết màn hình điện thoại */
@@ -342,33 +352,9 @@ body {
         width: 100%;
     } 
 }
-/* Hiệu ứng bông tuyết */
-.snowflake {
-    color: #fff;
-    font-size: 1.2em;
-    font-family: Arial, sans-serif;
-    text-shadow: 0 0 5px rgba(255,255,255,1);
-    position: fixed;
-    top: -10%;
-    z-index: 9999;
-    user-select: none;
-    cursor: default;
-    pointer-events: none;
-    animation-name: snowflakes-fall, snowflakes-shake;
-    animation-duration: 10s, 3s;
-    animation-timing-function: linear, ease-in-out;
-    animation-iteration-count: infinite, infinite;
-    animation-play-state: running, running;
-}
-
-@keyframes snowflakes-fall {
-    0% { top: -10%; }
-    100% { top: 100%; }
-}
-
-@keyframes snowflakes-shake {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(80px); }
+.navbar {
+    background-color: #8b1014 !important; /* Đỏ đậm phù hợp background */
+    border-bottom: 3px solid #f8b229;
 }
 .nav-link[href*="history"] {
     color: #ffeb3b !important; /* Màu vàng rực rỡ */
@@ -396,6 +382,54 @@ body {
 input::-ms-reveal, input::-ms-clear {
     display: none;
 }
+/* --- LÁ XANH RƠI LA ĐÀ & MỜ ẢO --- */
+.petal {
+    position: fixed;
+    top: -10%;
+    z-index: 9990; /* Nằm phía sau khung chat */
+    pointer-events: none;
+    
+    /* Chỉnh kích thước nhỏ lại */
+    width: 7px; 
+    height: 12px;
+    border-radius: 0 100% 0 100%;
+    
+    /* ĐIỀU CHỈNH: Giảm độ mờ xuống mức rất thấp và làm nhòe nhẹ */
+    opacity: 0.3; 
+    filter: blur(1px); 
+
+    /* Sử dụng 1 animation tổng hợp để tạo độ la đà */
+    animation: leaf-fall-natural 15s linear infinite;
+}
+
+/* Các tông màu xanh lá dịu mắt */
+.leaf-green-1 { background: #2ecc71; }
+.leaf-green-2 { background: #27ae60; }
+.leaf-green-3 { background: #a2d149; }
+
+/* KEYFRAME TẠO KIỂU RƠI LA ĐÀ (CHAO ĐẢO) */
+@keyframes leaf-fall-natural {
+    0% {
+        top: -10%;
+        transform: translateX(0) rotate(0deg) rotateY(0deg);
+    }
+    20% {
+        transform: translateX(40px) rotate(45deg) rotateY(90deg);
+    }
+    40% {
+        transform: translateX(-40px) rotate(90deg) rotateY(180deg);
+    }
+    60% {
+        transform: translateX(40px) rotate(135deg) rotateY(270deg);
+    }
+    80% {
+        transform: translateX(-40px) rotate(180deg) rotateY(360deg);
+    }
+    100% {
+        top: 110%;
+        transform: translateX(0) rotate(225deg) rotateY(450deg);
+    }
+}
 </style>
 <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
 
@@ -417,7 +451,7 @@ input::-ms-reveal, input::-ms-clear {
 </head>
 <body>
 <audio id="bg-music" loop preload="auto">
-    <source src="{% static "app/music/noel.mp3" %}"  type="audio/mpeg">
+    <source src="{% static "app/music/newyear.mp3" %}"  type="audio/mpeg">
 </audio>
 <div id="toco-chat-container">
     
@@ -442,9 +476,9 @@ input::-ms-reveal, input::-ms-clear {
                     cursor:pointer;">
                 🔊
             </button>
-            ✨Toco – Người bạn Giáng sinh✨
-            <div style="position: absolute; top: 40px; right: 15px; font-size: 35px; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3)); z-index: 10;">🔔</div>
-            <div style="position: absolute; bottom: 90px; left: 15px; font-size: 30px; color: white; opacity: 0.9; filter: blur(0.5px); z-index: 10;">❄️</div>
+            🌸Toco – Người bạn đồng hành🌸
+            <div style="position: absolute; top: 40px; right: 15px; font-size: 35px; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3)); z-index: 10;"></div>
+            <div style="position: absolute; bottom: 90px; left: 15px; font-size: 30px; color: white; opacity: 0.9; filter: blur(0.5px); z-index: 10;"></div>
             </div>
         <div id="chatbot-messages"></div>
 
@@ -453,13 +487,13 @@ input::-ms-reveal, input::-ms-clear {
         <div id="chatbot-input-area">
             <button id="voice-btn">🎤</button>
             <input type="text" id="chatbot-text" placeholder="Nhập tin nhắn..." onkeypress="if(event.keyCode==13) document.getElementById('chatbot-send').click()">
-            <button id="chatbot-send">Gửi🎁</button>
+            <button id="chatbot-send">Gửi🧧</button>
         </div>
     </div>
 </div>
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #1a472a; border-bottom: 3px solid #f8b229;">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="/" style="color: #ffffff;">🎄 KHKT <span style="color: #f8b229;">❄️</span></a>
+    <a class="navbar-brand fw-bold" href="/" style="color: #ffffff;">🏮 Trang chủ <span style="color: #ffee00ff;">🧧</span></a>
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(255,255,255,0.5);">
       <span class="navbar-toggler-icon"></span>
@@ -483,13 +517,13 @@ input::-ms-reveal, input::-ms-clear {
             <div class="d-none d-lg-block" style="flex: 1; margin-right: 15px;">
                 <div style="background: rgba(255, 255, 255, 0.15); color: #ffffff; padding: 8px 15px; border-radius: 20px; font-size: 1rem; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
                     <marquee behavior="scroll" direction="left" scrollamount="5">
-                        🔐 <strong><a href="{% url 'login' %}" style="color: #f8b229; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé! 🎄✨
+                        🔐 <strong><a href="{% url 'login' %}" style="color: #ffdd02ff; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🌸
                     </marquee>
                 </div>
             </div>
             <li class="nav-item mt-2 mt-lg-0">
               <a class="btn btn-sm px-3" href="{% url 'login' %}" 
-                 style="background-color: #d42426; color: white; border-radius: 20px; font-weight: bold;">
+                 style="background-color: #e8292dff; color: white; border-radius: 20px; font-weight: bold;">
                  Đăng nhập
               </a>
             </li>
@@ -509,7 +543,7 @@ input::-ms-reveal, input::-ms-clear {
 <div class="d-block d-lg-none" style="width: 100%; background: #921c1c; padding: 10px 0; border-bottom: 2px solid #f8b229; margin-bottom: 15px;">
     <div style="margin: 0 10px; background: rgba(255, 255, 255, 0.1); color: #ffffff; padding: 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
         <marquee behavior="scroll" direction="left" scrollamount="6">
-            🔐 <strong><a href="{% url 'login' %}" style="color: #f8b229; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé! 🎄✨
+            🔐 <strong><a href="{% url 'login' %}" style="color: #f8b229; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🌸
         </marquee>
     </div>
 </div>
@@ -521,6 +555,7 @@ input::-ms-reveal, input::-ms-clear {
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 <script>
 const TOCO_STATES = {
     IDLE: 'IDLE',
@@ -530,11 +565,11 @@ const TOCO_STATES = {
 
 const TOCO_IMAGES = {
     // Sửa tên file cho đúng với thực tế bạn đã lưu trong thư mục images
-    IDLE: "{% static 'app/images/toco_idle.png' %}", 
-    TYPING: "{% static 'app/images/toco_typing.png' %}",
-    HAPPY: "{% static 'app/images/toco_happy.png' %}",
-    COMFORT: "{% static 'app/images/toco_comfort.png' %}",
-    CUTE: "{% static 'app/images/toco_cute.png' %}" // Dùng idle làm mặc định
+    IDLE: "{% static 'app/images/thantai.png' %}", 
+    TYPING: "{% static 'app/images/thantai.png' %}",
+    HAPPY: "{% static 'app/images/thantai.png' %}",
+    COMFORT: "{% static 'app/images/thantai.png' %}",
+    CUTE: "{% static 'app/images/thantai.png' %}" // Dùng idle làm mặc định
 };
 const tocoChar = document.getElementById("toco-character");
 let currentAudio = null; 
@@ -910,45 +945,62 @@ function loadHistory() {
         })
         .catch(() => {});
 }
-function createSnow() {
-    const snowflakeContainer = document.body;
-    const snowflakeSymbols = ['❄', '❅', '❆', '•'];
-    
-    // Tạo 1 bông tuyết sau mỗi 300ms
-    setInterval(() => {
-        const snowflake = document.createElement('div');
-        snowflake.className = 'snowflake';
-        snowflake.innerHTML = snowflakeSymbols[Math.floor(Math.random() * snowflakeSymbols.length)];
-        
-        // Vị trí ngang ngẫu nhiên
-        snowflake.style.left = Math.random() * 100 + 'vw';
-        
-        // Kích thước ngẫu nhiên (từ 0.5em đến 1.5em)
-        snowflake.style.fontSize = (Math.random() * 1 + 0.5) + 'em';
-        
-        // Độ mờ ngẫu nhiên để tạo cảm giác xa gần
-        snowflake.style.opacity = Math.random();
-        
-        // Tốc độ rơi ngẫu nhiên (từ 5s đến 15s)
-        const duration = Math.random() * 10 + 5;
-        snowflake.style.animationDuration = `${duration}s, ${Math.random() * 3 + 2}s`;
-        
-        snowflakeContainer.appendChild(snowflake);
+function launchFirework() {
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
 
-        // Xóa bông tuyết sau khi rơi xong để tránh nặng trình duyệt
-        setTimeout(() => {
-            snowflake.remove();
-        }, duration * 1000);
-    }, 300);
+    (function frame() {
+        // Bắn từ bên trái
+        confetti({
+            particleCount: 3,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.8 },
+            colors: ['#FFD700', '#FF0000', '#FF69B4',]
+        });
+        // Bắn từ bên phải
+        confetti({
+            particleCount: 3,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.8 },
+            colors: ['#14c0ffff', '#00ffa2ff', '#9147ffff',]
+        });
+
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }());
 }
-// KHỞI CHẠY CHATBOX KHI TRANG TẢI XONG
+function createPetals() {
+    const container = document.body;
+    const oldPetals = document.querySelectorAll('.petal');
+    oldPetals.forEach(p => p.remove());
+
+    for (let i = 0; i < 30; i++) {
+        let leaf = document.createElement('div');
+        leaf.className = 'petal';
+        
+        const greenTypes = ['leaf-green-1', 'leaf-green-2', 'leaf-green-3'];
+        leaf.classList.add(greenTypes[Math.floor(Math.random() * greenTypes.length)]);
+
+        // Vị trí ngang ngẫu nhiên
+        leaf.style.left = Math.random() * 100 + 'vw';
+        
+        // ĐIỀU CHỈNH: Thời gian rơi ngẫu nhiên từ 12s đến 20s để lá rơi thật chậm
+        leaf.style.animationDuration = (Math.random() * 8 + 12) + 's';
+        leaf.style.animationDelay = Math.random() * 10 + 's';
+        
+        container.appendChild(leaf);
+    }
+}
 document.addEventListener("DOMContentLoaded", () => {
-    createSnow();
+    createPetals();
     const tocoChatContainer = document.getElementById("toco-chat-container");
     const currentPath = window.location.pathname.replace(/\/$/, ""); 
     const bgMusic = document.getElementById('bg-music');
     if (bgMusic) {
-        bgMusic.volume = 0.05; // Chỉnh âm lượng 50%
+        bgMusic.volume = 0.05; 
 
         const startMusic = () => {
             bgMusic.play().then(() => {
@@ -968,7 +1020,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentPath === '' || currentPath === '/' || currentPath === '/index.html') { 
         tocoChatContainer.style.display = 'flex'; // Hiển thị khung chat (Toco + Chatbox)
         initializeChat();
+        setInterval(launchFirework, 5000);
     } else {
+
         tocoChatContainer.style.display = 'none'; // Ẩn khung chat trên các trang khác
     }
 });
