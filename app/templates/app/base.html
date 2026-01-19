@@ -457,7 +457,7 @@ input::-ms-reveal, input::-ms-clear {
     
     <div id="toco-character-box">
         <img id="toco-character" 
-             src="{% static 'app/images/toco_idle.png' %}   "
+             src="{% static 'app/images/toco_idle_2026.png' %}   "
              alt="Toco Character">
     </div>
     
@@ -565,11 +565,11 @@ const TOCO_STATES = {
 
 const TOCO_IMAGES = {
     // Sửa tên file cho đúng với thực tế bạn đã lưu trong thư mục images
-    IDLE: "{% static 'app/images/thantai.png' %}", 
-    TYPING: "{% static 'app/images/thantai.png' %}",
-    HAPPY: "{% static 'app/images/thantai.png' %}",
-    COMFORT: "{% static 'app/images/thantai.png' %}",
-    CUTE: "{% static 'app/images/thantai.png' %}" // Dùng idle làm mặc định
+    IDLE: "{% static 'app/images/toco_idle_2026.png' %}", 
+    TYPING: "{% static 'app/images/toco_typing_2026.png' %}",
+    HAPPY: "{% static 'app/images/toco_happy_2026.png' %}",
+    COMFORT: "{% static 'app/images/toco_comfort_2026.png' %}",
+    CUTE: "{% static 'app/images/toco_cute_2026.png' %}" // Dùng idle làm mặc định
 };
 const tocoChar = document.getElementById("toco-character");
 let currentAudio = null; 
