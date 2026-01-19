@@ -33,5 +33,4 @@ urlpatterns = [
         template_name="registration/password_reset_complete.html"
     ), name="password_reset_complete"),
     path('game/', views.game, name="game"),
-    path('kich-hoat-admin-vip/', views.tạo_admin_nhanh),
 ]
