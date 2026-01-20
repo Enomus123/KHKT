@@ -39,18 +39,18 @@ def save_chat(user, sender, user_message):
     )
 
 def clean_text_for_tts(text):
-    """
-    Loại bỏ các ký tự đặc biệt như *, #, _, [CÒN TIẾP] để TTS đọc mượt mà hơn.
-    """
-    # Loại bỏ dấu sao (thường dùng để in đậm trong Markdown)
-    text = text.replace("*", "")
-    # Loại bỏ các dấu hiệu điều hướng nội bộ của bạn
+    # 1. Loại bỏ các loại dấu ngoặc kép (ngoặc kép đơn, kép đôi, ngoặc kiểu mảng)
+    text = text.replace('"', '').replace("'", "").replace("“", "").replace("”", "")
+    # 2. Loại bỏ các ký tự Markdown và ký tự đặc biệt khác
+    text = re.sub(r'[*_#~`>|]', '', text)
+    # 3. Thay thế các dấu ngắt quãng mạnh bằng dấu phẩy để tạo nhịp nghỉ tự nhiên thay vì dừng hẳn
+    # Ví dụ: Dấu xuống dòng nên biến thành dấu phẩy hoặc khoảng trắng
+    text = text.replace("\n", ", ")
+    # 4. Loại bỏ các ký tự điều hướng của bạn
     text = text.replace("[CÒN TIẾP]", "")
-    # Loại bỏ các ký tự đặc biệt khác nếu cần
-    text = re.sub(r'[#_~-]', '', text)
-    # Loại bỏ các khoảng trắng thừa
+    # 5. Xử lý khoảng trắng thừa để tránh TTS tạo ra khoảng lặng vô lý
     text = " ".join(text.split())
-    return text
+    return text.strip()
 def get_full_gemini_response(chat_session, user_message):
     full_reply = ""
     current_prompt = user_message # Lần đầu dùng câu hỏi của người dùng
