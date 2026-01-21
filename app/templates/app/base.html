@@ -463,17 +463,12 @@ input::-ms-reveal, input::-ms-clear {
     
     <div id="chatbot-box">
         <div id="chatbot-header">
+            <button id="chat-toggle-btn" 
+                style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:white; font-size:20px; cursor:pointer;">
+                ❌
+            </button>
             <button id="mute-btn" 
-                style="
-                    position:absolute;
-                    left:10px;
-                    top:50%;
-                    transform:translateY(-50%);
-                    background:none;
-                    border:none;
-                    color:white;
-                    font-size:20px;
-                    cursor:pointer;">
+                style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:white; font-size:20px; cursor:pointer;">
                 🔊
             </button>
             🌸Toco – Người bạn đồng hành🌸
@@ -997,6 +992,8 @@ function createPetals() {
 document.addEventListener("DOMContentLoaded", () => {
     createPetals();
     const tocoChatContainer = document.getElementById("toco-chat-container");
+    const toggleBtn = document.getElementById("chat-toggle-btn"); // Nút X
+    const openBubble = document.getElementById("chat-open-bubble"); // Nút 💬
     const currentPath = window.location.pathname.replace(/\/$/, ""); 
     const bgMusic = document.getElementById('bg-music');
     if (bgMusic) {
@@ -1021,6 +1018,18 @@ document.addEventListener("DOMContentLoaded", () => {
         tocoChatContainer.style.display = 'flex'; // Hiển thị khung chat (Toco + Chatbox)
         initializeChat();
         setInterval(launchFirework, 5000);
+        toggleBtn.onclick = () => {
+            const chatbotBox = document.getElementById("chatbot-box");
+            chatbotBox.style.display = 'none';
+            openBubble.style.display = 'flex'; // Hiện bong bóng mở lại
+        };
+
+        // Khi nhấn nút 💬 (mở lại)
+        openBubble.onclick = () => {
+            const chatbotBox = document.getElementById("chatbot-box");
+            chatbotBox.style.display = 'flex';
+            openBubble.style.display = 'none'; // Ẩn bong bóng
+        };
     } else {
 
         tocoChatContainer.style.display = 'none'; // Ẩn khung chat trên các trang khác
@@ -1038,5 +1047,8 @@ function togglePass(selector, btn) {
     }
 }
 </script>
+<button id="chat-open-bubble" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #d42426; color: white; border-radius: 50%; border: 3px solid #f8b229; z-index: 10001; cursor: pointer; font-size: 24px; display: none; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+    💬
+</button>
 </body>
 </html>
