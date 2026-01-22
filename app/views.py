@@ -108,7 +108,7 @@ def chatbot_api(request):
     now = time.time()
     
     # Rate limit tránh spam
-    if user_ip in LAST_REQUEST and now - LAST_REQUEST[user_ip] < 1.5:
+    if user_ip in LAST_REQUEST and now - LAST_REQUEST[user_ip] < 0.5:
         return JsonResponse({"reply": "⏳ Đợi Toco 1 chút nha…"}, status=429)
     LAST_REQUEST[user_ip] = now
 

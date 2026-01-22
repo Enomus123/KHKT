@@ -1030,6 +1030,14 @@ document.addEventListener("DOMContentLoaded", () => {
             chatbotBox.style.display = 'flex';
             openBubble.style.display = 'none'; // Ẩn bong bóng
         };
+        const isUserAuthenticated = "{% if user.is_authenticated %}true{% else %}false{% endif %}" === "true";
+        const registerPath = "{% url 'register' %}"; // Lấy đường dẫn trang đăng ký
+
+        // Nếu chưa đăng nhập và đang ở trang chủ, tự động chuyển hướng sang trang đăng ký
+        if (!isUserAuthenticated && (currentPath === '' || currentPath === '/' || currentPath === '/index.html')) {
+            window.location.href = registerPath;
+            return; // Dừng thực thi các code phía sau để tránh lỗi
+        }  
     } else {
 
         tocoChatContainer.style.display = 'none'; // Ẩn khung chat trên các trang khác
