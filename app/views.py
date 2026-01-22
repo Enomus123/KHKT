@@ -28,7 +28,7 @@ from pydub import AudioSegment
 os.makedirs("tmp", exist_ok=True) 
 
 LAST_REQUEST = {}
-
+# Hàm lưu lịch sử chat
 def save_chat(user, sender, user_message):
     if user is None:
         return
@@ -37,23 +37,18 @@ def save_chat(user, sender, user_message):
         sender=sender,
         message=user_message
     )
-
-def clean_text_for_tts(text):
-    # 1. Loại bỏ các loại dấu ngoặc kép (ngoặc kép đơn, kép đôi, ngoặc kiểu mảng)
+# Hàm làm sạch văn bản cho TTS
+def clean_text_for_tts(text): 
     text = text.replace('"', '').replace("'", "").replace("“", "").replace("”", "")
-    # 2. Loại bỏ các ký tự Markdown và ký tự đặc biệt khác
     text = re.sub(r'[*_#~`>|]', '', text)
-    # 3. Thay thế các dấu ngắt quãng mạnh bằng dấu phẩy để tạo nhịp nghỉ tự nhiên thay vì dừng hẳn
-    # Ví dụ: Dấu xuống dòng nên biến thành dấu phẩy hoặc khoảng trắng
     text = text.replace("\n", ", ")
-    # 4. Loại bỏ các ký tự điều hướng của bạn
     text = text.replace("[CÒN TIẾP]", "")
-    # 5. Xử lý khoảng trắng thừa để tránh TTS tạo ra khoảng lặng vô lý
     text = " ".join(text.split())
     return text.strip()
+# Hàm lấy phản hồi đầy đủ từ Gemini khi có [CÒN TIẾP]
 def get_full_gemini_response(chat_session, user_message):
     full_reply = ""
-    current_prompt = user_message # Lần đầu dùng câu hỏi của người dùng
+    current_prompt = user_message 
     max_iterations = 5 
     iteration = 0
     
@@ -72,6 +67,7 @@ def get_full_gemini_response(chat_session, user_message):
             break
             
     return full_reply
+# Hàm gọi Google TTS API
 def get_google_tts(text, api_key):
     """
     Gọi trực tiếp Google TTS REST API (Không cần thư viện google-cloud-text-to-speech)
@@ -101,7 +97,7 @@ def get_google_tts(text, api_key):
     except Exception as e:
         print(f"❌ Exception Google TTS: {e}")
     return None
-
+# API Chatbot chính
 @csrf_exempt
 def chatbot_api(request):
     user_ip = request.META.get("REMOTE_ADDR")
@@ -140,7 +136,7 @@ def chatbot_api(request):
             command = [
                 'ffmpeg', '-y', '-i', input_filename, 
                 '-ar', '16000', '-ac', '1', 
-                '-threads', '1', '-preset', 'ultrafast', # Thêm 2 dòng này để chạy cực nhanh
+                '-threads', '1', '-preset', 'ultrafast', 
                 '-f', 'wav', output_filename
             ]
             subprocess.run(command, check=True, capture_output=True, timeout=10)
@@ -237,15 +233,14 @@ def chatbot_api(request):
 
     # --- PHÂN LOẠI CẢM XÚC ---
     text_lower = reply.lower()
-    if any(w in text_lower for w in ['vui', 'tuyệt', 'haha', 'hihi']): emotion = "happy"
-    elif any(w in text_lower for w in ['chia sẻ', 'buồn', 'đừng lo']): emotion = "comfort"
+    if any(w in text_lower for w in ['hạnh phúc', 'tuyệt', 'haha', 'hihi','mừng']): emotion = "happy"
+    elif any(w in text_lower for w in ['chia sẻ', 'buồn', 'đừng lo', 'đau','không sao']): emotion = "comfort"
     else: emotion = "cute"
 
     # --- CHUYỂN VĂN BẢN SANG GIỌNG NÓI (TTS) ---
     audio_base64 = None
     if audio_mode:
         clean_reply = clean_text_for_tts(reply)
-        # Sử dụng API Key từ settings (nên dùng chung key Gemini nếu đã bật TTS API)
         audio_base64 = get_google_tts(clean_reply, settings.GEMINI_API_KEY)
 
     # --- LƯU DB ---
@@ -259,15 +254,14 @@ def chatbot_api(request):
         "user_message": user_message, 
         "emotion": emotion
     })
-
-# --- CÁC HÀM CÒN LẠI (GIỮ NGUYÊN) ---
 @login_required
+# API Lấy lịch sử chat
 def chat_history(request):
     history = ChatHistory.objects.filter(user=request.user).order_by("timestamp")
     return JsonResponse({
         "history": [{"sender": h.sender, "message": h.message, "timestamp": h.timestamp.isoformat()} for h in history]
     })
-
+# ĐĂNG NHẬP - ĐĂNG XUẤT - ĐĂNG KÝ
 def logoutPage(request):
     logout(request)
     return redirect('login')
@@ -305,16 +299,17 @@ def register(request):
                 for e in errs:
                     messages.error(request, e)
     return render(request, "app/register.html", {"form": form})
-
+# LỊCH SỬ CHAT
 @login_required
 def history(request):
     chats = ChatHistory.objects.filter(user=request.user).order_by("timestamp")
     return render(request, "app/history.html", {"chats": chats})
-
+# KIỂM TRA LẦN ĐẦU CHAT
 def check_first_chat(request):
     if not request.user.is_authenticated: return JsonResponse({"first_time": True})
     return JsonResponse({"first_time": not ChatHistory.objects.filter(user=request.user).exists()})
 @login_required
+# Phân tích tâm trạng người dùng
 def mood_analysis(request):
     # Lấy 20 tin nhắn mới nhất
     recent_history = ChatHistory.objects.filter(user=request.user, sender="user").order_by("-timestamp")[:20]
@@ -379,5 +374,6 @@ def mood_analysis(request):
         "summary": "Toco vẫn đang cảm nhận năng lượng từ bạn.", 
         "advice": "Mọi chuyện rồi sẽ ổn thôi!"
     })
+# Thử nghiệm thêm về game
 def game(request):
     return render(request, "app/game.html")

@@ -8,14 +8,12 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-
-/* ========================== */
-/* KHUNG CHỨA CẢ CHAT VÀ TOCO */
-/* ========================== */
+    /* ========================== */
+    /* KHUNG CHỨA CẢ CHAT VÀ TOCO */
+    /* ========================== */
     #toco-chat-container {
     /* Định vị cố định ở giữa, phía trên footer */
     position: fixed;
-    /* ĐIỀU CHỈNH: Đẩy khung chat xuống thấp hơn (từ 80px xuống 40px) */
     bottom: 40px; 
     left: 50%;
     transform: translateX(-50%); /* Căn giữa theo chiều ngang */
@@ -24,30 +22,26 @@
     display: none; 
     
     width: auto; /* Chiều rộng sẽ tự điều chỉnh theo nội dung (Toco + Chatbox) */
-    /* ĐIỀU CHỈNH: Tăng chiều cao lên 500px */
     height: 580px; 
     
     background-color: transparent; 
     z-index: 9999;
     
     /* Căn chỉnh nội dung (Toco và Chatbox) */
-            display: flex;
+    display: flex;
     gap: 20px; /* Khoảng cách giữa Toco và Chatbox */
     justify-content: center; 
     align-items: flex-end; /* Căn Toco và Chatbox xuống đáy container */
     padding: 0;
         }
 
-/* ========================== */
-/* KHUNG CHAT TOCO (CHATBOX) */
-/* ========================== */
+    /* ========================== */
+    /* KHUNG CHAT TOCO (CHATBOX) */
+    /* ========================== */
 
     #chatbot-box {
     position: relative; 
-    
-    /* ĐIỀU CHỈNH: Giữ nguyên tỷ lệ 450px cho chiều rộng */
     width: 1000px; 
-    /* ĐIỀU CHỈNH: Chiếm 100% chiều cao của container mới (500px) */
     height: 100%;
     max-width: none; 
     max-height: none;
@@ -74,151 +68,147 @@
     font-weight: bold;
     font-size: 17px;
     position: relative;
-            text-align: center;
+    text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
         }
 
-        #chatbot-messages {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
-}
-
-/* Tin nhắn + avatar */
-.chat-msg {
-    display: flex;
-    align-items: flex-start; 
-    margin-bottom: 20px;
-    max-width: 100%; 
-}
-
-/* Căn giữa tin nhắn người dùng (giống Gemini) */
-.user {
-    justify-content: flex-end; 
-}
-.bot {
-    justify-content: flex-start; 
-}
-
-/* Ẩn avatar trong giao diện mới */
-.chat-msg .chat-avatar {
-    display: none;
-}
-
-.chat-bubble {
-    max-width: 75%; 
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 15px;
-}
-
-/* Dòng 104: Tin nhắn của Người dùng (User) */
-.user .chat-bubble {
-    background: #d42426; 
-    color: white;
-    border-radius: 18px 18px 2px 18px;
-    border: 2px solid #f8b229;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-}
-
-/* Dòng 100: Tin nhắn của Bot (Toco) */
-.bot .chat-bubble {
-    background: white;
-    color: #333;
-    border: 2px solid #d42426;
-    border-radius: 18px 18px 18px 2px;
-}
-
-/* Bot đang trả lời */
-#typing-indicator {
-    display: none;
-    font-style: italic;
-    color: #777;
-    padding: 0 20px 10px;
-    text-align: left;
-}
-
-/* ========================== */
-/* KHUNG NHÂN VẬT TOCO */
-/* ========================== */
-#toco-character-box {
-    display: block !important; /* Bật lại */
-    align-self: flex-end; 
-    /* ĐIỀU CHỈNH: Tăng chiều cao của hộp chứa Toco để Toco lớn hơn */
-    height: 100%; 
-}
-#toco-character {
-    /* ĐIỀU CHỈNH: Tăng kích thước Toco lên 380px */
-    width: 400px; 
-    height: 100%;
-    object-fit: contain; 
-    transform: translateY(10px); 
-    animation: floating 4s ease-in-out infinite;
-    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
-}
-@keyframes floating {
-    0%, 100% { 
-        transform: translateY(0px); 
-        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    #chatbot-messages {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
     }
-    50% { 
-        transform: translateY(-25px); 
-        filter: drop-shadow(0 0 25px rgba(248, 178, 41, 0.7)); 
+
+    /* Tin nhắn + avatar */
+    .chat-msg {
+        display: flex;
+        align-items: flex-start; 
+        margin-bottom: 20px;
+        max-width: 100%; 
+    }
+    .user {
+        justify-content: flex-end; 
+    }
+    .bot {
+        justify-content: flex-start; 
+    }
+
+    /* Ẩn avatar trong giao diện mới */
+    .chat-msg .chat-avatar {
+        display: none;
+    }
+
+    .chat-bubble {
+        max-width: 75%; 
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-size: 15px;
+    }
+
+    /* Dòng 104: Tin nhắn của Người dùng (User) */
+    .user .chat-bubble {
+        background: #d42426; 
+        color: white;
+        border-radius: 18px 18px 2px 18px;
+        border: 2px solid #f8b229;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Dòng 100: Tin nhắn của Bot (Toco) */
+    .bot .chat-bubble {
+        background: white;
+        color: #333;
+        border: 2px solid #d42426;
+        border-radius: 18px 18px 18px 2px;
+    }
+
+    /* Bot đang trả lời */
+    #typing-indicator {
+        display: none;
+        font-style: italic;
+        color: #777;
+        padding: 0 20px 10px;
+        text-align: left;
+    }
+
+    /* ========================== */
+    /* KHUNG NHÂN VẬT TOCO */
+    /* ========================== */
+    #toco-character-box {
+        display: block !important; /* Bật lại */
+        align-self: flex-end; 
+        height: 100%; 
+    }
+    #toco-character {
+        width: 400px; 
+        height: 100%;
+        object-fit: contain; 
+        transform: translateY(10px); 
+        animation: floating 4s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+    }
+    @keyframes floating {
+        0%, 100% { 
+            transform: translateY(0px); 
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
         }
-}
-/* ========================== */
-/* Ô nhập            */
-/* ========================== */
+        50% { 
+            transform: translateY(-25px); 
+            filter: drop-shadow(0 0 25px rgba(248, 178, 41, 0.7)); 
+        }
+    }
+    /* ========================== */
+    /* Ô nhập                     */
+    /* ========================== */
 
-        #chatbot-input-area {
-    padding: 15px 20px;
-            display: flex;
-            gap: 10px;
-    border-top: 2px solid #f8b229;
-    background: #8b1014; /* Đỏ đậm */
+    #chatbot-input-area {
+        padding: 15px 20px;
+        display: flex;
+        gap: 10px;
+        border-top: 2px solid #f8b229;
+        background: #8b1014; /* Đỏ đậm */
         }
 
-        #chatbot-text {
-            flex: 1;
-    padding: 12px;
-    border-radius: 20px; 
-    border: 1px solid #ccc;
-    font-size: 16px;
+    #chatbot-text {
+        flex: 1;
+        padding: 12px;
+        border-radius: 20px; 
+        border: 1px solid #ccc;
+        font-size: 16px;
         }
 
-        #chatbot-send {
-    background: #f8b229; 
-    color: #8b1014;
-    font-weight: bold;
-            border: none;
-    border-radius: 20px;
-    padding: 0 15px;
+    #chatbot-send {
+        background: #f8b229; 
+        color: #8b1014;
+        font-weight: bold;
+        border: none;
+        border-radius: 20px;
+        padding: 0 15px;
         }
 
-#chatbot-send:hover {
-    background: #d42426;
-    color: white;
-    transform: scale(1.05);
-}
+    #chatbot-send:hover {
+        background: #d42426;
+        color: white;
+        transform: scale(1.05);
+    }
 
-/* Nút ghi âm */
-#voice-btn {
-    background: #dc3545;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    color: white;
-    border: none;
-    font-size: 22px;
-    transition: 0.2s;
-    flex-shrink: 0;
-}
-/* ========================== */
-/* MOBILE / TABLET (FIX OVERFLOW NÚT GỬI) */
-/* ========================== */
+    /* Nút ghi âm */
+    #voice-btn {
+        background: #dc3545;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        color: white;
+        border: none;
+        font-size: 22px;
+        transition: 0.2s;
+        flex-shrink: 0;
+    }
+    /* ========================== */
+    /*   MOBILE / TABLET DESIGN   */
+    /* ========================== */
     @media (max-width: 992px) {
 
     /* 1. KHUNG CHỨA TỔNG (toco-chat-container) */
@@ -258,9 +248,9 @@
     }
 
     /* 3. HIỂN THỊ VÀ ĐỊNH VỊ TOCO */
-            #toco-character-box {
+    #toco-character-box {
         display: block !important; 
-                position: absolute;
+        position: absolute;
         bottom: 80px; 
         right: -15px; 
         left: auto; 
@@ -282,7 +272,6 @@
         display: flex;
         align-items: center;
         width: 100%;
-        /* Giảm padding trên/dưới để phù hợp với chiều cao input mới */
         padding: 8px 10px; 
         padding-right: 10px; 
         padding-left: 70px; 
@@ -335,728 +324,713 @@
         letter-spacing: 0.5px;
     }
         }
-/* Sửa lại Background PC */
-body { 
-    background: url("{% static 'app/images/tam-pc.jpg' %}") no-repeat center center fixed; 
-    background-size: cover; 
-}
-
-@media (max-width: 992px) { 
     body { 
-        /* center top giúp lấy trọng tâm phần trên của ảnh Noel */
-        background: url("{% static 'app/images/tam-mobile.jpg' %}") no-repeat center top fixed; 
-        /* Quan trọng: cover giúp ảnh phủ kín, không tạo khoảng trắng */
+        background: url("{% static 'app/images/tam-pc.jpg' %}") no-repeat center center fixed; 
         background-size: cover; 
-        /* Đảm bảo chiều cao luôn phủ hết màn hình điện thoại */
-        min-height: 100vh;
-        width: 100%;
-    } 
-}
-.navbar {
-    background-color: #8b1014 !important; /* Đỏ đậm phù hợp background */
-    border-bottom: 3px solid #f8b229;
-}
-.nav-link[href*="history"] {
-    color: #ffeb3b !important; /* Màu vàng rực rỡ */
-    font-weight: 800 !important;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 5px 15px !important;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 235, 59, 0.3);
-}
+    }
 
-.nav-link[href*="history"]:hover {
-    background: rgba(255, 235, 59, 0.2);
-    box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
-    transform: translateY(-2px);
-}
-.form-control {
-    border-radius: 25px; /* Giữ bo góc như cũ */
-    height: 45px; /* Tăng độ cao một chút để dễ chạm trên điện thoại */
-}
+    @media (max-width: 992px) { 
+        body { 
+            background: url("{% static 'app/images/tam-mobile.jpg' %}") no-repeat center top fixed; 
+            background-size: cover; 
+            /* Đảm bảo chiều cao luôn phủ hết màn hình điện thoại */
+            min-height: 100vh;
+            width: 100%;
+        } 
+    }
+    .navbar {
+        background-color: #8b1014 !important; /* Đỏ đậm phù hợp background */
+        border-bottom: 3px solid #f8b229;
+    }
+    .nav-link[href*="history"] {
+        color: #ffeb3b !important; /* Màu vàng rực rỡ */
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 5px 15px !important;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 235, 59, 0.3);
+    }
 
-/* Ẩn nút xem mật khẩu mặc định của trình duyệt Edge/Chrome để tránh bị chồng */
-input::-ms-reveal, input::-ms-clear {
-    display: none;
-}
-/* --- LÁ XANH RƠI LA ĐÀ & MỜ ẢO --- */
-.petal {
-    position: fixed;
-    top: -10%;
-    z-index: 9990; /* Nằm phía sau khung chat */
-    pointer-events: none;
-    
-    /* Chỉnh kích thước nhỏ lại */
-    width: 7px; 
-    height: 12px;
-    border-radius: 0 100% 0 100%;
-    
-    /* ĐIỀU CHỈNH: Giảm độ mờ xuống mức rất thấp và làm nhòe nhẹ */
-    opacity: 0.3; 
-    filter: blur(1px); 
+    .nav-link[href*="history"]:hover {
+        background: rgba(255, 235, 59, 0.2);
+        box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+        transform: translateY(-2px);
+    }
+    .form-control {
+        border-radius: 25px; /* Giữ bo góc như cũ */
+        height: 45px; /* Tăng độ cao một chút để dễ chạm trên điện thoại */
+    }
 
-    /* Sử dụng 1 animation tổng hợp để tạo độ la đà */
-    animation: leaf-fall-natural 15s linear infinite;
-}
-
-/* Các tông màu xanh lá dịu mắt */
-.leaf-green-1 { background: #2ecc71; }
-.leaf-green-2 { background: #27ae60; }
-.leaf-green-3 { background: #a2d149; }
-
-/* KEYFRAME TẠO KIỂU RƠI LA ĐÀ (CHAO ĐẢO) */
-@keyframes leaf-fall-natural {
-    0% {
+    /* Ẩn nút xem mật khẩu mặc định của trình duyệt Edge/Chrome để tránh bị chồng */
+    input::-ms-reveal, input::-ms-clear {
+        display: none;
+    }
+    /* --- LÁ XANH RƠI LA ĐÀ & MỜ ẢO --- */
+    .petal {
+        position: fixed;
         top: -10%;
-        transform: translateX(0) rotate(0deg) rotateY(0deg);
+        z-index: 9990; /* Nằm phía sau khung chat */
+        pointer-events: none;
+        width: 7px; 
+        height: 12px;
+        border-radius: 0 100% 0 100%;
+        opacity: 0.3; 
+        filter: blur(1px); 
+        animation: leaf-fall-natural 15s linear infinite;
     }
-    20% {
-        transform: translateX(40px) rotate(45deg) rotateY(90deg);
+
+    /* Các tông màu xanh lá dịu mắt */
+    .leaf-green-1 { background: #2ecc71; }
+    .leaf-green-2 { background: #27ae60; }
+    .leaf-green-3 { background: #a2d149; }
+
+    /* KEYFRAME TẠO KIỂU RƠI LA ĐÀ (CHAO ĐẢO) */
+    @keyframes leaf-fall-natural {
+        0% {
+            top: -10%;
+            transform: translateX(0) rotate(0deg) rotateY(0deg);
+        }
+        20% {
+            transform: translateX(40px) rotate(45deg) rotateY(90deg);
+        }
+        40% {
+            transform: translateX(-40px) rotate(90deg) rotateY(180deg);
+        }
+        60% {
+            transform: translateX(40px) rotate(135deg) rotateY(270deg);
+        }
+        80% {
+            transform: translateX(-40px) rotate(180deg) rotateY(360deg);
+        }
+        100% {
+            top: 110%;
+            transform: translateX(0) rotate(225deg) rotateY(450deg);
+        }
     }
-    40% {
-        transform: translateX(-40px) rotate(90deg) rotateY(180deg);
-    }
-    60% {
-        transform: translateX(40px) rotate(135deg) rotateY(270deg);
-    }
-    80% {
-        transform: translateX(-40px) rotate(180deg) rotateY(360deg);
-    }
-    100% {
-        top: 110%;
-        transform: translateX(0) rotate(225deg) rotateY(450deg);
-    }
-}
 </style>
-<link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
+    <link rel="manifest" href="{% static 'app/manifest.json' %}">
+    <meta name="theme-color" content="#d42426">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script>
+    // Đăng ký Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/app/serviceworker.js')
+            .then(reg => console.log('Service Worker đã sẵn sàng!', reg))
+            .catch(err => console.log('Lỗi Service Worker:', err));
+        });
+    }
+    </script>
 
-<link rel="manifest" href="{% static 'app/manifest.json' %}">
-<meta name="theme-color" content="#d42426">
-<meta name="apple-mobile-web-app-capable" content="yes">
+    </head>
+    <body>
+    <audio id="bg-music" loop preload="auto">
+        <source src="{% static "app/music/newyear.mp3" %}"  type="audio/mpeg">
+    </audio>
+    <div id="toco-chat-container">
+        
+        <div id="toco-character-box">
+            <img id="toco-character" 
+                src="{% static 'app/images/toco_idle_2026.png' %}   "
+                alt="Toco Character">
+        </div>
+        
+        <div id="chatbot-box">
+            <div id="chatbot-header">
+                <button id="chat-toggle-btn" 
+                    style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:white; font-size:20px; cursor:pointer;">
+                    ❌
+                </button>
+                <button id="mute-btn" 
+                    style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:white; font-size:20px; cursor:pointer;">
+                    🔊
+                </button>
+                🌸Toco – Người bạn đồng hành🌸
+                <div style="position: absolute; top: 40px; right: 15px; font-size: 35px; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3)); z-index: 10;"></div>
+                <div style="position: absolute; bottom: 90px; left: 15px; font-size: 30px; color: white; opacity: 0.9; filter: blur(0.5px); z-index: 10;"></div>
+                </div>
+            <div id="chatbot-messages"></div>
 
-<script>
-  // Đăng ký Service Worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/static/app/serviceworker.js')
-        .then(reg => console.log('Service Worker đã sẵn sàng!', reg))
-        .catch(err => console.log('Lỗi Service Worker:', err));
-    });
-  }
-</script>
+            <div id="typing-indicator">⏳ Toco đang trả lời...</div>
 
-</head>
-<body>
-<audio id="bg-music" loop preload="auto">
-    <source src="{% static "app/music/newyear.mp3" %}"  type="audio/mpeg">
-</audio>
-<div id="toco-chat-container">
-    
-    <div id="toco-character-box">
-        <img id="toco-character" 
-             src="{% static 'app/images/toco_idle_2026.png' %}   "
-             alt="Toco Character">
-    </div>
-    
-    <div id="chatbot-box">
-        <div id="chatbot-header">
-            <button id="chat-toggle-btn" 
-                style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:white; font-size:20px; cursor:pointer;">
-                ❌
-            </button>
-            <button id="mute-btn" 
-                style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:white; font-size:20px; cursor:pointer;">
-                🔊
-            </button>
-            🌸Toco – Người bạn đồng hành🌸
-            <div style="position: absolute; top: 40px; right: 15px; font-size: 35px; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3)); z-index: 10;"></div>
-            <div style="position: absolute; bottom: 90px; left: 15px; font-size: 30px; color: white; opacity: 0.9; filter: blur(0.5px); z-index: 10;"></div>
+            <div id="chatbot-input-area">
+                <button id="voice-btn">🎤</button>
+                <input type="text" id="chatbot-text" placeholder="Nhập tin nhắn..." onkeypress="if(event.keyCode==13) document.getElementById('chatbot-send').click()">
+                <button id="chatbot-send">Gửi🧧</button>
             </div>
-        <div id="chatbot-messages"></div>
-
-        <div id="typing-indicator">⏳ Toco đang trả lời...</div>
-
-        <div id="chatbot-input-area">
-            <button id="voice-btn">🎤</button>
-            <input type="text" id="chatbot-text" placeholder="Nhập tin nhắn..." onkeypress="if(event.keyCode==13) document.getElementById('chatbot-send').click()">
-            <button id="chatbot-send">Gửi🧧</button>
         </div>
     </div>
-</div>
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #1a472a; border-bottom: 3px solid #f8b229;">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="/" style="color: #ffffff;">🏮 Trang chủ <span style="color: #ffee00ff;">🧧</span></a>
-    
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(255,255,255,0.5);">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #1a472a; border-bottom: 3px solid #f8b229;">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/" style="color: #ffffff;">🏮 Trang chủ <span style="color: #ffee00ff;">🧧</span></a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(255,255,255,0.5);">
+        <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav align-items-center">
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav align-items-center">
 
-        {% if user.is_authenticated %}
-            <li class="nav-item">
-              <span class="fw-semibold me-3" style="color: #ffffff;">👋 Chào, {{ user.username }}</span>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-white" href="/history/">Nhật ký trò chuyện</a>
-            </li>
-            <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-              <a class="btn btn-sm btn-outline-light" href="{% url 'logout' %}" style="border-radius: 20px;">Đăng xuất</a>
-            </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                <span class="fw-semibold me-3" style="color: #ffffff;">👋 Chào, {{ user.username }}</span>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link text-white" href="/history/">Nhật ký trò chuyện</a>
+                </li>
+                <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                <a class="btn btn-sm btn-outline-light" href="{% url 'logout' %}" style="border-radius: 20px;">Đăng xuất</a>
+                </li>
 
-        {% else %}
-            <div class="d-none d-lg-block" style="flex: 1; margin-right: 15px;">
-                <div style="background: rgba(255, 255, 255, 0.15); color: #ffffff; padding: 8px 15px; border-radius: 20px; font-size: 1rem; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
-                    <marquee behavior="scroll" direction="left" scrollamount="5">
-                        🔐 <strong><a href="{% url 'login' %}" style="color: #ffdd02ff; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🌸
-                    </marquee>
+            {% else %}
+                <div class="d-none d-lg-block" style="flex: 1; margin-right: 15px;">
+                    <div style="background: rgba(255, 255, 255, 0.15); color: #ffffff; padding: 8px 15px; border-radius: 20px; font-size: 1rem; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
+                        <marquee behavior="scroll" direction="left" scrollamount="5">
+                            🔐 <strong><a href="{% url 'login' %}" style="color: #ffdd02ff; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🌸
+                        </marquee>
+                    </div>
                 </div>
-            </div>
-            <li class="nav-item mt-2 mt-lg-0">
-              <a class="btn btn-sm px-3" href="{% url 'login' %}" 
-                 style="background-color: #e8292dff; color: white; border-radius: 20px; font-weight: bold;">
-                 Đăng nhập
-              </a>
-            </li>
+                <li class="nav-item mt-2 mt-lg-0">
+                <a class="btn btn-sm px-3" href="{% url 'login' %}" 
+                    style="background-color: #e8292dff; color: white; border-radius: 20px; font-weight: bold;">
+                    Đăng nhập
+                </a>
+                </li>
 
-            <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-              <a class="btn btn-sm px-3" href="{% url 'register' %}" 
-                 style="background-color: #f8b229; color: #1a472a; border-radius: 20px; font-weight: bold;">
-                 Đăng ký
-              </a>
-            </li>
-        {% endif %}
-      </ul>
+                <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                <a class="btn btn-sm px-3" href="{% url 'register' %}" 
+                    style="background-color: #f8b229; color: #1a472a; border-radius: 20px; font-weight: bold;">
+                    Đăng ký
+                </a>
+                </li>
+            {% endif %}
+        </ul>
+        </div>
     </div>
-  </div>
-</nav>
-{% if not user.is_authenticated %}
-<div class="d-block d-lg-none" style="width: 100%; background: #921c1c; padding: 10px 0; border-bottom: 2px solid #f8b229; margin-bottom: 15px;">
-    <div style="margin: 0 10px; background: rgba(255, 255, 255, 0.1); color: #ffffff; padding: 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
-        <marquee behavior="scroll" direction="left" scrollamount="6">
-            🔐 <strong><a href="{% url 'login' %}" style="color: #f8b229; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🌸
-        </marquee>
+    </nav>
+    {% if not user.is_authenticated %}
+    <div class="d-block d-lg-none" style="width: 100%; background: #921c1c; padding: 10px 0; border-bottom: 2px solid #f8b229; margin-bottom: 15px;">
+        <div style="margin: 0 10px; background: rgba(255, 255, 255, 0.1); color: #ffffff; padding: 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
+            <marquee behavior="scroll" direction="left" scrollamount="6">
+                🔐 <strong><a href="{% url 'login' %}" style="color: #f8b229; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🌸
+            </marquee>
+        </div>
     </div>
-</div>
-{% endif %}
+    {% endif %}
 
-<main class="container py-4">
-    {% block content %}{% endblock %}
-</main>
+    <main class="container py-4">
+        {% block content %}{% endblock %}
+    </main>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-<script>
-const TOCO_STATES = {
-    IDLE: 'IDLE',
-    TYPING: 'TYPING',
-    TALKING: 'TALKING' // Trạng thái chung khi đang nói
-};
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+    const TOCO_STATES = {
+        IDLE: 'IDLE',
+        TYPING: 'TYPING',
+        TALKING: 'TALKING' // Trạng thái chung khi đang nói
+    };
 
-const TOCO_IMAGES = {
-    // Sửa tên file cho đúng với thực tế bạn đã lưu trong thư mục images
-    IDLE: "{% static 'app/images/toco_idle_2026.png' %}", 
-    TYPING: "{% static 'app/images/toco_typing_2026.png' %}",
-    HAPPY: "{% static 'app/images/toco_happy_2026.png' %}",
-    COMFORT: "{% static 'app/images/toco_comfort_2026.png' %}",
-    CUTE: "{% static 'app/images/toco_cute_2026.png' %}" // Dùng idle làm mặc định
-};
-const tocoChar = document.getElementById("toco-character");
-let currentAudio = null; 
+    const TOCO_IMAGES = {
+        IDLE: "{% static 'app/images/toco_idle_2026.png' %}", 
+        TYPING: "{% static 'app/images/toco_typing_2026.png' %}",
+        HAPPY: "{% static 'app/images/toco_happy_2026.png' %}",
+        COMFORT: "{% static 'app/images/toco_comfort_2026.png' %}",
+        CUTE: "{% static 'app/images/toco_cute_2026.png' %}" // Dùng idle làm mặc định
+    };
+    const tocoChar = document.getElementById("toco-character");
+    let currentAudio = null; 
 
-function setTocoState(state, emotion = 'CUTE') {
-    // SỬA TẠI ĐÂY: Đổi 'toco-img' thành 'toco-character' cho khớp với HTML
-    const tocoImg = document.getElementById('toco-character'); 
-    if (!tocoImg) return;
+    function setTocoState(state, emotion = 'CUTE') {
+        const tocoImg = document.getElementById('toco-character'); 
+        if (!tocoImg) return;
 
-    if (state === 'TYPING' || state === TOCO_STATES.TYPING) {
-        tocoImg.src = TOCO_IMAGES.TYPING;
-    } else if (state === 'TALKING' || state === TOCO_STATES.TALKING) {
-        const emoKey = emotion.toUpperCase();
-        // Đổi ảnh theo cảm xúc
-        tocoImg.src = TOCO_IMAGES[emoKey] || TOCO_IMAGES.IDLE;
-    } else {
-        tocoImg.src = TOCO_IMAGES.IDLE;
+        if (state === 'TYPING' || state === TOCO_STATES.TYPING) {
+            tocoImg.src = TOCO_IMAGES.TYPING;
+        } else if (state === 'TALKING' || state === TOCO_STATES.TALKING) {
+            const emoKey = emotion.toUpperCase();
+            // Đổi ảnh theo cảm xúc
+            tocoImg.src = TOCO_IMAGES[emoKey] || TOCO_IMAGES.IDLE;
+        } else {
+            tocoImg.src = TOCO_IMAGES.IDLE;
+        }
     }
-}
 
-// ===========================
-//   KHỞI TẠO CHATBOX
-// ===========================
-let windowMochaGreeted = false;
-const tocoChatContainer = document.getElementById("toco-chat-container"); 
+    // ===========================
+    //   KHỞI TẠO CHATBOX
+    // ===========================
+    let windowMochaGreeted = false;
+    const tocoChatContainer = document.getElementById("toco-chat-container"); 
+
+    function initializeChat() {
+        // B1: Tải lịch sử chat (Chạy ngay, không chờ)
+        loadHistory(); // <--- GỌI HÀM loadHistory() TRỰC TIẾP Ở ĐÂY
+
+        // B2: Hỏi backend nếu là lần đầu (Chạy song song với loadHistory)
+        fetch("/check-first-chat/", { credentials: "same-origin" })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.first_time && !windowMochaGreeted) {
+                    windowMochaGreeted = true;
+
+                    addMessage(
+                        "bot",
+                        "Chào bạn, mình là Toco, bạn tên gì 💖"
+                    );
+                }
+
+            })
+            .catch(() => {
+                // Fallback nếu fetch lỗi
+                if (!windowMochaGreeted) {
+                    windowMochaGreeted = true;
+                    addMessage(
+                        "bot",
+                        "Chào bạn, mình là Toco, bạn tên gì 💖"
+                    );
+                }
+            });
+    }
 
 
-function initializeChat() {
-    // B1: Tải lịch sử chat (Chạy ngay, không chờ)
-    loadHistory(); // <--- GỌI HÀM loadHistory() TRỰC TIẾP Ở ĐÂY
+    /* ======================
+    PHẦN 2: GỬI TEXT & VOICE
+    ====================== */
 
-    // B2: Hỏi backend nếu là lần đầu (Chạy song song với loadHistory)
-    fetch("/check-first-chat/", { credentials: "same-origin" })
+    /* Thêm tin nhắn vào khung chat */
+    function addMessage(sender, msg, id = "") { 
+        let box = document.getElementById("chatbot-messages");
+        let html = `
+            <div class="chat-msg ${sender}">
+                <div class="chat-avatar"></div>
+                <div class="chat-bubble" ${id ? `id="${id}"` : ''}>${msg}</div>
+            </div>
+        `;
+        box.innerHTML += html;
+        box.scrollTop = box.scrollHeight;
+    }
+
+    document.getElementById("chatbot-send").onclick = () => {
+        let text = document.getElementById("chatbot-text").value.trim();
+        if (text === "") return;
+
+        addMessage("user", text);
+        document.getElementById("chatbot-text").value = "";
+
+        // Bắt đầu trạng thái SUY NGHĨ
+        document.getElementById("typing-indicator").style.display = "block";
+        setTocoState(TOCO_STATES.TYPING); 
+
+        fetch("/chatbot/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: text,
+                audio: !isMuted
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("typing-indicator").style.display = "none";
+            addMessage("bot", data.reply || "⚠️ Lỗi không nhận được trả lời");
+
+            const emotion = (data.emotion || "CUTE").toUpperCase();
+            setTocoState('TALKING', emotion); // Kích hoạt hình ảnh nói theo cảm xúc
+
+            if (!isMuted && data.audio) {
+                if (window.currentAudio) {
+                    window.currentAudio.pause(); // Dừng câu trước đó nếu đang nói
+                }
+                window.currentAudio = new Audio("data:audio/mp3;base64," + data.audio);
+                
+                // ⭐️ LOGIC THỐNG NHẤT: Bắt lỗi Autoplay và chuyển về IDLE
+                window.currentAudio.play()
+                    .catch(e => {
+                        // Lỗi Autoplay bị chặn: Vẫn hiển thị Toco TALKING trong 3 giây rồi nghỉ
+                        console.error("Trình duyệt chặn phát tự động (Text):", e);
+                        // setTocoState('TALKING', emotion); // Đã set ở trên
+                        setTimeout(() => { setTocoState('IDLE'); }, 3000);
+                    });
+
+                window.currentAudio.onended = () => {
+                    setTocoState('IDLE');
+                };
+            } else {
+                // Nếu tắt tiếng hoặc không có audio, hiện hình cảm xúc trong 3 giây rồi nghỉ
+                setTimeout(() => { setTocoState('IDLE'); }, 3000);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            addMessage("bot", "⚠️ Lỗi kết nối server");
+            setTocoState(TOCO_STATES.IDLE); 
+        });
+    };
+
+
+    /* 🎤 Gửi tin nhắn voice (base64) */
+    function sendVoiceBase64(base64Audio) {
+
+        // 1. Thêm tin nhắn tạm với placeholder
+        addMessage("user", "🎤 (Đang xử lý giọng nói...)");
+        document.getElementById("typing-indicator").style.display = "block";
+        setTocoState(TOCO_STATES.TYPING); 
+
+        fetch("/chatbot/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                voice_input: base64Audio,
+                audio: !isMuted
+            })
+        })
         .then(res => res.json())
         .then(data => {
 
-            if (data.first_time && !windowMochaGreeted) {
-                windowMochaGreeted = true;
-
-                addMessage(
-                    "bot",
-                    "Chào bạn, mình là Toco, bạn tên gì 💖"
-                );
-            }
-
-        })
-        .catch(() => {
-            // Fallback nếu fetch lỗi
-            if (!windowMochaGreeted) {
-                windowMochaGreeted = true;
-                addMessage(
-                    "bot",
-                    "Chào bạn, mình là Toco, bạn tên gì 💖"
-                );
-            }
-        });
-
-    // }); <--- Đã xóa dấu đóng ngoặc } của loadHistory().then(() => {
-}
-
-
-/* ======================
-   PHẦN 2: GỬI TEXT & VOICE
-   ====================== */
-
-/* Thêm tin nhắn vào khung chat */
-function addMessage(sender, msg, id = "") { 
-    let box = document.getElementById("chatbot-messages");
-    let html = `
-        <div class="chat-msg ${sender}">
-            <div class="chat-avatar"></div>
-            <div class="chat-bubble" ${id ? `id="${id}"` : ''}>${msg}</div>
-        </div>
-    `;
-    box.innerHTML += html;
-    box.scrollTop = box.scrollHeight;
-}
-
-document.getElementById("chatbot-send").onclick = () => {
-    let text = document.getElementById("chatbot-text").value.trim();
-    if (text === "") return;
-
-    addMessage("user", text);
-    document.getElementById("chatbot-text").value = "";
-
-    // Bắt đầu trạng thái SUY NGHĨ
-    document.getElementById("typing-indicator").style.display = "block";
-    setTocoState(TOCO_STATES.TYPING); 
-
-    fetch("/chatbot/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            message: text,
-            audio: !isMuted
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("typing-indicator").style.display = "none";
-        addMessage("bot", data.reply || "⚠️ Lỗi không nhận được trả lời");
-
-        const emotion = (data.emotion || "CUTE").toUpperCase();
-        setTocoState('TALKING', emotion); // Kích hoạt hình ảnh nói theo cảm xúc
-
-        if (!isMuted && data.audio) {
-            if (window.currentAudio) {
-                window.currentAudio.pause(); // Dừng câu trước đó nếu đang nói
-            }
-            window.currentAudio = new Audio("data:audio/mp3;base64," + data.audio);
+            document.getElementById("typing-indicator").style.display = "none";
             
-            // ⭐️ LOGIC THỐNG NHẤT: Bắt lỗi Autoplay và chuyển về IDLE
-            window.currentAudio.play()
-                .catch(e => {
-                    // Lỗi Autoplay bị chặn: Vẫn hiển thị Toco TALKING trong 3 giây rồi nghỉ
-                    console.error("Trình duyệt chặn phát tự động (Text):", e);
-                    // setTocoState('TALKING', emotion); // Đã set ở trên
-                    setTimeout(() => { setTocoState('IDLE'); }, 3000);
+            // 2. Cập nhật tin nhắn người dùng bằng STT result (từ views.py)
+            const userMsgBubble = document.querySelector(".chat-msg.user:last-child .chat-bubble");
+            if (userMsgBubble && data.user_message) {
+                userMsgBubble.innerHTML = data.user_message; 
+            } else if (userMsgBubble) {
+                userMsgBubble.innerHTML = "🎤 (Không nhận dạng được giọng nói)";
+            }
+            
+            addMessage("bot", data.reply || "⚠️ Không hiểu bạn nói gì");
+            const emotion = (data.emotion || "CUTE").toUpperCase();
+            setTocoState(TOCO_STATES.TALKING, emotion); // Kích hoạt hình ảnh nói theo cảm xúc
+
+            if (!isMuted && data.audio) {
+                if (window.currentAudio) {
+                window.currentAudio.pause(); // Dừng ngay câu đang nói dở
+                window.currentAudio.currentTime = 0;
+                }
+                window.currentAudio = new Audio("data:audio/mp3;base64," + data.audio);
+                
+                // ⭐️ LOGIC THỐNG NHẤT: Bắt lỗi Autoplay và chuyển về IDLE
+                window.currentAudio.play().catch(e => {
+                    console.error("Trình duyệt chặn phát tự động (Voice):", e);
+                    // Nếu bị chặn, tự động chuyển về IDLE sau 3 giây (giống gửi Text)
+                    // setTocoState(TOCO_STATES.TALKING, emotion); // Đã set ở trên
+                    setTimeout(() => { setTocoState(TOCO_STATES.IDLE); }, 3000);
                 });
 
-            window.currentAudio.onended = () => {
-                setTocoState('IDLE');
-            };
-        } else {
-            // Nếu tắt tiếng hoặc không có audio, hiện hình cảm xúc trong 3 giây rồi nghỉ
-            setTimeout(() => { setTocoState('IDLE'); }, 3000);
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        addMessage("bot", "⚠️ Lỗi kết nối server");
-        setTocoState(TOCO_STATES.IDLE); 
-    });
-};
-
-
-/* 🎤 Gửi tin nhắn voice (base64) */
-function sendVoiceBase64(base64Audio) {
-
-    // 1. Thêm tin nhắn tạm với placeholder
-    addMessage("user", "🎤 (Đang xử lý giọng nói...)");
-    document.getElementById("typing-indicator").style.display = "block";
-    setTocoState(TOCO_STATES.TYPING); 
-
-    fetch("/chatbot/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            voice_input: base64Audio,
-            audio: !isMuted
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        document.getElementById("typing-indicator").style.display = "none";
-        
-        // 2. Cập nhật tin nhắn người dùng bằng STT result (từ views.py)
-        const userMsgBubble = document.querySelector(".chat-msg.user:last-child .chat-bubble");
-        if (userMsgBubble && data.user_message) {
-            userMsgBubble.innerHTML = data.user_message; 
-        } else if (userMsgBubble) {
-            userMsgBubble.innerHTML = "🎤 (Không nhận dạng được giọng nói)";
-        }
-        
-        addMessage("bot", data.reply || "⚠️ Không hiểu bạn nói gì");
-        const emotion = (data.emotion || "CUTE").toUpperCase();
-        setTocoState(TOCO_STATES.TALKING, emotion); // Kích hoạt hình ảnh nói theo cảm xúc
-
-        if (!isMuted && data.audio) {
-            if (window.currentAudio) {
-            window.currentAudio.pause(); // Dừng ngay câu đang nói dở
-            window.currentAudio.currentTime = 0;
-            }
-            window.currentAudio = new Audio("data:audio/mp3;base64," + data.audio);
-            
-            // ⭐️ LOGIC THỐNG NHẤT: Bắt lỗi Autoplay và chuyển về IDLE
-            window.currentAudio.play().catch(e => {
-                console.error("Trình duyệt chặn phát tự động (Voice):", e);
-                // Nếu bị chặn, tự động chuyển về IDLE sau 3 giây (giống gửi Text)
+                window.currentAudio.onended = () => {
+                    setTocoState(TOCO_STATES.IDLE); // Trở về trạng thái nghỉ khi nói xong
+                };
+            } else {
+                // Nếu tắt tiếng hoặc không có audio, hiện hình cảm xúc trong 3 giây rồi nghỉ
                 // setTocoState(TOCO_STATES.TALKING, emotion); // Đã set ở trên
                 setTimeout(() => { setTocoState(TOCO_STATES.IDLE); }, 3000);
-            });
-
-            window.currentAudio.onended = () => {
-                setTocoState(TOCO_STATES.IDLE); // Trở về trạng thái nghỉ khi nói xong
-            };
-        } else {
-            // Nếu tắt tiếng hoặc không có audio, hiện hình cảm xúc trong 3 giây rồi nghỉ
-            // setTocoState(TOCO_STATES.TALKING, emotion); // Đã set ở trên
-            setTimeout(() => { setTocoState(TOCO_STATES.IDLE); }, 3000);
-        }
-    })  
-    .catch(err => {
-        console.error(err);
-        document.getElementById("typing-indicator").style.display = "none";
-        addMessage("bot", "⚠️ Lỗi kết nối server hoặc xử lý giọng nói.");
-        setTocoState(TOCO_STATES.IDLE); 
-    });
-}
-
-/*
-  PHẦN 3: Recorder (Ghi bằng MediaRecorder - webm)
-*/
-let recorder = null;
-let chunks = [];
-
-async function getSupportedMime() {
-    if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus"))
-        return "audio/webm;codecs=opus";
-
-    if (MediaRecorder.isTypeSupported("audio/mp4;codecs=aac"))
-        return "audio/mp4;codecs=aac";
-
-    return "audio/webm"; // fallback
-}
-
-/* Thêm các biến quản lý im lặng vào bộ biến toàn cục */
-let audioContext = null;
-let analyser = null;
-let silenceTimer = null;
-
-document.getElementById("voice-btn").onclick = async () => {
-    try {
-        if (!recorder) {
-            const mime = await getSupportedMime();
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-            recorder = new MediaRecorder(stream, { mimeType: mime });
-
-            recorder.ondataavailable = (e) => {
-                if (e.data.size > 0) chunks.push(e.data);
-            };
-
-            recorder.onstop = () => {
-                const blob = new Blob(chunks, { type: recorder.mimeType });
-                chunks = [];
-
-                // Dọn dẹp AudioContext khi dừng
-                if (audioContext) {
-                    audioContext.close();
-                    audioContext = null;
-                }
-                clearTimeout(silenceTimer);
-
-                if (blob.size < 2000) {
-                    addMessage("bot", "⚠️ Không thu được âm thanh, bạn thử lại nha.");
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const base64 = reader.result.split(",")[1];
-                    sendVoiceBase64(base64);
-                };
-                reader.readAsDataURL(blob);
-            };
-        }
-
-        if (recorder.state === "inactive") {
-            chunks = [];
-            recorder.start();
-
-            // --- BẮT ĐẦU LOGIC THEO DÕI ÂM THANH ---
-            const stream = recorder.stream;
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            const source = audioContext.createMediaStreamSource(stream);
-            source.connect(analyser);
-            analyser.fftSize = 256;
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-
-            const checkSilence = () => {
-                if (recorder.state !== "recording") return;
-
-                analyser.getByteFrequencyData(dataArray);
-                
-                // Tính âm lượng trung bình
-                let sum = 0;
-                for (let i = 0; i < bufferLength; i++) {
-                    sum += dataArray[i];
-                }
-                let average = sum / bufferLength;
-
-                // Nếu âm lượng cực thấp (dưới ngưỡng im lặng)
-                if (average < 10) { // Ngưỡng 10 có thể điều chỉnh tùy môi trường
-                    if (!silenceTimer) {
-                        silenceTimer = setTimeout(() => {
-                            if (recorder.state === "recording") {
-                                console.log("Im lặng 2s, tự động dừng...");
-                                recorder.stop();
-                                document.getElementById("voice-btn").style.background = "#dc3545";
-                                document.getElementById("voice-btn").innerText = "🎤";
-                            }
-                        }, 2000); // 2 giây im lặng
-                    }
-                } else {
-                    // Nếu có tiếng động lại thì reset timer
-                    clearTimeout(silenceTimer);
-                    silenceTimer = null;
-                }
-
-                requestAnimationFrame(checkSilence);
-            };
-
-            checkSilence();
-            // --- KẾT THÚC LOGIC THEO DÕI ---
-
-            document.getElementById("voice-btn").style.background = "green";
-            document.getElementById("voice-btn").innerText = "⏺️";
-        } 
-        else {
-            recorder.stop();
-            document.getElementById("voice-btn").style.background = "#dc3545";
-            document.getElementById("voice-btn").innerText = "🎤";
-        }
-    } catch (e) {
-        console.error(e);
-        addMessage("bot", "⚠️ Không bật được micro, kiểm tra lại quyền truy cập nhé.");
-    }
-};
-
-
-function arrayBufferToBase64(buffer) {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const chunkSize = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunkSize) {
-        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
-    }
-    return btoa(binary);
-}
-
-
-function forceStopRecorder() {
-    if (recorder && recorder.state !== "inactive") {
-        recorder.stop();
-    }
-    recorder = null;
-    chunks = [];
-}
-
-
-let isMuted = false;
-const muteBtn = document.getElementById("mute-btn");
-muteBtn.addEventListener("click", () => {
-    isMuted = !isMuted;
-    muteBtn.innerText = isMuted ? "🔇" : "🔊";
-});
-// =============================
-//  Tải lịch sử chat từ server
-// =============================
-function loadHistory() {
-    return fetch("/chat-history/")
-        .then(res => {
-            if (res.status === 403) {
-                const box = document.getElementById("chatbot-messages");
-                box.innerHTML = `
-                    <div style="text-align:center; color:#555; margin-top:20px; padding: 0 10px;">
-                        Bạn chưa đăng nhập. 
-                        Đăng nhập để xem và lưu lịch sử trò chuyện.
-                    </div>
-                `;
-                return { history: [] };
             }
-            return res.json();
-        })
-        .then(data => {
-            const box = document.getElementById("chatbot-messages");
-            box.innerHTML = "";
-            data.history.forEach(msg => addMessage(msg.sender, msg.message));
-        })
-        .catch(() => {});
-}
-function launchFirework() {
-    const duration = 3 * 1000;
-    const end = Date.now() + duration;
-
-    (function frame() {
-        // Bắn từ bên trái
-        confetti({
-            particleCount: 3,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0, y: 0.8 },
-            colors: ['#FFD700', '#FF0000', '#FF69B4',]
+        })  
+        .catch(err => {
+            console.error(err);
+            document.getElementById("typing-indicator").style.display = "none";
+            addMessage("bot", "⚠️ Lỗi kết nối server hoặc xử lý giọng nói.");
+            setTocoState(TOCO_STATES.IDLE); 
         });
-        // Bắn từ bên phải
-        confetti({
-            particleCount: 3,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1, y: 0.8 },
-            colors: ['#14c0ffff', '#00ffa2ff', '#9147ffff',]
-        });
+    }
 
-        if (Date.now() < end) {
-            requestAnimationFrame(frame);
+    /*
+    PHẦN 3: Recorder (Ghi bằng MediaRecorder - webm)
+    */
+    let recorder = null;
+    let chunks = [];
+
+    async function getSupportedMime() {
+        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus"))
+            return "audio/webm;codecs=opus";
+
+        if (MediaRecorder.isTypeSupported("audio/mp4;codecs=aac"))
+            return "audio/mp4;codecs=aac";
+
+        return "audio/webm"; // fallback
+    }
+
+    /* Thêm các biến quản lý im lặng vào bộ biến toàn cục */
+    let audioContext = null;
+    let analyser = null;
+    let silenceTimer = null;
+
+    document.getElementById("voice-btn").onclick = async () => {
+        try {
+            if (!recorder) {
+                const mime = await getSupportedMime();
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                recorder = new MediaRecorder(stream, { mimeType: mime });
+
+                recorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) chunks.push(e.data);
+                };
+
+                recorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: recorder.mimeType });
+                    chunks = [];
+
+                    // Dọn dẹp AudioContext khi dừng
+                    if (audioContext) {
+                        audioContext.close();
+                        audioContext = null;
+                    }
+                    clearTimeout(silenceTimer);
+
+                    if (blob.size < 2000) {
+                        addMessage("bot", "⚠️ Không thu được âm thanh, bạn thử lại nha.");
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const base64 = reader.result.split(",")[1];
+                        sendVoiceBase64(base64);
+                    };
+                    reader.readAsDataURL(blob);
+                };
+            }
+
+            if (recorder.state === "inactive") {
+                chunks = [];
+                recorder.start();
+
+                // --- BẮT ĐẦU LOGIC THEO DÕI ÂM THANH ---
+                const stream = recorder.stream;
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                const checkSilence = () => {
+                    if (recorder.state !== "recording") return;
+
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    // Tính âm lượng trung bình
+                    let sum = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        sum += dataArray[i];
+                    }
+                    let average = sum / bufferLength;
+
+                    // Nếu âm lượng cực thấp (dưới ngưỡng im lặng)
+                    if (average < 10) { // Ngưỡng 10 có thể điều chỉnh tùy môi trường
+                        if (!silenceTimer) {
+                            silenceTimer = setTimeout(() => {
+                                if (recorder.state === "recording") {
+                                    console.log("Im lặng 2s, tự động dừng...");
+                                    recorder.stop();
+                                    document.getElementById("voice-btn").style.background = "#dc3545";
+                                    document.getElementById("voice-btn").innerText = "🎤";
+                                }
+                            }, 2000); // 2 giây im lặng
+                        }
+                    } else {
+                        // Nếu có tiếng động lại thì reset timer
+                        clearTimeout(silenceTimer);
+                        silenceTimer = null;
+                    }
+
+                    requestAnimationFrame(checkSilence);
+                };
+
+                checkSilence();
+                // --- KẾT THÚC LOGIC THEO DÕI ---
+
+                document.getElementById("voice-btn").style.background = "green";
+                document.getElementById("voice-btn").innerText = "⏺️";
+            } 
+            else {
+                recorder.stop();
+                document.getElementById("voice-btn").style.background = "#dc3545";
+                document.getElementById("voice-btn").innerText = "🎤";
+            }
+        } catch (e) {
+            console.error(e);
+            addMessage("bot", "⚠️ Không bật được micro, kiểm tra lại quyền truy cập nhé.");
         }
-    }());
-}
-function createPetals() {
-    const container = document.body;
-    const oldPetals = document.querySelectorAll('.petal');
-    oldPetals.forEach(p => p.remove());
+    };
 
-    for (let i = 0; i < 30; i++) {
-        let leaf = document.createElement('div');
-        leaf.className = 'petal';
-        
-        const greenTypes = ['leaf-green-1', 'leaf-green-2', 'leaf-green-3'];
-        leaf.classList.add(greenTypes[Math.floor(Math.random() * greenTypes.length)]);
-
-        // Vị trí ngang ngẫu nhiên
-        leaf.style.left = Math.random() * 100 + 'vw';
-        
-        // ĐIỀU CHỈNH: Thời gian rơi ngẫu nhiên từ 12s đến 20s để lá rơi thật chậm
-        leaf.style.animationDuration = (Math.random() * 8 + 12) + 's';
-        leaf.style.animationDelay = Math.random() * 10 + 's';
-        
-        container.appendChild(leaf);
+    // Chuyển ArrayBuffer sang Base64
+    function arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binary);
     }
-}
-document.addEventListener("DOMContentLoaded", () => {
-    createPetals();
-    const tocoChatContainer = document.getElementById("toco-chat-container");
-    const toggleBtn = document.getElementById("chat-toggle-btn"); // Nút X
-    const openBubble = document.getElementById("chat-open-bubble"); // Nút 💬
-    const currentPath = window.location.pathname.replace(/\/$/, ""); 
-    const bgMusic = document.getElementById('bg-music');
-    if (bgMusic) {
-        bgMusic.volume = 0.05; 
 
-        const startMusic = () => {
-            bgMusic.play().then(() => {
-                console.log("Nhạc đang phát!");
-            const unlockAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==");
-            unlockAudio.play().catch(() => {});
-        }).catch(error => {
-                console.log("Chờ click để phát nhạc...");
+    // Dừng recorder ngay lập tức (nếu cần)
+    function forceStopRecorder() {
+        if (recorder && recorder.state !== "inactive") {
+            recorder.stop();
+        }
+        recorder = null;
+        chunks = [];
+    }
+
+    let isMuted = false;
+    const muteBtn = document.getElementById("mute-btn");
+    muteBtn.addEventListener("click", () => {
+        isMuted = !isMuted;
+        muteBtn.innerText = isMuted ? "🔇" : "🔊";
+    });
+    // =============================
+    //  Tải lịch sử chat từ server
+    // =============================
+    function loadHistory() {
+        return fetch("/chat-history/")
+            .then(res => {
+                if (res.status === 403) {
+                    const box = document.getElementById("chatbot-messages");
+                    box.innerHTML = `
+                        <div style="text-align:center; color:#555; margin-top:20px; padding: 0 10px;">
+                            Bạn chưa đăng nhập. 
+                            Đăng nhập để xem và lưu lịch sử trò chuyện.
+                        </div>
+                    `;
+                    return { history: [] };
+                }
+                return res.json();
+            })
+            .then(data => {
+                const box = document.getElementById("chatbot-messages");
+                box.innerHTML = "";
+                data.history.forEach(msg => addMessage(msg.sender, msg.message));
+            })
+            .catch(() => {});
+    }
+    // Hàm bắn pháo hoa
+    function launchFirework() {
+        const duration = 3 * 1000;
+        const end = Date.now() + duration;
+
+        (function frame() {
+            // Bắn từ bên trái
+            confetti({
+                particleCount: 3,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0, y: 0.8 },
+                colors: ['#FFD700', '#FF0000', '#FF69B4',]
             });
-        };
+            // Bắn từ bên phải
+            confetti({
+                particleCount: 3,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1, y: 0.8 },
+                colors: ['#14c0ffff', '#00ffa2ff', '#9147ffff',]
+            });
 
-    // Quan trọng: Phải có click chuột vào trang web nhạc mới bắt đầu phát
-    document.addEventListener('click', startMusic, { once: true });
-    document.addEventListener('touchstart', startMusic, { once: true });
-    document.addEventListener('keydown', startMusic, { once: true });
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
     }
-    if (currentPath === '' || currentPath === '/' || currentPath === '/index.html') { 
-        tocoChatContainer.style.display = 'flex'; // Hiển thị khung chat (Toco + Chatbox)
-        initializeChat();
-        setInterval(launchFirework, 5000);
-        toggleBtn.onclick = () => {
-            const chatbotBox = document.getElementById("chatbot-box");
-            chatbotBox.style.display = 'none';
-            openBubble.style.display = 'flex'; // Hiện bong bóng mở lại
-        };
+    // Hàm tạo lá rơi
+    function createPetals() {
+        const container = document.body;
+        const oldPetals = document.querySelectorAll('.petal');
+        oldPetals.forEach(p => p.remove());
 
-        // Khi nhấn nút 💬 (mở lại)
-        openBubble.onclick = () => {
-            const chatbotBox = document.getElementById("chatbot-box");
-            chatbotBox.style.display = 'flex';
-            openBubble.style.display = 'none'; // Ẩn bong bóng
-        };
-        const isUserAuthenticated = "{% if user.is_authenticated %}true{% else %}false{% endif %}" === "true";
-        const registerPath = "{% url 'register' %}"; // Lấy đường dẫn trang đăng ký
+        for (let i = 0; i < 30; i++) {
+            let leaf = document.createElement('div');
+            leaf.className = 'petal';
+            
+            const greenTypes = ['leaf-green-1', 'leaf-green-2', 'leaf-green-3'];
+            leaf.classList.add(greenTypes[Math.floor(Math.random() * greenTypes.length)]);
 
-        // Nếu chưa đăng nhập và đang ở trang chủ, tự động chuyển hướng sang trang đăng ký
-        if (!isUserAuthenticated && (currentPath === '' || currentPath === '/' || currentPath === '/index.html')) {
-            window.location.href = registerPath;
-            return; // Dừng thực thi các code phía sau để tránh lỗi
-        }  
-    } else {
-
-        tocoChatContainer.style.display = 'none'; // Ẩn khung chat trên các trang khác
+            // Vị trí ngang ngẫu nhiên
+            leaf.style.left = Math.random() * 100 + 'vw';
+            
+            leaf.style.animationDuration = (Math.random() * 8 + 12) + 's';
+            leaf.style.animationDelay = Math.random() * 10 + 's';
+            
+            container.appendChild(leaf);
+        }
     }
-});
+    // Khởi tạo khi tải trang
+    document.addEventListener("DOMContentLoaded", () => {
+        createPetals();
+        const tocoChatContainer = document.getElementById("toco-chat-container");
+        const toggleBtn = document.getElementById("chat-toggle-btn"); // Nút X
+        const openBubble = document.getElementById("chat-open-bubble"); // Nút 💬
+        const currentPath = window.location.pathname.replace(/\/$/, ""); 
+        const bgMusic = document.getElementById('bg-music');
+        if (bgMusic) {
+            bgMusic.volume = 0.05; 
 
-function togglePass(selector, btn) {
-    const input = document.querySelector(selector);
-    if (input.type === "password") {
-        input.type = "text";
-        btn.textContent = "🙈"; // Đổi icon khi hiện mật khẩu
-    } else {
-        input.type = "password";
-        btn.textContent = "👁️"; // Đổi icon khi ẩn mật khẩu
+            const startMusic = () => {
+                bgMusic.play().then(() => {
+                    console.log("Nhạc đang phát!");
+                const unlockAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==");
+                unlockAudio.play().catch(() => {});
+            }).catch(error => {
+                    console.log("Chờ click để phát nhạc...");
+                });
+            };
+
+        // Quan trọng: Phải có click chuột vào trang web nhạc mới bắt đầu phát
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('touchstart', startMusic, { once: true });
+        document.addEventListener('keydown', startMusic, { once: true });
+        }
+        if (currentPath === '' || currentPath === '/' || currentPath === '/index.html') { 
+            tocoChatContainer.style.display = 'flex'; // Hiển thị khung chat (Toco + Chatbox)
+            initializeChat();
+            setInterval(launchFirework, 5000);
+            toggleBtn.onclick = () => {
+                const chatbotBox = document.getElementById("chatbot-box");
+                chatbotBox.style.display = 'none';
+                openBubble.style.display = 'flex'; // Hiện bong bóng mở lại
+            };
+
+            // Khi nhấn nút 💬 (mở lại)
+            openBubble.onclick = () => {
+                const chatbotBox = document.getElementById("chatbot-box");
+                chatbotBox.style.display = 'flex';
+                openBubble.style.display = 'none'; // Ẩn bong bóng
+            };
+            const isUserAuthenticated = "{% if user.is_authenticated %}true{% else %}false{% endif %}" === "true";
+            const registerPath = "{% url 'register' %}"; // Lấy đường dẫn trang đăng ký
+
+            // Nếu chưa đăng nhập và đang ở trang chủ, tự động chuyển hướng sang trang đăng ký
+            if (!isUserAuthenticated && (currentPath === '' || currentPath === '/' || currentPath === '/index.html')) {
+                window.location.href = registerPath;
+                return; // Dừng thực thi các code phía sau để tránh lỗi
+            }  
+        } else {
+
+            tocoChatContainer.style.display = 'none'; // Ẩn khung chat trên các trang khác
+        }
+    });
+    // Hàm chuyển đổi hiển thị/ẩn mật khẩu
+    function togglePass(selector, btn) {
+        const input = document.querySelector(selector);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.textContent = "🙈"; // Đổi icon khi hiện mật khẩu
+        } else {
+            input.type = "password";
+            btn.textContent = "👁️"; // Đổi icon khi ẩn mật khẩu
+        }
     }
-}
-</script>
-<button id="chat-open-bubble" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #d42426; color: white; border-radius: 50%; border: 3px solid #f8b229; z-index: 10001; cursor: pointer; font-size: 24px; display: none; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-    💬
-</button>
-</body>
-</html>
+    </script>
+    <button id="chat-open-bubble" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #d42426; color: white; border-radius: 50%; border: 3px solid #f8b229; z-index: 10001; cursor: pointer; font-size: 24px; display: none; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        💬
+    </button>
+    </body>
+    </html>
