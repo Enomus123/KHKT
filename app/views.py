@@ -298,7 +298,7 @@ def register(request):
             return render(request, 'app/register.html', {'form': form})
         if form.is_valid():
             form.save()
-            messages.success(request, "Tạo tài khoản thành công! Đăng nhập ngay nhé. 🎄")
+            messages.success(request, "Tạo tài khoản thành công! Đăng nhập ngay nhé.")
             return redirect('login')
         else:
             for field, errs in form.errors.items():
