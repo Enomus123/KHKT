@@ -9,7 +9,7 @@ services:
     startCommand: "gunicorn duankhkt.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: PYTHON_VERSION
-        value: "3.11.0" # Phiên bản ổn định nhất trên Render hiện tại
+        value: "3.11.0" 
       - key: DJANGO_SETTINGS_MODULE
         value: "duankhkt.settings"
       - key: WEB_CONCURRENCY

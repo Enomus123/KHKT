@@ -18,19 +18,13 @@ load_dotenv()  # Load file .env
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 OPENAI_PROJECT_ID = "proj_E2wBJe2boLD1PQ0pCPchSSBJ"
 CORS_ALLOW_ALL_ORIGINS = True
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = ['khkt-s1n9.onrender.com', 'localhost', '127.0.0.1']
 
@@ -44,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',  # Đảm bảo tên ứng dụng con của bạn đã được thêm
+    'app', 
 ]
 
 MIDDLEWARE = [
@@ -139,7 +133,7 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # ⬅️ Đảm bảo có dòng này
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 WHITENOISE_MANIFEST_STRICT = False
 
@@ -153,5 +147,5 @@ GMAIL_API_CLIENT_ID = os.environ.get('GMAIL_API_CLIENT_ID')
 GMAIL_API_CLIENT_SECRET = os.environ.get('GMAIL_API_CLIENT_SECRET')
 GMAIL_API_REFRESH_TOKEN = os.environ.get('GMAIL_API_REFRESH_TOKEN')
 
-# Email này phải khớp với email ttungduong2000@gmail.com bạn đã xác thực
+
 DEFAULT_FROM_EMAIL = 'ttungduong2000@gmail.com'

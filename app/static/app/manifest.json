@@ -8,12 +8,12 @@
   "description": "Chatbot AI hỗ trợ tâm lý dựa trên Gemini API",
   "icons": [
     {
-      "src": "/static/app/images/toco_idle.png",
+      "src": "/static/app/images/toco_idle_2026.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/static/app/images/toco_idle.png",
+      "src": "/static/app/images/toco_idle_2026.png",
       "sizes": "512x512",
       "type": "image/png"
     }

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hồ Số Nghệ Thuật</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Times New Roman', serif; }
+        
+        #game-container { 
+            position: relative; 
+            width: 100vw; 
+            height: 100vh; 
+            /* Hình nền dự phòng nếu ảnh không tải được */
+            background: #051923; 
+        }
+
+        /* Lớp hình nền */
+        #background-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0; /* Nằm dưới cùng */
+            pointer-events: none; /* Không cho phép click vào ảnh làm vướng game */
+        }
+        
+        #ui-layer { 
+            position: absolute; top: 20px; left: 20px; z-index: 10; 
+            background: rgba(0, 0, 0, 0.4); color: #e0e0e0; 
+            padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(8px);
+            display: none; /* Ẩn đi lúc đầu, hiện khi bắt đầu game */
+        }
+
+        /* ... (Các phần style khác giữ nguyên như cũ của bạn) ... */
+        .number-art {
+            position: absolute; font-size: 50px; font-weight: 800;
+            cursor: pointer; user-select: none;
+            text-shadow: 2px 4px 6px rgba(0,0,0,0.6);
+            transition: transform 0.2s, opacity 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 5; /* Nằm trên hình nền nhưng dưới UI */
+        }
+        .number-art:hover { transform: scale(1.15); filter: brightness(1.2); }
+        #menu { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            text-align: center; color: white; z-index: 20;
+        }
+        h1 { font-size: 40px; letter-spacing: 3px; font-weight: 300; margin-bottom: 30px; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        button { 
+            padding: 14px 40px; font-size: 16px; cursor: pointer; margin: 10px; 
+            font-family: 'Times New Roman'; border-radius: 4px; border: 1px solid #4a90e2; 
+            background: rgba(0,0,0,0.5); color: #4a90e2; transition: 0.3s;
+        }
+        button:hover { background: #4a90e2; color: white; box-shadow: 0 0 15px rgba(74,144,226,0.4); }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <img id="background-img" src="/static/app/images/lake_background.png" alt="Lake Background">
+
+        <div id="ui-layer">
+            <div style="font-size: 18px; opacity: 0.8;">⏱ Thời gian: <span id="timer">0</span>s</div>
+            <div style="font-size: 22px; margin-top: 5px;">Mục tiêu: <span id="next-num" style="color: #4a90e2; font-weight: bold;">1</span></div>
+        </div>
+
+        <div id="menu">
+            <h1>HỒ SỐ NGHỆ THUẬT</h1>
+            <button onclick="startGame(10, 120)">MỨC DỄ</button>
+            <button onclick="startGame(50, 180)">MỨC TRUNG BÌNH</button>
+            <button onclick="startGame(100, 240)">MỨC KHÓ</button>
+        </div>
+    </div>
+
+<script>
+    // Giữ nguyên phần logic JavaScript của bạn
+    // Lưu ý: Đảm bảo đường dẫn ảnh "/static/app/images/lake_background.png" là chính xác trên server của bạn.
+    let targetNum = 1, maxNum = 0, timeLeft = 0, timerInterval, numbers = [];
+    const container = document.getElementById('game-container');
+
+    function getRandomColor() {
+        const colors = ['#5dade2', '#48c9b0', '#f4d03f', '#eb984e', '#af7ac5', '#ec7063', '#aeb6bf'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function startGame(count, time) {
+        maxNum = count; timeLeft = time; targetNum = 1;
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('ui-layer').style.display = 'block';
+        
+        for (let i = 1; i <= count; i++) {
+            createNumber(i);
+        }
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = timeLeft;
+            if (timeLeft <= 0) endGame(false);
+        }, 1000);
+        animate();
+    }
+
+    function createNumber(num) {
+        const el = document.createElement('div');
+        el.className = 'number-art';
+        el.innerText = num;
+        el.style.color = getRandomColor();
+        
+        const data = { 
+            el: el, 
+            x: Math.random() * (window.innerWidth - 100), 
+            y: Math.random() * (window.innerHeight - 100), 
+            vx: (Math.random() - 0.5) * 2.5,
+            vy: (Math.random() - 0.5) * 2.5 
+        };
+
+        el.onclick = () => {
+            if (num === targetNum) {
+                targetNum++;
+                el.style.opacity = '0';
+                el.style.transform = 'scale(0.5)';
+                setTimeout(() => el.remove(), 300);
+                document.getElementById('next-num').innerText = targetNum;
+                if (targetNum > maxNum) endGame(true);
+            }
+        };
+
+        container.appendChild(el);
+        numbers.push(data);
+    }
+
+    function animate() {
+        numbers.forEach(n => {
+            n.x += n.vx; n.y += n.vy;
+            if (n.x <= 0 || n.x >= window.innerWidth - 80) n.vx *= -1;
+            if (n.y <= 0 || n.y >= window.innerHeight - 80) n.vy *= -1;
+            n.el.style.left = n.x + 'px'; n.el.style.top = n.y + 'px';
+        });
+        if (timeLeft > 0) requestAnimationFrame(animate);
+    }
+
+    function endGame(win) {
+        clearInterval(timerInterval);
+        alert(win ? "Hoàn thành thử thách!" : "Trò chơi kết thúc.");
+        location.reload();
+    }
+</script>
+</body>
+</html>

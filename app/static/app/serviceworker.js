@@ -1,8 +1,8 @@
 const CACHE_NAME = 'toco-v1';
 const urlsToCache = [
   '/',
-  '/static/app/images/toco_idle.png',
-  '/static/app/images/noel-bg-mobile.jpg'
+  '/static/app/images/toco_idle_2026.png',
+  '/static/app/images/tam-mobile.jpg'
 ];
 
 self.addEventListener('install', event => {
