@@ -4,9 +4,9 @@
 <style>
     /* 1. Làm nổi bật mục Nhật ký trên Navbar (Thêm vào nếu chưa có trong base) */
     .nav-link[href*="history"] {
-        color: #ffeb3b !important; /* Màu vàng Giáng sinh */
+        color: #ffe91f !important; /* Màu vàng Giáng sinh */
         font-weight: 8th !important;
-        text-shadow: 0 0 5px rgba(255, 235, 59, 0.5);
+        text-shadow: 0 0 5px rgba(254, 235, 67, 0.79);
     }
 
     /* 2. Tối ưu giao diện tràn màn hình và dễ đọc */
@@ -19,13 +19,13 @@
     .glass-card {
         background: rgba(255, 255, 255, 0.9) !important;
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border: 5px solid rgba(0, 0, 0, 0.33) !important;
         border-radius: 20px;
     }
 
     /* Chỉnh chữ tiêu đề tự co giãn theo thiết bị */
     .responsive-title {
-        color: #ffffff;
+        color: #ffffb4;
         text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 36, 38, 0.6);
         font-size: clamp(1.5rem, 6vw, 2.5rem);
     }
@@ -55,7 +55,7 @@
     </div>
 
     <div id="mood-bubble-container" style="display: none;" class="mb-5 mx-2">
-        <div class="card glass-card shadow-lg border-0" id="mood-card" style="border-left: 10px solid #ccc;">
+        <div class="card glass-card shadow-lg border-0" id="mood-card" style="border-left: 10px solid #caffc2;">
             <div class="card-body p-4">
                 <div id="mood-loading" class="text-center py-4">
                     <div class="spinner-grow text-danger" role="status"></div>
@@ -73,7 +73,7 @@
                     
                     <p id="mood-summary" class="chat-text p-3 mb-3" style="background: rgba(0,0,0,0.05); border-radius: 15px;"></p>
                     
-                    <div class="progress mb-2" style="height: 12px; background: #ddd; border-radius: 10px;">
+                    <div class="progress mb-2" style="height: 12px; background: #e3e3e3; border-radius: 10px;">
                         <div id="mood-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
                     </div>
                     <div class="d-flex justify-content-between mb-4 small fw-bold text-white" style="text-shadow: 1px 1px 2px black;">

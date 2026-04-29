@@ -45,24 +45,25 @@
     height: 100%;
     max-width: none; 
     max-height: none;
-    background: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.96); /* Trắng đục, dễ đọc */
 
-    border: 4px solid transparent;
+    /* Viền Gradient Vàng Ánh Kim (sang trọng) */
+    border: 4px solid #f8b229;
     background-image: linear-gradient(white, white), 
-                      linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+    linear-gradient(135deg, #f8ea31 0%, #FCF6BA 25%, #eecb3e 50%, #FBF5B7 75%, #e3a322 100%);
     background-origin: border-box;
     background-clip: padding-box, border-box;
 
     border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2); 
+    box-shadow: 0 15px 50px rgba(179, 18, 23, 0.3); /* Shadow đỏ nhẹ */
     display: flex; 
     flex-direction: column;
     overflow: hidden;
         }
 
     #chatbot-header {
-    background: linear-gradient(90deg, #b31217 0%, #d42426 100%); 
-    border-bottom: 3px solid #f8b229;
+    background: linear-gradient(90deg, #d7171e 0%, #ef393c 100%); /* Đỏ cờ sôi nổi */
+    border-bottom: 3px solid #fdbf41;
     color: #ffeb3b; /* Chữ vàng */
     padding: 12px;
     font-weight: bold;
@@ -79,6 +80,7 @@
         flex-grow: 1;
         padding: 20px;
         overflow-y: auto;
+        background-color: #fffff0 !important; /* Màu xanh xám nhạt */
     }
 
     /* Tin nhắn + avatar */
@@ -107,24 +109,24 @@
         font-size: 15px;
     }
 
-    /* Dòng 104: Tin nhắn của Người dùng (User) */
-    .user .chat-bubble {
-        background: #d42426; 
-        color: white;
-        border-radius: 18px 18px 2px 18px;
-        border: 2px solid #f8b229;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    /* 2. TIN NHẮN TOCO (BOT): Màu xanh áo lính sương phong */
+    .bot .chat-bubble {
+        background: #fbfef3 !important; /* Xanh Olive trầm (hơi xám) */
+        color: #48762c !important;    /* Vàng đồng (Gold Leaf) - không chói như vàng tươi */
+        border: 1px solid #0a0a0a;     /* Viền tiệp màu nhưng sáng hơn chút */
+        border-radius: 18px 18px 18px 2px;
+        font-weight: 400;
     }
 
-    /* Dòng 100: Tin nhắn của Bot (Toco) */
-    .bot .chat-bubble {
-        background: white;
-        color: #333;
-        border: 2px solid #d42426;
+    /* 3. TIN NHẮN NGƯỜI DÙNG: Màu đỏ đất/đỏ bordeaux */
+    .user .chat-bubble {
+        background: #cf2626 !important; /* Đỏ trầm, không bị rực như đỏ tươi */
+        color: #f2f2f2 !important;     /* Chữ trắng hơi xám để dịu mắt */
+        border: 1px solid #0a0a0a;     /* Viền tiệp màu nhưng sáng hơn chút */
         border-radius: 18px 18px 18px 2px;
     }
 
-    /* Bot đang trả lời */
+    /* Typing indicators */
     #typing-indicator {
         display: none;
         font-style: italic;
@@ -147,7 +149,7 @@
         object-fit: contain; 
         transform: translateY(10px); 
         animation: floating 4s ease-in-out infinite;
-        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+        filter: drop-shadow(0 0 15px rgba(248, 178, 41, 0.8));
     }
     @keyframes floating {
         0%, 100% { 
@@ -163,13 +165,13 @@
     /* Ô nhập                     */
     /* ========================== */
 
-    #chatbot-input-area {
+    #chatbot-input-area {  
         padding: 15px 20px;
         display: flex;
         gap: 10px;
-        border-top: 2px solid #f8b229;
-        background: #8b1014; /* Đỏ đậm */
-        }
+        border-top: 2px solid #f8de38;
+        background: #c6252b; /* Đỏ đậm phù hợp tone navbar */
+    }
 
     #chatbot-text {
         flex: 1;
@@ -177,16 +179,18 @@
         border-radius: 20px; 
         border: 1px solid #ccc;
         font-size: 16px;
-        }
+    }
 
+    /* Nút gửi - Màu vàng hoàng gia */
     #chatbot-send {
         background: #f8b229; 
         color: #8b1014;
         font-weight: bold;
         border: none;
         border-radius: 20px;
-        padding: 0 15px;
-        }
+        padding: 0 20px;
+        transition: all 0.2s ease;
+    }
 
     #chatbot-send:hover {
         background: #d42426;
@@ -205,6 +209,11 @@
         font-size: 22px;
         transition: 0.2s;
         flex-shrink: 0;
+    }
+
+    #voice-btn:hover {
+        transform: scale(1.1);
+        background: #b31217;
     }
     /* ========================== */
     /*   MOBILE / TABLET DESIGN   */
@@ -325,13 +334,13 @@
     }
         }
     body { 
-        background: url("{% static 'app/images/tam-pc.jpg' %}") no-repeat center center fixed; 
+        background: url("{% static 'app/images/304-pc.jpg' %}") no-repeat center center fixed; 
         background-size: cover; 
     }
 
     @media (max-width: 992px) { 
         body { 
-            background: url("{% static 'app/images/tam-mobile.jpg' %}") no-repeat center top fixed; 
+            background: url("{% static 'app/images/304-mobile.jpg' %}") no-repeat center top fixed; 
             background-size: cover; 
             /* Đảm bảo chiều cao luôn phủ hết màn hình điện thoại */
             min-height: 100vh;
@@ -339,25 +348,25 @@
         } 
     }
     .navbar {
-        background-color: #8b1014 !important; /* Đỏ đậm phù hợp background */
-        border-bottom: 3px solid #f8b229;
+        background: linear-gradient(90deg, #b31217 0%, #d42426 100%) !important; /* Đỏ cờ */
+        border-bottom: 3px solid #f8b229; /* Viền vàng Gold */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
-    .nav-link[href*="history"] {
-        color: #ffeb3b !important; /* Màu vàng rực rỡ */
-        font-weight: 800 !important;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 5px 15px !important;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 235, 59, 0.3);
+    
+    .navbar-brand {
+        color: #fff !important;
+        font-weight: 800;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     }
 
-    .nav-link[href*="history"]:hover {
-        background: rgba(255, 235, 59, 0.2);
-        box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
-        transform: translateY(-2px);
+    /* Link Lịch Sử đặc biệt */
+    .nav-link[href*="history"] {
+        color: #ffeb3b !important; /* Vàng rực rỡ */
+        font-weight: bold !important;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        padding: 5px 15px !important;
+        border: 1px solid rgba(255, 235, 59, 0.4);
     }
     .form-control {
         border-radius: 25px; /* Giữ bo góc như cũ */
@@ -368,48 +377,7 @@
     input::-ms-reveal, input::-ms-clear {
         display: none;
     }
-    /* --- LÁ XANH RƠI LA ĐÀ & MỜ ẢO --- */
-    .petal {
-        position: fixed;
-        top: -10%;
-        z-index: 9990; /* Nằm phía sau khung chat */
-        pointer-events: none;
-        width: 7px; 
-        height: 12px;
-        border-radius: 0 100% 0 100%;
-        opacity: 0.3; 
-        filter: blur(1px); 
-        animation: leaf-fall-natural 15s linear infinite;
-    }
 
-    /* Các tông màu xanh lá dịu mắt */
-    .leaf-green-1 { background: #2ecc71; }
-    .leaf-green-2 { background: #27ae60; }
-    .leaf-green-3 { background: #a2d149; }
-
-    /* KEYFRAME TẠO KIỂU RƠI LA ĐÀ (CHAO ĐẢO) */
-    @keyframes leaf-fall-natural {
-        0% {
-            top: -10%;
-            transform: translateX(0) rotate(0deg) rotateY(0deg);
-        }
-        20% {
-            transform: translateX(40px) rotate(45deg) rotateY(90deg);
-        }
-        40% {
-            transform: translateX(-40px) rotate(90deg) rotateY(180deg);
-        }
-        60% {
-            transform: translateX(40px) rotate(135deg) rotateY(270deg);
-        }
-        80% {
-            transform: translateX(-40px) rotate(180deg) rotateY(360deg);
-        }
-        100% {
-            top: 110%;
-            transform: translateX(0) rotate(225deg) rotateY(450deg);
-        }
-    }
 </style>
     <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
     <link rel="manifest" href="{% static 'app/manifest.json' %}">
@@ -435,7 +403,7 @@
         
         <div id="toco-character-box">
             <img id="toco-character" 
-                src="{% static 'app/images/toco_idle_2026.png' %}   "
+                src="{% static 'app/images/toco_idle_304.png' %}   "
                 alt="Toco Character">
         </div>
         
@@ -449,7 +417,7 @@
                     style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:white; font-size:20px; cursor:pointer;">
                     🔊
                 </button>
-                🌸Toco – Người bạn đồng hành🌸
+                🪖Toco – Người bạn đồng hành🪖
                 <div style="position: absolute; top: 40px; right: 15px; font-size: 35px; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3)); z-index: 10;"></div>
                 <div style="position: absolute; bottom: 90px; left: 15px; font-size: 30px; color: white; opacity: 0.9; filter: blur(0.5px); z-index: 10;"></div>
                 </div>
@@ -460,13 +428,13 @@
             <div id="chatbot-input-area">
                 <button id="voice-btn">🎤</button>
                 <input type="text" id="chatbot-text" placeholder="Nhập tin nhắn..." onkeypress="if(event.keyCode==13) document.getElementById('chatbot-send').click()">
-                <button id="chatbot-send">Gửi🧧</button>
+                <button id="chatbot-send">Gửi🕊️</button>
             </div>
         </div>
     </div>
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #1a472a; border-bottom: 3px solid #f8b229;">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="/" style="color: #ffffff;">🏮 Trang chủ <span style="color: #ffee00ff;">🧧</span></a>
+        <a class="navbar-brand fw-bold" href="/" style="color: #ffffff;">⭐️ Trang chủ <span style="color: #ffee00ff;">⭐️</span></a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(255,255,255,0.5);">
         <span class="navbar-toggler-icon"></span>
@@ -490,20 +458,20 @@
                 <div class="d-none d-lg-block" style="flex: 1; margin-right: 15px;">
                     <div style="background: rgba(255, 255, 255, 0.15); color: #ffffff; padding: 8px 15px; border-radius: 20px; font-size: 1rem; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
                         <marquee behavior="scroll" direction="left" scrollamount="5">
-                            🔐 <strong><a href="{% url 'login' %}" style="color: #ffdd02ff; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🌸
+                            🔐 <strong><a href="{% url 'login' %}" style="color: #ffdd02ff; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🎆
                         </marquee>
                     </div>
                 </div>
                 <li class="nav-item mt-2 mt-lg-0">
                 <a class="btn btn-sm px-3" href="{% url 'login' %}" 
-                    style="background-color: #e8292dff; color: white; border-radius: 20px; font-weight: bold;">
+                    style="background-color: #e8292dff; color: white; border-radius: 20px; font-weight: bold;border: 1px solid #0a0a0a;">
                     Đăng nhập
                 </a>
                 </li>
 
                 <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
                 <a class="btn btn-sm px-3" href="{% url 'register' %}" 
-                    style="background-color: #f8b229; color: #1a472a; border-radius: 20px; font-weight: bold;">
+                    style="background-color: #fff458; color: #000000; border-radius: 20px; font-weight: bold;border: 1px solid #000000;">
                     Đăng ký
                 </a>
                 </li>
@@ -516,7 +484,7 @@
     <div class="d-block d-lg-none" style="width: 100%; background: #921c1c; padding: 10px 0; border-bottom: 2px solid #f8b229; margin-bottom: 15px;">
         <div style="margin: 0 10px; background: rgba(255, 255, 255, 0.1); color: #ffffff; padding: 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; border: 1px dashed #f8b229; overflow: hidden; white-space: nowrap;">
             <marquee behavior="scroll" direction="left" scrollamount="6">
-                🔐 <strong><a href="{% url 'login' %}" style="color: #f8b229; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🌸
+                🔐 <strong><a href="{% url 'login' %}" style="color: #f8b229; text-decoration: underline;">Đăng nhập ngay</a></strong> để cải thiện chất lượng cuộc trò chuyện và lưu lại lịch sử trò chuyện cùng Toco nhé!🎆
             </marquee>
         </div>
     </div>
@@ -537,11 +505,11 @@
     };
 
     const TOCO_IMAGES = {
-        IDLE: "{% static 'app/images/toco_idle_2026.png' %}", 
-        TYPING: "{% static 'app/images/toco_typing_2026.png' %}",
-        HAPPY: "{% static 'app/images/toco_happy_2026.png' %}",
-        COMFORT: "{% static 'app/images/toco_comfort_2026.png' %}",
-        CUTE: "{% static 'app/images/toco_cute_2026.png' %}" // Dùng idle làm mặc định
+        IDLE: "{% static 'app/images/toco_idle_304.png' %}", 
+        TYPING: "{% static 'app/images/toco_typing_304.png' %}",
+        HAPPY: "{% static 'app/images/toco_happy_304.png' %}",
+        COMFORT: "{% static 'app/images/toco_comfort_304.png' %}",
+        CUTE: "{% static 'app/images/toco_cute_304.png' %}" // Dùng idle làm mặc định
     };
     const tocoChar = document.getElementById("toco-character");
     let currentAudio = null; 
@@ -940,31 +908,8 @@
             }
         }());
     }
-    // Hàm tạo lá rơi
-    function createPetals() {
-        const container = document.body;
-        const oldPetals = document.querySelectorAll('.petal');
-        oldPetals.forEach(p => p.remove());
-
-        for (let i = 0; i < 30; i++) {
-            let leaf = document.createElement('div');
-            leaf.className = 'petal';
-            
-            const greenTypes = ['leaf-green-1', 'leaf-green-2', 'leaf-green-3'];
-            leaf.classList.add(greenTypes[Math.floor(Math.random() * greenTypes.length)]);
-
-            // Vị trí ngang ngẫu nhiên
-            leaf.style.left = Math.random() * 100 + 'vw';
-            
-            leaf.style.animationDuration = (Math.random() * 8 + 12) + 's';
-            leaf.style.animationDelay = Math.random() * 10 + 's';
-            
-            container.appendChild(leaf);
-        }
-    }
     // Khởi tạo khi tải trang
     document.addEventListener("DOMContentLoaded", () => {
-        createPetals();
         const tocoChatContainer = document.getElementById("toco-chat-container");
         const toggleBtn = document.getElementById("chat-toggle-btn"); // Nút X
         const openBubble = document.getElementById("chat-open-bubble"); // Nút 💬
