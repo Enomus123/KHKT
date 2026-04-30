@@ -20,8 +20,7 @@ from google import genai
 from google.genai import types
 
 client = genai.Client(api_key=settings.GEMINI_API_KEY)
-
-# Thư viện nhận diện giọng nói
+cloud_api_key = settings.GOOGLE_APPLICATION_CREDENTIALS
 import speech_recognition as sr
 from pydub import AudioSegment
 
@@ -220,7 +219,7 @@ def chatbot_api(request):
         )
 
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash",
             contents=gemini_history + [current_user_content],
             config=config
         )
@@ -241,7 +240,7 @@ def chatbot_api(request):
     audio_base64 = None
     if audio_mode:
         clean_reply = clean_text_for_tts(reply)
-        audio_base64 = get_google_tts(clean_reply, settings.GEMINI_API_KEY)
+        audio_base64 = get_google_tts(clean_reply, settings.GOOGLE_APPLICATION_CREDENTIALS)
 
     # --- LƯU DB ---
     if user:
@@ -354,7 +353,7 @@ def mood_analysis(request):
     
     try:
         response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         contents=prompt,
         config=types.GenerateContentConfig(temperature=0.1) # Thấp cho kết quả chính xác
         )
