@@ -41,10 +41,50 @@
 
     .result-img { width: 85%; max-width: 280px; border-radius: 15px; margin: 15px 0; border: 3px solid #f8b229; }
 
-    #mobile-ctrl { display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; }
-    .ctrl-btn { width: 70px; height: 70px; background: #f8b229; border: 4px solid #fff; border-radius: 50%; font-size: 30px; display: flex; align-items: center; justify-content: center; user-select: none; }
-    .shoot-btn { background: #ff4747 !important; width: 85px !important; height: 85px !important; }
-    @media (max-width: 768px) { #mobile-ctrl { display: flex; } }
+    /* PHẦN ĐIỀU CHỈNH CHO MOBILE */
+#mobile-ctrl { 
+    display: none; 
+    justify-content: space-between; 
+    align-items: center; 
+    width: 95%; 
+    max-width: 500px; 
+    margin: 15px auto; 
+    padding: 0 10px;
+}
+
+.move-btns { display: flex; gap: 20px; } /* Cụm nút di chuyển trái phải */
+
+.ctrl-btn { 
+    width: 65px; 
+    height: 65px; 
+    background: #f8b229; 
+    border: 4px solid #fff; 
+    border-radius: 15px; 
+    font-size: 28px; 
+    color: #000;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    user-select: none; 
+    touch-action: manipulation;
+    box-shadow: 0 4px 0 #b37e00;
+}
+
+.shoot-btn { 
+    background: #ff4747 !important; 
+    width: 80px !important; 
+    height: 80px !important; 
+    border-radius: 50% !important; 
+    color: white;
+    box-shadow: 0 4px 0 #990000;
+}
+
+.ctrl-btn:active { transform: translateY(3px); box-shadow: none; }
+
+@media (max-width: 768px) { 
+    #mobile-ctrl { display: flex; } 
+    #game-viewport { height: 65vh; } /* Thu nhỏ màn hình game một chút để lấy chỗ cho nút */
+}
 </style>
 
 <div class="container text-center px-2">
