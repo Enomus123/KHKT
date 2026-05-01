@@ -1,152 +1,246 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Hồ Số Nghệ Thuật</title>
-    <style>
-        body { margin: 0; overflow: hidden; font-family: 'Times New Roman', serif; }
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body { background-color: transparent !important; overflow-x: hidden; font-family: 'Segoe UI', Arial, sans-serif; }
+    
+    #game-viewport {
+        position: relative; width: 98%; max-width: 550px; height: 85vh; max-height: 750px; margin: 10px auto;
+        background: linear-gradient(to bottom, #333, #444) !important; border: 6px solid #f8b229;
+        border-radius: 25px; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.7); touch-action: none;
+    }
+
+    .road-line {
+        position: absolute; width: 8px; height: 60px; background: rgba(255, 255, 255, 0.3);
+        left: 33.33%; transform: translateX(-50%); animation: roadMove 0.6s linear infinite;
+    }
+    .road-line.right { left: 66.66%; }
+    @keyframes roadMove { from { top: -100px; } to { top: 100%; } }
+
+    .entity { position: absolute; z-index: 5; background-size: contain; background-repeat: no-repeat; background-position: center; }
+    .tank { width: 100px; height: 130px; background-image: url("{% static 'app/images/your_tank.png' %}"); transition: left 0.1s ease-out; }
+    .enemy { width: 95px; height: 95px; background-image: url("{% static 'app/images/enemy_tank.png' %}"); }
+    .rock { width: 85px; height: 85px; background-image: url("{% static 'app/images/soi-da.png' %}"); }
+    .ally { width: 80px; height: 80px; background-image: url("{% static 'app/images/ally.png' %}"); }
+    .bullet { width: 16px; height: 40px; background: #ff4747; border: 2px solid #fff; border-radius: 10px; box-shadow: 0 0 15px red; }
+    .blink { opacity: 0.4; filter: brightness(3); }
+
+    #ui-hud { position: absolute; top: 20px; left: 0; width: 100%; z-index: 10; color: white; font-weight: bold; text-shadow: 2px 2px 5px black; font-size: 1.2rem; display: flex; justify-content: space-around; pointer-events: none; }
+    
+    #game-menu, #win-screen, #lose-screen {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.92); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        color: white; padding: 25px; text-align: center;
+    }
+
+    .instruction-box {
+        background: rgba(255,255,255,0.1); border: 1px solid #f8b229;
+        padding: 15px; border-radius: 15px; font-size: 0.85rem; text-align: left; margin-bottom: 20px; width: 90%;
+    }
+
+    .result-img { width: 85%; max-width: 280px; border-radius: 15px; margin: 15px 0; border: 3px solid #f8b229; }
+
+    #mobile-ctrl { display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; }
+    .ctrl-btn { width: 70px; height: 70px; background: #f8b229; border: 4px solid #fff; border-radius: 50%; font-size: 30px; display: flex; align-items: center; justify-content: center; user-select: none; }
+    .shoot-btn { background: #ff4747 !important; width: 85px !important; height: 85px !important; }
+    @media (max-width: 768px) { #mobile-ctrl { display: flex; } }
+</style>
+
+<div class="container text-center px-2">
+    <div id="game-viewport">
+        <div class="road-line"></div><div class="road-line right"></div>
         
-        #game-container { 
-            position: relative; 
-            width: 100vw; 
-            height: 100vh; 
-            /* Hình nền dự phòng nếu ảnh không tải được */
-            background: #051923; 
-        }
-
-        /* Lớp hình nền */
-        #background-img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0; /* Nằm dưới cùng */
-            pointer-events: none; /* Không cho phép click vào ảnh làm vướng game */
-        }
-        
-        #ui-layer { 
-            position: absolute; top: 20px; left: 20px; z-index: 10; 
-            background: rgba(0, 0, 0, 0.4); color: #e0e0e0; 
-            padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(8px);
-            display: none; /* Ẩn đi lúc đầu, hiện khi bắt đầu game */
-        }
-
-        /* ... (Các phần style khác giữ nguyên như cũ của bạn) ... */
-        .number-art {
-            position: absolute; font-size: 50px; font-weight: 800;
-            cursor: pointer; user-select: none;
-            text-shadow: 2px 4px 6px rgba(0,0,0,0.6);
-            transition: transform 0.2s, opacity 0.3s;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 5; /* Nằm trên hình nền nhưng dưới UI */
-        }
-        .number-art:hover { transform: scale(1.15); filter: brightness(1.2); }
-        #menu { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            text-align: center; color: white; z-index: 20;
-        }
-        h1 { font-size: 40px; letter-spacing: 3px; font-weight: 300; margin-bottom: 30px; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
-        button { 
-            padding: 14px 40px; font-size: 16px; cursor: pointer; margin: 10px; 
-            font-family: 'Times New Roman'; border-radius: 4px; border: 1px solid #4a90e2; 
-            background: rgba(0,0,0,0.5); color: #4a90e2; transition: 0.3s;
-        }
-        button:hover { background: #4a90e2; color: white; box-shadow: 0 0 15px rgba(74,144,226,0.4); }
-    </style>
-</head>
-<body>
-
-    <div id="game-container">
-        <img id="background-img" src="/static/app/images/lake_background.png" alt="Lake Background">
-
-        <div id="ui-layer">
-            <div style="font-size: 18px; opacity: 0.8;">⏱ Thời gian: <span id="timer">0</span>s</div>
-            <div style="font-size: 22px; margin-top: 5px;">Mục tiêu: <span id="next-num" style="color: #4a90e2; font-weight: bold;">1</span></div>
+        <div id="ui-hud" style="display: none;">
+            <span>❤️: <span id="hp">3</span></span>
+            <span>🎖️: <span id="score">0</span></span>
+            <span>⏱️: <span id="timer">45</span>s</span>
         </div>
 
-        <div id="menu">
-            <h1>HỒ SỐ NGHỆ THUẬT</h1>
-            <button onclick="startGame(10, 120)">MỨC DỄ</button>
-            <button onclick="startGame(50, 180)">MỨC TRUNG BÌNH</button>
-            <button onclick="startGame(100, 240)">MỨC KHÓ</button>
+        <!-- MENU HƯỚNG DẪN -->
+        <div id="game-menu">
+            <h2 class="text-warning fw-bold mb-3">HÀNH TRÌNH LỊCH SỬ</h2>
+            <div class="instruction-box">
+                <div>🎯 <b>Nhiệm vụ:</b> Sống sót 45 giây.</div>
+                <div>❤️ <b>Sinh mệnh:</b> Bạn có 3 MÁU.</div>
+                <div>🔥 <b>Chiến đấu:</b> Bắn địch hoặc cứu đồng đội.</div>
+                <div>🩹 <b>Cứu viện:</b> Cứu đồng đội được +1 Máu và +1 Điểm.</div>
+                <div>🪨 <b>Cảnh báo:</b> Đâm vào ĐÁ sẽ thua ngay lập tức!</div>
+            </div>
+            <button onclick="startGame()" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg">XUẤT QUÂN</button>
         </div>
+
+        <!-- THẮNG -->
+        <div id="win-screen" style="display: none;">
+            <h1 class="text-warning fw-bold">CHIẾN THẮNG!</h1>
+            <img src="{% static 'app/images/anh_ket_man.png' %}" class="result-img">
+            <h3 class="text-white">Điểm: <span id="final-score">0</span></h3>
+            <button onclick="location.reload()" class="btn btn-warning btn-lg px-5">TIẾP TỤC</button>
+        </div>
+
+        <!-- THUA -->
+        <div id="lose-screen" style="display: none;">
+            <h1 class="text-danger fw-bold">THẤT BẠI!</h1>
+            <img src="{% static 'app/images/lose_image.png' %}" class="result-img" style="border-color: #ff4747;">
+            <p id="lose-reason" class="text-white fs-5"></p>
+            <button onclick="location.reload()" class="btn btn-danger btn-lg px-5">THỬ LẠI</button>
+        </div>
+
+        <div id="game-area"></div>
     </div>
 
+    <!-- ĐIỀU KHIỂN -->
+    <div id="mobile-ctrl">
+        <div class="ctrl-btn" onpointerdown="moveLeft()">◀</div>
+        <div class="ctrl-btn shoot-btn" onpointerdown="shoot()">🔥</div>
+        <div class="ctrl-btn" onpointerdown="moveRight()">▶</div>
+    </div>
+</div>
+
 <script>
-    // Giữ nguyên phần logic JavaScript của bạn
-    // Lưu ý: Đảm bảo đường dẫn ảnh "/static/app/images/lake_background.png" là chính xác trên server của bạn.
-    let targetNum = 1, maxNum = 0, timeLeft = 0, timerInterval, numbers = [];
-    const container = document.getElementById('game-container');
+    let lane = 1, hp = 3, score = 0, timeLeft = 45;
+    let gameActive = false, isInvincible = false;
+    let entities = [], bullets = [];
+    const viewport = document.getElementById('game-viewport');
+    const gameArea = document.getElementById('game-area');
 
-    function getRandomColor() {
-        const colors = ['#5dade2', '#48c9b0', '#f4d03f', '#eb984e', '#af7ac5', '#ec7063', '#aeb6bf'];
-        return colors[Math.floor(Math.random() * colors.length)];
-    }
-
-    function startGame(count, time) {
-        maxNum = count; timeLeft = time; targetNum = 1;
-        document.getElementById('menu').style.display = 'none';
-        document.getElementById('ui-layer').style.display = 'block';
+    function startGame() {
+        document.getElementById('game-menu').style.display = 'none';
+        document.getElementById('ui-hud').style.display = 'flex';
+        gameActive = true;
+        hp = 3; score = 0; timeLeft = 45;
         
-        for (let i = 1; i <= count; i++) {
-            createNumber(i);
-        }
-
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            document.getElementById('timer').innerText = timeLeft;
-            if (timeLeft <= 0) endGame(false);
-        }, 1000);
-        animate();
-    }
-
-    function createNumber(num) {
-        const el = document.createElement('div');
-        el.className = 'number-art';
-        el.innerText = num;
-        el.style.color = getRandomColor();
+        gameArea.innerHTML = '<div id="player-tank" class="entity tank"></div>';
+        updateTankPos();
         
-        const data = { 
-            el: el, 
-            x: Math.random() * (window.innerWidth - 100), 
-            y: Math.random() * (window.innerHeight - 100), 
-            vx: (Math.random() - 0.5) * 2.5,
-            vy: (Math.random() - 0.5) * 2.5 
-        };
-
-        el.onclick = () => {
-            if (num === targetNum) {
-                targetNum++;
-                el.style.opacity = '0';
-                el.style.transform = 'scale(0.5)';
-                setTimeout(() => el.remove(), 300);
-                document.getElementById('next-num').innerText = targetNum;
-                if (targetNum > maxNum) endGame(true);
+        setInterval(() => {
+            if(gameActive) {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if(timeLeft <= 0) endGame(true);
             }
-        };
+        }, 1000);
 
-        container.appendChild(el);
-        numbers.push(data);
+        spawn();
+        requestAnimationFrame(loop);
     }
 
-    function animate() {
-        numbers.forEach(n => {
-            n.x += n.vx; n.y += n.vy;
-            if (n.x <= 0 || n.x >= window.innerWidth - 80) n.vx *= -1;
-            if (n.y <= 0 || n.y >= window.innerHeight - 80) n.vy *= -1;
-            n.el.style.left = n.x + 'px'; n.el.style.top = n.y + 'px';
+    function updateTankPos() {
+        const t = document.getElementById('player-tank');
+        if(t) t.style.left = (lane * (viewport.offsetWidth/3) + (viewport.offsetWidth/6 - 50)) + 'px';
+        if(t) t.style.bottom = "30px";
+    }
+
+    function moveLeft() { if(lane > 0) { lane--; updateTankPos(); } }
+    function moveRight() { if(lane < 2) { lane++; updateTankPos(); } }
+    
+    function shoot() {
+        if(!gameActive) return;
+        const b = document.createElement('div');
+        b.className = 'entity bullet';
+        gameArea.appendChild(b);
+        bullets.push({ 
+            el: b, 
+            x: (lane * (viewport.offsetWidth/3) + (viewport.offsetWidth/6 - 8)), 
+            y: viewport.offsetHeight - 170 
         });
-        if (timeLeft > 0) requestAnimationFrame(animate);
     }
 
-    function endGame(win) {
-        clearInterval(timerInterval);
-        alert(win ? "Hoàn thành thử thách!" : "Trò chơi kết thúc.");
-        location.reload();
+    function spawn() {
+        if(!gameActive) return;
+        const type = Math.random() > 0.7 ? (Math.random() > 0.85 ? 'ally' : 'enemy') : 'rock';
+        const el = document.createElement('div');
+        el.className = `entity ${type}`;
+        gameArea.appendChild(el);
+        const l = Math.floor(Math.random() * 3);
+        entities.push({ 
+            el: el, 
+            type: type, 
+            x: l * (viewport.offsetWidth/3) + (viewport.offsetWidth/6 - 45), 
+            y: -120, 
+            speed: type === 'rock' ? 4 : 5.5 
+        });
+        setTimeout(spawn, 1000);
     }
+
+    function loop() {
+        if(!gameActive) return;
+
+        // Xử lý đạn và va chạm với Địch
+        bullets.forEach((b, bi) => {
+            b.y -= 12;
+            b.el.style.top = b.y + 'px';
+            b.el.style.left = b.x + 'px';
+
+            entities.forEach((en, ei) => {
+                if(en.type === 'enemy') {
+                    // Kiểm tra va chạm đạn - địch (Sửa lỗi tại đây)
+                    if(Math.abs(b.x - en.x) < 60 && Math.abs(b.y - en.y) < 60) {
+                        score++;
+                        document.getElementById('score').innerText = score;
+                        en.el.remove(); entities.splice(ei, 1);
+                        b.el.remove(); bullets.splice(bi, 1);
+                    }
+                }
+            });
+            if(b.y < -50) { b.el.remove(); bullets.splice(bi, 1); }
+        });
+
+        // Xử lý thực thể rơi và va chạm xe tăng
+        entities.forEach((en, i) => {
+            en.y += en.speed;
+            en.el.style.top = en.y + 'px';
+            en.el.style.left = en.x + 'px';
+
+            const tX = lane * (viewport.offsetWidth/3) + (viewport.offsetWidth/6 - 50);
+            const tY = viewport.offsetHeight - 160;
+
+            if(en.y > tY - 60 && en.y < tY + 80 && Math.abs(en.x - tX) < 55) {
+                if(en.type === 'rock') { endGame(false, "Đâm vào đá tảng!"); return; }
+                
+                if(!isInvincible) {
+                    if(en.type === 'enemy') { 
+                        hp--; blink();
+                    } else if(en.type === 'ally') { 
+                        hp++; score++;
+                    }
+                    document.getElementById('hp').innerText = hp;
+                    document.getElementById('score').innerText = score;
+                    en.el.remove(); entities.splice(i, 1);
+                    if(hp <= 0) endGame(false, "Xe tăng bị phá hủy!");
+                }
+            }
+            if(en.y > viewport.offsetHeight) { en.el.remove(); entities.splice(i, 1); }
+        });
+
+        requestAnimationFrame(loop);
+    }
+
+    function blink() {
+        isInvincible = true;
+        const tank = document.getElementById('player-tank');
+        if(tank) tank.classList.add('blink');
+        setTimeout(() => { isInvincible = false; if(tank) tank.classList.remove('blink'); }, 1200);
+    }
+
+    function endGame(win, reason = "") {
+        gameActive = false;
+        document.getElementById('ui-hud').style.display = 'none';
+        if(win) {
+            document.getElementById('win-screen').style.display = 'flex';
+            document.getElementById('final-score').innerText = score;
+        } else {
+            document.getElementById('lose-screen').style.display = 'flex';
+            document.getElementById('lose-reason').innerText = reason;
+        }
+        gameArea.innerHTML = '';
+    }
+
+    // Hỗ trợ phím cách để bắn
+    window.addEventListener('keydown', (e) => {
+        if(e.key === ' ') { e.preventDefault(); shoot(); }
+        if(e.key === 'ArrowLeft') moveLeft();
+        if(e.key === 'ArrowRight') moveRight();
+    });
 </script>
-</body>
-</html>
+{% endblock %}

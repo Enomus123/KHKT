@@ -377,7 +377,40 @@
     input::-ms-reveal, input::-ms-clear {
         display: none;
     }
+    #game-shortcut-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    background: #1a472a; /* Bạn có thể đổi thành transparent nếu hình đã có nền tròn */
+    color: white;
+    border-radius: 50%;
+    border: 3px solid #f8b229;
+    z-index: 10001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Cắt bớt phần thừa nếu hình ảnh to hơn vòng tròn */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+}
 
+    #game-shortcut-btn:hover {
+    transform: scale(1.1);
+}
+
+    /* Nếu bạn muốn hình ảnh chiếm trọn 100% diện tích nút */
+    #game-shortcut-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+    /* Ẩn nút nếu đang ở trang game để tránh bị lặp */
+    body.game-page #game-shortcut-btn {
+    display: none;
+}
 </style>
     <link rel="icon" type="image/x-icon" href="{% static 'app/images/favicon.ico' %}">
     <link rel="manifest" href="{% static 'app/manifest.json' %}">
@@ -435,7 +468,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #1a472a; border-bottom: 3px solid #f8b229;">
     <div class="container">
         <a class="navbar-brand fw-bold" href="/" style="color: #ffffff;">⭐️ Trang chủ <span style="color: #ffee00ff;">⭐️</span></a>
-        
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: rgba(255,255,255,0.5);">
         <span class="navbar-toggler-icon"></span>
         </button>
@@ -913,6 +945,7 @@
         const tocoChatContainer = document.getElementById("toco-chat-container");
         const toggleBtn = document.getElementById("chat-toggle-btn"); // Nút X
         const openBubble = document.getElementById("chat-open-bubble"); // Nút 💬
+        const gameBtn = document.getElementById("game-shortcut-btn");
         const currentPath = window.location.pathname.replace(/\/$/, ""); 
         const bgMusic = document.getElementById('bg-music');
         if (bgMusic) {
@@ -935,6 +968,7 @@
         }
         if (currentPath === '' || currentPath === '/' || currentPath === '/index.html') { 
             tocoChatContainer.style.display = 'flex'; // Hiển thị khung chat (Toco + Chatbox)
+            gameBtn.style.display = 'flex'; // Hiển thị nút game
             initializeChat();
             setInterval(launchFirework, 5000);
             toggleBtn.onclick = () => {
@@ -960,6 +994,7 @@
         } else {
 
             tocoChatContainer.style.display = 'none'; // Ẩn khung chat trên các trang khác
+            gameBtn.style.display = 'none'; // Ẩn nút game trên các trang khác
         }
     });
     // Hàm chuyển đổi hiển thị/ẩn mật khẩu
@@ -976,6 +1011,9 @@
     </script>
     <button id="chat-open-bubble" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #d42426; color: white; border-radius: 50%; border: 3px solid #f8b229; z-index: 10001; cursor: pointer; font-size: 24px; display: none; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
         💬
+    <a href="/game/" id="game-shortcut-btn" title="Chơi game lịch sử">
+        <img src="{% static 'app/images/game_icon.png' %}" alt="Game Icon" style="width: 150%; height: 150%; object-fit: contain;">
+    </a>
     </button>
     </body>
     </html>
