@@ -166,7 +166,7 @@ def chatbot_api(request):
             history_msgs.append({"role": role, "content": h.message})
     
     history_msgs.append({"role": "user", "content": user_message})
-    history_msgs = history_msgs[-7:] # Lấy 7 tin gần nhất để Toco thông minh hơn
+    history_msgs = history_msgs[-10:] # Lấy 7 tin gần nhất để Toco thông minh hơn
     now_vn = timezone.now() + timedelta(hours=7)# Lấy thời gian từ hệ thống
     # Định dạng lại thành chuỗi tiếng Việt dễ hiểu
     current_time_str = now_vn.strftime("%H:%M, thứ %w (0 là Chủ Nhật), ngày %d/%m/%Y")
@@ -214,7 +214,7 @@ def chatbot_api(request):
         
         config = types.GenerateContentConfig(
             system_instruction=system_prompt + time_context,
-            temperature=0.7,
+            temperature=0.8,
             max_output_tokens=400,
         )
 
